@@ -1,0 +1,520 @@
+<div class="claims-management-container">
+  <div class="category-header">
+    <h3>Claims Management</h3>
+    <p>User claims and permissions management with creation, modification, and assignment capabilities</p>
+  </div>
+
+  <p-tabView class="nested-tabs">
+    <!-- UI Interface Tab -->
+    <p-tabPanel header="UI Interface" leftIcon="pi pi-tags">
+      <div class="claims-ui-interface">
+        <p-card header="Claims Management Interface">
+          <div class="ui-description">
+            <p><i class="pi pi-info-circle"></i> Comprehensive interface for managing user claims and permissions.</p>
+          </div>
+          
+          <div class="ui-features">
+            <h4>Available Features:</h4>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <i class="pi pi-tags"></i>
+                <h5>Claims List</h5>
+                <p>Browse and search all system claims with filtering</p>
+                <p-button label="View Claims" icon="pi pi-external-link" class="p-button-outlined" size="small" (onClick)="openClaimsManagementUI('list')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-plus-circle"></i>
+                <h5>Create Claim</h5>
+                <p>Add new claims with specific types and values</p>
+                <p-button label="Create Claim" icon="pi pi-plus" class="p-button-outlined" size="small" (onClick)="openClaimsManagementUI('create')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-pencil"></i>
+                <h5>Edit Claim</h5>
+                <p>Modify existing claim properties and values</p>
+                <p-button label="Edit Claim" icon="pi pi-pencil" class="p-button-outlined" size="small" (onClick)="openClaimsManagementUI('edit')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-search"></i>
+                <h5>Search Claims</h5>
+                <p>Find claims by type, value, or user</p>
+                <p-button label="Search Claims" icon="pi pi-search" class="p-button-outlined" size="small" (onClick)="openClaimsManagementUI('search')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-user"></i>
+                <h5>User Claims</h5>
+                <p>View all claims assigned to a specific user</p>
+                <p-button label="User Claims" icon="pi pi-user" class="p-button-outlined" size="small" (onClick)="openClaimsManagementUI('user-claims')"></p-button>
+              </div>
+            </div>
+          </div>
+
+          <p-divider></p-divider>
+
+          <div class="quick-actions">
+            <h4>Quick Actions:</h4>
+            <div class="actions-row">
+              <p-button 
+                label="All Claims" 
+                icon="pi pi-tags" 
+                (onClick)="openEndpointTester('/api/Claims', 'GET')"
+                class="p-button-outlined"
+              ></p-button>
+              <p-button 
+                label="Create Claim" 
+                icon="pi pi-plus" 
+                (onClick)="openClaimsManagementUI('create')"
+                class="p-button-success"
+              ></p-button>
+              <p-button 
+                label="Search Claims" 
+                icon="pi pi-search" 
+                (onClick)="openClaimsManagementUI('search')"
+                class="p-button-info"
+              ></p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- API Endpoints Tab -->
+    <p-tabPanel header="API Endpoints" leftIcon="pi pi-code">
+      <div class="api-endpoints-interface">
+        <p-card header="Claims Management API Endpoints">
+          <div class="api-description">
+            <p><i class="pi pi-info-circle"></i> Complete list of API endpoints for claims management operations.</p>
+          </div>
+
+          <p-accordion>
+            <p-accordionTab 
+              *ngFor="let endpoint of claimsManagementEndpoints"
+              [header]="getAccordionHeader(endpoint)"
+            >
+              <div class="endpoint-details">
+                <div class="endpoint-info">
+                  <div class="endpoint-meta">
+                    <p-chip 
+                      [label]="endpoint.method" 
+                      [class]="'method-' + endpoint.method.toLowerCase()"
+                    ></p-chip>
+                    <span class="endpoint-path">{{ endpoint.endpoint }}</span>
+                    <p-badge 
+                      *ngIf="endpoint.requiresAuth" 
+                      value="AUTH" 
+                      severity="warning"
+                    ></p-badge>
+                  </div>
+                  <p class="endpoint-summary">{{ endpoint.summary }}</p>
+                  
+                  <div class="endpoint-parameters" *ngIf="endpoint.parameters && endpoint.parameters.length > 0">
+                    <h5>Parameters:</h5>
+                    <div class="parameters-list">
+                      <p-chip 
+                        *ngFor="let param of endpoint.parameters" 
+                        [label]="param"
+                        class="parameter-chip"
+                      ></p-chip>
+                    </div>
+                  </div>
+
+                  <div class="endpoint-actions">
+                    <p-button 
+                      label="Test Endpoint" 
+                      icon="pi pi-play" 
+                      size="small"
+                      (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)"
+                    ></p-button>
+                    <p-button 
+                      label="Copy cURL" 
+                      icon="pi pi-copy" 
+                      size="small"
+                      class="p-button-outlined"
+                      (onClick)="copyCurlCommand(endpoint)"
+                    ></p-button>
+                    <p-button 
+                      label="View Schema" 
+                      icon="pi pi-eye" 
+                      size="small"
+                      class="p-button-info"
+                      (onClick)="viewEndpointSchema(endpoint)"
+                    ></p-button>
+                  </div>
+                </div>
+              </div>
+            </p-accordionTab>
+          </p-accordion>
+        </p-card>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<!-- Create Claim Dialog -->
+<p-dialog 
+  header="Create New Claim" 
+  [(visible)]="showCreateClaimDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="create-claim-dialog"
+  (onHide)="onCreateDialogHide()"
+>
+  <form [formGroup]="createClaimForm" (ngSubmit)="handleCreateClaim()">
+    <div class="form-field">
+      <label for="createClaimType">Claim Type *</label>
+      <p-dropdown 
+        id="createClaimType" 
+        formControlName="type" 
+        [options]="claimTypes"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select claim type"
+        [class.ng-invalid]="createClaimForm.get('type')?.invalid && createClaimForm.get('type')?.touched"
+      ></p-dropdown>
+      <small class="p-error" *ngIf="createClaimForm.get('type')?.invalid && createClaimForm.get('type')?.touched">
+        Claim type is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="createClaimValue">Claim Value *</label>
+      <input 
+        pInputText 
+        id="createClaimValue" 
+        formControlName="value" 
+        placeholder="Enter claim value"
+        [class.ng-invalid]="createClaimForm.get('value')?.invalid && createClaimForm.get('value')?.touched"
+      />
+      <small class="p-error" *ngIf="createClaimForm.get('value')?.invalid && createClaimForm.get('value')?.touched">
+        Claim value is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="createClaimUserId">User ID</label>
+      <input 
+        pInputText 
+        id="createClaimUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID (optional)"
+      />
+    </div>
+
+    <div class="form-field">
+      <label for="createClaimIssuer">Issuer</label>
+      <input 
+        pInputText 
+        id="createClaimIssuer" 
+        formControlName="issuer" 
+        placeholder="Enter claim issuer (optional)"
+      />
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Create Claim" 
+        icon="pi pi-plus" 
+        [loading]="createClaimLoading"
+        [disabled]="createClaimForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showCreateClaimDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="createClaimMessage" severity="info" [text]="createClaimMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Edit Claim Dialog -->
+<p-dialog 
+  header="Edit Claim" 
+  [(visible)]="showEditClaimDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="edit-claim-dialog"
+  (onHide)="onEditDialogHide()"
+>
+  <form [formGroup]="editClaimForm" (ngSubmit)="handleEditClaim()">
+    <div class="form-field">
+      <label for="editClaimId">Claim ID *</label>
+      <input 
+        pInputText 
+        id="editClaimId" 
+        formControlName="id" 
+        placeholder="Enter claim ID"
+        [class.ng-invalid]="editClaimForm.get('id')?.invalid && editClaimForm.get('id')?.touched"
+      />
+      <small class="p-error" *ngIf="editClaimForm.get('id')?.invalid && editClaimForm.get('id')?.touched">
+        Claim ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="editClaimType">Claim Type *</label>
+      <p-dropdown 
+        id="editClaimType" 
+        formControlName="type" 
+        [options]="claimTypes"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select claim type"
+        [class.ng-invalid]="editClaimForm.get('type')?.invalid && editClaimForm.get('type')?.touched"
+      ></p-dropdown>
+      <small class="p-error" *ngIf="editClaimForm.get('type')?.invalid && editClaimForm.get('type')?.touched">
+        Claim type is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="editClaimValue">Claim Value *</label>
+      <input 
+        pInputText 
+        id="editClaimValue" 
+        formControlName="value" 
+        placeholder="Enter claim value"
+        [class.ng-invalid]="editClaimForm.get('value')?.invalid && editClaimForm.get('value')?.touched"
+      />
+      <small class="p-error" *ngIf="editClaimForm.get('value')?.invalid && editClaimForm.get('value')?.touched">
+        Claim value is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="editClaimIssuer">Issuer</label>
+      <input 
+        pInputText 
+        id="editClaimIssuer" 
+        formControlName="issuer" 
+        placeholder="Enter claim issuer (optional)"
+      />
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Update Claim" 
+        icon="pi pi-check" 
+        [loading]="editClaimLoading"
+        [disabled]="editClaimForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showEditClaimDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="editClaimMessage" severity="info" [text]="editClaimMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Search Claims Dialog -->
+<p-dialog 
+  header="Search Claims" 
+  [(visible)]="showSearchClaimsDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="search-claims-dialog"
+  (onHide)="onSearchDialogHide()"
+>
+  <form [formGroup]="searchClaimsForm" (ngSubmit)="handleSearchClaims()">
+    <div class="search-form">
+      <div class="form-field">
+        <label for="searchTerm">Search Term</label>
+        <input 
+          pInputText 
+          id="searchTerm" 
+          formControlName="searchTerm" 
+          placeholder="Enter claim value or partial text"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="searchType">Claim Type</label>
+        <p-dropdown 
+          id="searchType" 
+          formControlName="type" 
+          [options]="claimTypes"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select claim type (optional)"
+          [showClear]="true"
+        ></p-dropdown>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="pageNumber">Page Number</label>
+          <p-inputNumber 
+            id="pageNumber" 
+            formControlName="pageNumber" 
+            [min]="1"
+            [showButtons]="true"
+          ></p-inputNumber>
+        </div>
+
+        <div class="form-field">
+          <label for="pageSize">Page Size</label>
+          <p-inputNumber 
+            id="pageSize" 
+            formControlName="pageSize" 
+            [min]="1"
+            [max]="100"
+            [showButtons]="true"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Search" 
+        icon="pi pi-search" 
+        [loading]="searchClaimsLoading"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Clear" 
+        icon="pi pi-refresh" 
+        class="p-button-secondary" 
+        (onClick)="resetSearchForm()"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="searchClaimsMessage" severity="info" [text]="searchClaimsMessage"></p-message>
+
+    <div class="search-results" *ngIf="searchResults.length > 0">
+      <h4>Search Results:</h4>
+      <div class="claim-list">
+        <div 
+          *ngFor="let claim of searchResults" 
+          class="claim-item"
+          (click)="selectClaim(claim)"
+          [class.selected]="selectedClaim?.id === claim.id"
+        >
+          <div class="claim-info">
+            <h5>{{ claim.type }}</h5>
+            <p>{{ claim.value }}</p>
+            <small>ID: {{ claim.id }}</small>
+            <small *ngIf="claim.issuer">Issuer: {{ claim.issuer }}</small>
+          </div>
+          <div class="claim-meta">
+            <p-chip 
+              [label]="claim.type" 
+              class="type-chip"
+            ></p-chip>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- User Claims Dialog -->
+<p-dialog 
+  header="User Claims" 
+  [(visible)]="showUserClaimsDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="user-claims-dialog"
+  (onHide)="onUserClaimsDialogHide()"
+>
+  <form [formGroup]="userClaimsForm" (ngSubmit)="handleGetUserClaims()">
+    <div class="form-field">
+      <label for="userClaimsId">User ID *</label>
+      <input 
+        pInputText 
+        id="userClaimsId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="userClaimsForm.get('userId')?.invalid && userClaimsForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="userClaimsForm.get('userId')?.invalid && userClaimsForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="claimsPageNumber">Page Number</label>
+        <p-inputNumber 
+          id="claimsPageNumber" 
+          formControlName="pageNumber" 
+          [min]="1"
+          [showButtons]="true"
+        ></p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="claimsPageSize">Page Size</label>
+        <p-inputNumber 
+          id="claimsPageSize" 
+          formControlName="pageSize" 
+          [min]="1"
+          [max]="100"
+          [showButtons]="true"
+        ></p-inputNumber>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Get Claims" 
+        icon="pi pi-tags" 
+        [loading]="userClaimsLoading"
+        [disabled]="userClaimsForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Clear" 
+        icon="pi pi-refresh" 
+        class="p-button-secondary" 
+        (onClick)="resetUserClaimsForm()"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="userClaimsMessage" severity="info" [text]="userClaimsMessage"></p-message>
+
+    <div class="claims-results" *ngIf="userClaims.length > 0">
+      <h4>User Claims:</h4>
+      <div class="claim-list">
+        <div 
+          *ngFor="let claim of userClaims" 
+          class="claim-item"
+        >
+          <div class="claim-info">
+            <h5>{{ claim.type }}</h5>
+            <p>{{ claim.value }}</p>
+            <small>ID: {{ claim.id }}</small>
+            <small *ngIf="claim.issuer">Issuer: {{ claim.issuer }}</small>
+            <small *ngIf="claim.dateCreated">Created: {{ claim.dateCreated | date:'short' }}</small>
+          </div>
+          <div class="claim-meta">
+            <p-chip 
+              [label]="claim.type" 
+              class="type-chip"
+            ></p-chip>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</p-dialog>

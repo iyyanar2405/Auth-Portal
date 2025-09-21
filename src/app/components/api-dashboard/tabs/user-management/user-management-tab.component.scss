@@ -1,0 +1,333 @@
+.user-management-container {
+  .category-header {
+    margin-bottom: 1.5rem;
+
+    h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &::before {
+        content: '👥';
+        font-size: 1.2em;
+      }
+    }
+
+    p {
+      color: var(--text-color-secondary);
+      margin: 0;
+    }
+  }
+
+  .nested-tabs {
+    .p-tabview-nav-link {
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+    }
+  }
+
+  .user-ui-interface {
+    .ui-description {
+      background: var(--surface-100);
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--blue-500);
+
+      p {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .pi-info-circle {
+          color: var(--blue-500);
+        }
+      }
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .feature-card {
+        background: var(--surface-50);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--surface-200);
+        transition: all 0.3s ease;
+        text-align: center;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          border-color: var(--blue-500);
+        }
+
+        i {
+          font-size: 2rem;
+          color: var(--blue-500);
+          margin-bottom: 1rem;
+          display: block;
+        }
+
+        h5 {
+          margin: 0 0 0.5rem 0;
+          color: var(--text-color);
+          font-weight: 600;
+        }
+
+        p {
+          margin: 0 0 1rem 0;
+          color: var(--text-color-secondary);
+          font-size: 0.9rem;
+          line-height: 1.4;
+        }
+
+        .p-button {
+          width: 100%;
+        }
+      }
+    }
+
+    .quick-actions {
+      .actions-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        .p-button {
+          flex: 1;
+          min-width: 150px;
+        }
+      }
+    }
+  }
+
+  .api-endpoints-interface {
+    .api-description {
+      background: var(--surface-100);
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--blue-500);
+    }
+
+    .endpoint-details {
+      .endpoint-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+
+        .endpoint-path {
+          font-family: 'Courier New', monospace;
+          background: var(--surface-100);
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-size: 0.9rem;
+        }
+      }
+
+      .endpoint-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+
+        .p-button {
+          flex: 1;
+          min-width: 120px;
+        }
+      }
+    }
+  }
+}
+
+// Dialog styling
+.create-user-dialog,
+.edit-user-dialog,
+.search-users-dialog,
+.lockout-user-dialog {
+  .p-dialog-content {
+    padding: 1.5rem;
+    max-width: 600px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-field {
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    input,
+    p-inputNumber,
+    p-calendar {
+      width: 100%;
+    }
+
+    &.checkbox-field {
+      display: flex;
+      align-items: center;
+    }
+
+    .p-error,
+    .p-info {
+      margin-top: 0.25rem;
+      display: block;
+      font-size: 0.875rem;
+    }
+
+    .p-info {
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+
+    .form-field {
+      flex: 1;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+
+    .p-button {
+      min-width: 120px;
+    }
+  }
+}
+
+.search-users-dialog {
+  .search-results {
+    margin-top: 1.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .user-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid var(--surface-200);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: var(--surface-50);
+          border-color: var(--primary-color);
+        }
+
+        &.selected {
+          background: var(--primary-50);
+          border-color: var(--primary-color);
+        }
+
+        .user-info {
+          h5 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-color);
+          }
+
+          p {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-color-secondary);
+          }
+
+          small {
+            color: var(--text-color-secondary);
+            font-size: 0.8rem;
+          }
+        }
+
+        .user-status {
+          flex-shrink: 0;
+        }
+      }
+    }
+  }
+}
+
+// Method-specific styling
+.method-get {
+  background: var(--green-100) !important;
+  color: var(--green-900) !important;
+}
+
+.method-post {
+  background: var(--blue-100) !important;
+  color: var(--blue-900) !important;
+}
+
+.method-put {
+  background: var(--orange-100) !important;
+  color: var(--orange-900) !important;
+}
+
+.method-delete {
+  background: var(--red-100) !important;
+  color: var(--red-900) !important;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .user-management-container {
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-actions .actions-row {
+      flex-direction: column;
+
+      .p-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .create-user-dialog,
+  .edit-user-dialog,
+  .search-users-dialog,
+  .lockout-user-dialog {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row {
+      flex-direction: column;
+    }
+
+    .form-actions {
+      flex-direction: column;
+
+      .p-button {
+        width: 100%;
+      }
+    }
+  }
+}

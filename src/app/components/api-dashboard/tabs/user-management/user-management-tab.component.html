@@ -1,0 +1,536 @@
+<div class="user-management-container">
+  <div class="category-header">
+    <h3>User Management</h3>
+    <p>Complete user lifecycle management including CRUD operations and account control</p>
+  </div>
+
+  <p-tabView class="nested-tabs">
+    <!-- UI Interface Tab -->
+    <p-tabPanel header="UI Interface" leftIcon="pi pi-desktop">
+      <div class="user-ui-interface">
+        <p-card header="User Management Interface">
+          <div class="ui-description">
+            <p><i class="pi pi-info-circle"></i> Comprehensive interface for managing user accounts, profiles, and access control.</p>
+          </div>
+          
+          <div class="ui-features">
+            <h4>Available Features:</h4>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <i class="pi pi-users"></i>
+                <h5>User List</h5>
+                <p>Browse and search all users with pagination</p>
+                <p-button label="View Users" icon="pi pi-external-link" class="p-button-outlined" size="small" (onClick)="openUserManagementUI('list')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-user-plus"></i>
+                <h5>Create User</h5>
+                <p>Add new user accounts with complete profiles</p>
+                <p-button label="Create User" icon="pi pi-plus" class="p-button-outlined" size="small" (onClick)="openUserManagementUI('create')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-user-edit"></i>
+                <h5>Edit User</h5>
+                <p>Modify existing user information and settings</p>
+                <p-button label="Edit User" icon="pi pi-pencil" class="p-button-outlined" size="small" (onClick)="openUserManagementUI('edit')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-user-minus"></i>
+                <h5>Delete User</h5>
+                <p>Remove user accounts with confirmation</p>
+                <p-button label="Delete User" icon="pi pi-trash" class="p-button-outlined" size="small" (onClick)="openUserManagementUI('delete')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-lock"></i>
+                <h5>User Lockout</h5>
+                <p>Lock/unlock user accounts for security</p>
+                <p-button label="Manage Lockout" icon="pi pi-lock" class="p-button-outlined" size="small" (onClick)="openUserManagementUI('lockout')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-key"></i>
+                <h5>Password Reset</h5>
+                <p>Reset user passwords (Admin only)</p>
+                <p-button label="Reset Password" icon="pi pi-refresh" class="p-button-outlined" size="small" (onClick)="handleResetUserPassword(selectedUser?.id)"></p-button>
+              </div>
+            </div>
+          </div>
+
+          <p-divider></p-divider>
+
+          <div class="quick-actions">
+            <h4>Quick Actions:</h4>
+            <div class="actions-row">
+              <p-button 
+                label="All Users" 
+                icon="pi pi-users" 
+                (onClick)="openEndpointTester('/api/User', 'GET')"
+                class="p-button-outlined"
+              ></p-button>
+              <p-button 
+                label="Create User" 
+                icon="pi pi-user-plus" 
+                (onClick)="openEndpointTester('/api/User', 'POST')"
+                class="p-button-success"
+              ></p-button>
+              <p-button 
+                label="User Search" 
+                icon="pi pi-search" 
+                (onClick)="openUserManagementUI('list')"
+                class="p-button-info"
+              ></p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- API Endpoints Tab -->
+    <p-tabPanel header="API Endpoints" leftIcon="pi pi-code">
+      <div class="api-endpoints-interface">
+        <p-card header="User Management API Endpoints">
+          <div class="api-description">
+            <p><i class="pi pi-info-circle"></i> Complete list of API endpoints for user management operations.</p>
+          </div>
+
+          <p-accordion>
+            <p-accordionTab 
+              *ngFor="let endpoint of userManagementEndpoints"
+              [header]="getAccordionHeader(endpoint)"
+            >
+              <div class="endpoint-details">
+                <div class="endpoint-info">
+                  <div class="endpoint-meta">
+                    <p-chip 
+                      [label]="endpoint.method" 
+                      [class]="'method-' + endpoint.method.toLowerCase()"
+                    ></p-chip>
+                    <span class="endpoint-path">{{ endpoint.endpoint }}</span>
+                    <p-badge 
+                      *ngIf="endpoint.requiresAuth" 
+                      value="AUTH" 
+                      severity="warning"
+                    ></p-badge>
+                  </div>
+                  <p class="endpoint-summary">{{ endpoint.summary }}</p>
+                  
+                  <div class="endpoint-parameters" *ngIf="endpoint.parameters && endpoint.parameters.length > 0">
+                    <h5>Parameters:</h5>
+                    <div class="parameters-list">
+                      <p-chip 
+                        *ngFor="let param of endpoint.parameters" 
+                        [label]="param"
+                        class="parameter-chip"
+                      ></p-chip>
+                    </div>
+                  </div>
+
+                  <div class="endpoint-actions">
+                    <p-button 
+                      label="Test Endpoint" 
+                      icon="pi pi-play" 
+                      size="small"
+                      (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)"
+                    ></p-button>
+                    <p-button 
+                      label="Copy cURL" 
+                      icon="pi pi-copy" 
+                      size="small"
+                      class="p-button-outlined"
+                      (onClick)="copyCurlCommand(endpoint)"
+                    ></p-button>
+                    <p-button 
+                      label="View Schema" 
+                      icon="pi pi-eye" 
+                      size="small"
+                      class="p-button-info"
+                      (onClick)="viewEndpointSchema(endpoint)"
+                    ></p-button>
+                  </div>
+                </div>
+              </div>
+            </p-accordionTab>
+          </p-accordion>
+        </p-card>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<!-- Create User Dialog -->
+<p-dialog 
+  header="Create New User" 
+  [(visible)]="showCreateUserDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="create-user-dialog"
+>
+  <form [formGroup]="createUserForm" (ngSubmit)="handleCreateUser()">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="createUserName">Username *</label>
+        <input 
+          pInputText 
+          id="createUserName" 
+          formControlName="userName" 
+          placeholder="Enter username"
+          [class.ng-invalid]="createUserForm.get('userName')?.invalid && createUserForm.get('userName')?.touched"
+        />
+        <small class="p-error" *ngIf="createUserForm.get('userName')?.invalid && createUserForm.get('userName')?.touched">
+          Username is required
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="createEmail">Email *</label>
+        <input 
+          pInputText 
+          id="createEmail" 
+          formControlName="email" 
+          placeholder="Enter email address"
+          [class.ng-invalid]="createUserForm.get('email')?.invalid && createUserForm.get('email')?.touched"
+        />
+        <small class="p-error" *ngIf="createUserForm.get('email')?.invalid && createUserForm.get('email')?.touched">
+          Valid email address is required
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="createPassword">Password *</label>
+        <input 
+          pInputText 
+          type="password"
+          id="createPassword" 
+          formControlName="password" 
+          placeholder="Enter password"
+          [class.ng-invalid]="createUserForm.get('password')?.invalid && createUserForm.get('password')?.touched"
+        />
+        <small class="p-error" *ngIf="createUserForm.get('password')?.invalid && createUserForm.get('password')?.touched">
+          Password must be at least 6 characters
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="createFirstName">First Name</label>
+        <input 
+          pInputText 
+          id="createFirstName" 
+          formControlName="firstName" 
+          placeholder="Enter first name"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="createLastName">Last Name</label>
+        <input 
+          pInputText 
+          id="createLastName" 
+          formControlName="lastName" 
+          placeholder="Enter last name"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="createPhone">Phone Number</label>
+        <input 
+          pInputText 
+          id="createPhone" 
+          formControlName="phoneNumber" 
+          placeholder="Enter phone number"
+        />
+      </div>
+
+      <div class="form-field checkbox-field">
+        <p-checkbox 
+          formControlName="isActive" 
+          label="Active User"
+          inputId="createIsActive"
+        ></p-checkbox>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Create User" 
+        icon="pi pi-user-plus" 
+        [loading]="createUserLoading"
+        [disabled]="createUserForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showCreateUserDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="createUserMessage" severity="info" [text]="createUserMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Edit User Dialog -->
+<p-dialog 
+  header="Edit User" 
+  [(visible)]="showEditUserDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="edit-user-dialog"
+>
+  <form [formGroup]="editUserForm" (ngSubmit)="handleEditUser()">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="editUserId">User ID *</label>
+        <input 
+          pInputText 
+          id="editUserId" 
+          formControlName="id" 
+          placeholder="Enter user ID"
+          [class.ng-invalid]="editUserForm.get('id')?.invalid && editUserForm.get('id')?.touched"
+        />
+        <small class="p-error" *ngIf="editUserForm.get('id')?.invalid && editUserForm.get('id')?.touched">
+          User ID is required
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="editUserName">Username *</label>
+        <input 
+          pInputText 
+          id="editUserName" 
+          formControlName="userName" 
+          placeholder="Enter username"
+          [class.ng-invalid]="editUserForm.get('userName')?.invalid && editUserForm.get('userName')?.touched"
+        />
+        <small class="p-error" *ngIf="editUserForm.get('userName')?.invalid && editUserForm.get('userName')?.touched">
+          Username is required
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="editEmail">Email *</label>
+        <input 
+          pInputText 
+          id="editEmail" 
+          formControlName="email" 
+          placeholder="Enter email address"
+          [class.ng-invalid]="editUserForm.get('email')?.invalid && editUserForm.get('email')?.touched"
+        />
+        <small class="p-error" *ngIf="editUserForm.get('email')?.invalid && editUserForm.get('email')?.touched">
+          Valid email address is required
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="editFirstName">First Name</label>
+        <input 
+          pInputText 
+          id="editFirstName" 
+          formControlName="firstName" 
+          placeholder="Enter first name"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="editLastName">Last Name</label>
+        <input 
+          pInputText 
+          id="editLastName" 
+          formControlName="lastName" 
+          placeholder="Enter last name"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="editPhone">Phone Number</label>
+        <input 
+          pInputText 
+          id="editPhone" 
+          formControlName="phoneNumber" 
+          placeholder="Enter phone number"
+        />
+      </div>
+
+      <div class="form-field checkbox-field">
+        <p-checkbox 
+          formControlName="isActive" 
+          label="Active User"
+          inputId="editIsActive"
+        ></p-checkbox>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Update User" 
+        icon="pi pi-check" 
+        [loading]="editUserLoading"
+        [disabled]="editUserForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showEditUserDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="editUserMessage" severity="info" [text]="editUserMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Search Users Dialog -->
+<p-dialog 
+  header="Search Users" 
+  [(visible)]="showSearchUsersDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="search-users-dialog"
+>
+  <form [formGroup]="searchUsersForm" (ngSubmit)="handleSearchUsers()">
+    <div class="search-form">
+      <div class="form-field">
+        <label for="searchTerm">Search Term</label>
+        <input 
+          pInputText 
+          id="searchTerm" 
+          formControlName="searchTerm" 
+          placeholder="Enter username, email, or name"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="pageNumber">Page Number</label>
+          <p-inputNumber 
+            id="pageNumber" 
+            formControlName="pageNumber" 
+            [min]="1"
+            [showButtons]="true"
+          ></p-inputNumber>
+        </div>
+
+        <div class="form-field">
+          <label for="pageSize">Page Size</label>
+          <p-inputNumber 
+            id="pageSize" 
+            formControlName="pageSize" 
+            [min]="1"
+            [max]="100"
+            [showButtons]="true"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Search" 
+        icon="pi pi-search" 
+        [loading]="searchUsersLoading"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Clear" 
+        icon="pi pi-refresh" 
+        class="p-button-secondary" 
+        (onClick)="searchUsersForm.reset(); searchResults = []"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="searchUsersMessage" severity="info" [text]="searchUsersMessage"></p-message>
+
+    <div class="search-results" *ngIf="searchResults.length > 0">
+      <h4>Search Results:</h4>
+      <div class="user-list">
+        <div 
+          *ngFor="let user of searchResults" 
+          class="user-item"
+          (click)="selectUser(user)"
+          [class.selected]="selectedUser?.id === user.id"
+        >
+          <div class="user-info">
+            <h5>{{ user.userName || user.email }}</h5>
+            <p>{{ user.firstName }} {{ user.lastName }}</p>
+            <small>{{ user.email }}</small>
+          </div>
+          <div class="user-status">
+            <p-badge 
+              [value]="user.isActive ? 'Active' : 'Inactive'" 
+              [severity]="user.isActive ? 'success' : 'danger'"
+            ></p-badge>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Lockout User Dialog -->
+<p-dialog 
+  header="User Lockout Management" 
+  [(visible)]="showLockoutUserDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="lockout-user-dialog"
+>
+  <form [formGroup]="lockoutForm" (ngSubmit)="handleLockoutUser()">
+    <div class="form-field">
+      <label for="lockoutUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="lockoutUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID to lock/unlock"
+        [class.ng-invalid]="lockoutForm.get('userId')?.invalid && lockoutForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="lockoutForm.get('userId')?.invalid && lockoutForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="lockoutEnd">Lockout End Date (Optional)</label>
+      <p-calendar 
+        id="lockoutEnd" 
+        formControlName="lockoutEnd" 
+        [showTime]="true"
+        placeholder="Leave empty to unlock user"
+        dateFormat="mm/dd/yy"
+      ></p-calendar>
+      <small class="p-info">
+        Set a date to lock the user until that time, or leave empty to unlock the user immediately.
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        [label]="lockoutForm.get('lockoutEnd')?.value ? 'Lock User' : 'Unlock User'" 
+        [icon]="lockoutForm.get('lockoutEnd')?.value ? 'pi pi-lock' : 'pi pi-unlock'" 
+        [loading]="lockoutUserLoading"
+        [disabled]="lockoutForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showLockoutUserDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="lockoutUserMessage" severity="info" [text]="lockoutUserMessage"></p-message>
+  </form>
+</p-dialog>

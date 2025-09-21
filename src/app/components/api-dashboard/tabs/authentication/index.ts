@@ -1,0 +1,1 @@
+export { AuthenticationTabComponent } from './authentication-tab.component';

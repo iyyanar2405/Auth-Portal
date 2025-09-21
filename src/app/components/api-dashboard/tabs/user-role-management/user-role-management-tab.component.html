@@ -1,0 +1,569 @@
+<div class="user-role-management-container">
+  <div class="category-header">
+    <h3>User Role Management</h3>
+    <p>Comprehensive user-role assignment and management with bulk operations</p>
+  </div>
+
+  <p-tabView class="nested-tabs">
+    <!-- UI Interface Tab -->
+    <p-tabPanel header="UI Interface" leftIcon="pi pi-users">
+      <div class="user-role-ui-interface">
+        <p-card header="User Role Management Interface">
+          <div class="ui-description">
+            <p><i class="pi pi-info-circle"></i> Complete interface for managing user-role assignments and bulk operations.</p>
+          </div>
+          
+          <div class="ui-features">
+            <h4>Available Features:</h4>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <i class="pi pi-user-plus"></i>
+                <h5>Assign Role</h5>
+                <p>Assign specific roles to users</p>
+                <p-button label="Assign Role" icon="pi pi-plus" class="p-button-outlined" size="small" (onClick)="openUserRoleManagementUI('assign')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-user-minus"></i>
+                <h5>Remove Role</h5>
+                <p>Remove roles from users</p>
+                <p-button label="Remove Role" icon="pi pi-minus" class="p-button-outlined" size="small" (onClick)="openUserRoleManagementUI('remove')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-user"></i>
+                <h5>User Roles</h5>
+                <p>View all roles assigned to a user</p>
+                <p-button label="User Roles" icon="pi pi-eye" class="p-button-outlined" size="small" (onClick)="openUserRoleManagementUI('user-roles')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-key"></i>
+                <h5>Role Users</h5>
+                <p>View all users with a specific role</p>
+                <p-button label="Role Users" icon="pi pi-users" class="p-button-outlined" size="small" (onClick)="openUserRoleManagementUI('role-users')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-copy"></i>
+                <h5>Bulk Assign</h5>
+                <p>Assign multiple roles to multiple users</p>
+                <p-button label="Bulk Assign" icon="pi pi-copy" class="p-button-outlined" size="small" (onClick)="openUserRoleManagementUI('bulk-assign')"></p-button>
+              </div>
+            </div>
+          </div>
+
+          <p-divider></p-divider>
+
+          <div class="quick-actions">
+            <h4>Quick Actions:</h4>
+            <div class="actions-row">
+              <p-button 
+                label="All Assignments" 
+                icon="pi pi-list" 
+                (onClick)="openEndpointTester('/api/UserRoles', 'GET')"
+                class="p-button-outlined"
+              ></p-button>
+              <p-button 
+                label="Assign Role" 
+                icon="pi pi-plus" 
+                (onClick)="openUserRoleManagementUI('assign')"
+                class="p-button-success"
+              ></p-button>
+              <p-button 
+                label="Bulk Operations" 
+                icon="pi pi-copy" 
+                (onClick)="openUserRoleManagementUI('bulk-assign')"
+                class="p-button-info"
+              ></p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- API Endpoints Tab -->
+    <p-tabPanel header="API Endpoints" leftIcon="pi pi-code">
+      <div class="api-endpoints-interface">
+        <p-card header="User Role Management API Endpoints">
+          <div class="api-description">
+            <p><i class="pi pi-info-circle"></i> Complete list of API endpoints for user-role management operations.</p>
+          </div>
+
+          <p-accordion>
+            <p-accordionTab 
+              *ngFor="let endpoint of userRoleManagementEndpoints"
+              [header]="getAccordionHeader(endpoint)"
+            >
+              <div class="endpoint-details">
+                <div class="endpoint-info">
+                  <div class="endpoint-meta">
+                    <p-chip 
+                      [label]="endpoint.method" 
+                      [class]="'method-' + endpoint.method.toLowerCase()"
+                    ></p-chip>
+                    <span class="endpoint-path">{{ endpoint.endpoint }}</span>
+                    <p-badge 
+                      *ngIf="endpoint.requiresAuth" 
+                      value="AUTH" 
+                      severity="warning"
+                    ></p-badge>
+                  </div>
+                  <p class="endpoint-summary">{{ endpoint.summary }}</p>
+                  
+                  <div class="endpoint-parameters" *ngIf="endpoint.parameters && endpoint.parameters.length > 0">
+                    <h5>Parameters:</h5>
+                    <div class="parameters-list">
+                      <p-chip 
+                        *ngFor="let param of endpoint.parameters" 
+                        [label]="param"
+                        class="parameter-chip"
+                      ></p-chip>
+                    </div>
+                  </div>
+
+                  <div class="endpoint-actions">
+                    <p-button 
+                      label="Test Endpoint" 
+                      icon="pi pi-play" 
+                      size="small"
+                      (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)"
+                    ></p-button>
+                    <p-button 
+                      label="Copy cURL" 
+                      icon="pi pi-copy" 
+                      size="small"
+                      class="p-button-outlined"
+                      (onClick)="copyCurlCommand(endpoint)"
+                    ></p-button>
+                    <p-button 
+                      label="View Schema" 
+                      icon="pi pi-eye" 
+                      size="small"
+                      class="p-button-info"
+                      (onClick)="viewEndpointSchema(endpoint)"
+                    ></p-button>
+                  </div>
+                </div>
+              </div>
+            </p-accordionTab>
+          </p-accordion>
+        </p-card>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<!-- Assign Role Dialog -->
+<p-dialog 
+  header="Assign Role to User" 
+  [(visible)]="showAssignRoleDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="assign-role-dialog"
+  (onHide)="onAssignDialogHide()"
+>
+  <form [formGroup]="assignRoleForm" (ngSubmit)="handleAssignRole()">
+    <div class="form-field">
+      <label for="assignUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="assignUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="assignRoleForm.get('userId')?.invalid && assignRoleForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="assignRoleForm.get('userId')?.invalid && assignRoleForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="assignRoleId">Role ID *</label>
+      <input 
+        pInputText 
+        id="assignRoleId" 
+        formControlName="roleId" 
+        placeholder="Enter role ID"
+        [class.ng-invalid]="assignRoleForm.get('roleId')?.invalid && assignRoleForm.get('roleId')?.touched"
+      />
+      <small class="p-error" *ngIf="assignRoleForm.get('roleId')?.invalid && assignRoleForm.get('roleId')?.touched">
+        Role ID is required
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Assign Role" 
+        icon="pi pi-plus" 
+        [loading]="assignRoleLoading"
+        [disabled]="assignRoleForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showAssignRoleDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="assignRoleMessage" severity="info" [text]="assignRoleMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Remove Role Dialog -->
+<p-dialog 
+  header="Remove Role from User" 
+  [(visible)]="showRemoveRoleDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="remove-role-dialog"
+  (onHide)="onRemoveDialogHide()"
+>
+  <form [formGroup]="removeRoleForm" (ngSubmit)="handleRemoveRole()">
+    <div class="form-field">
+      <label for="removeUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="removeUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="removeRoleForm.get('userId')?.invalid && removeRoleForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="removeRoleForm.get('userId')?.invalid && removeRoleForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="removeRoleId">Role ID *</label>
+      <input 
+        pInputText 
+        id="removeRoleId" 
+        formControlName="roleId" 
+        placeholder="Enter role ID"
+        [class.ng-invalid]="removeRoleForm.get('roleId')?.invalid && removeRoleForm.get('roleId')?.touched"
+      />
+      <small class="p-error" *ngIf="removeRoleForm.get('roleId')?.invalid && removeRoleForm.get('roleId')?.touched">
+        Role ID is required
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Remove Role" 
+        icon="pi pi-minus" 
+        [loading]="removeRoleLoading"
+        [disabled]="removeRoleForm.invalid"
+        severity="danger"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showRemoveRoleDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="removeRoleMessage" severity="info" [text]="removeRoleMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- User Roles Dialog -->
+<p-dialog 
+  header="User Roles" 
+  [(visible)]="showUserRolesDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="user-roles-dialog"
+  (onHide)="onUserRolesDialogHide()"
+>
+  <form [formGroup]="userRolesForm" (ngSubmit)="handleGetUserRoles()">
+    <div class="form-field">
+      <label for="userRolesUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="userRolesUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="userRolesForm.get('userId')?.invalid && userRolesForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="userRolesForm.get('userId')?.invalid && userRolesForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="userRolesPageNumber">Page Number</label>
+        <p-inputNumber 
+          id="userRolesPageNumber" 
+          formControlName="pageNumber" 
+          [min]="1"
+          [showButtons]="true"
+        ></p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="userRolesPageSize">Page Size</label>
+        <p-inputNumber 
+          id="userRolesPageSize" 
+          formControlName="pageSize" 
+          [min]="1"
+          [max]="100"
+          [showButtons]="true"
+        ></p-inputNumber>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Get Roles" 
+        icon="pi pi-key" 
+        [loading]="userRolesLoading"
+        [disabled]="userRolesForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Clear" 
+        icon="pi pi-refresh" 
+        class="p-button-secondary" 
+        (onClick)="resetUserRolesForm()"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="userRolesMessage" severity="info" [text]="userRolesMessage"></p-message>
+
+    <div class="roles-results" *ngIf="userRoles.length > 0">
+      <h4>User Roles:</h4>
+      <p-table 
+        [value]="userRoles" 
+        [paginator]="true" 
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} roles"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Role ID</th>
+            <th>Role Name</th>
+            <th>Description</th>
+            <th>Assigned Date</th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-userRole>
+          <tr>
+            <td>{{ userRole.roleId }}</td>
+            <td>{{ userRole.roleName || 'N/A' }}</td>
+            <td>{{ userRole.roleDescription || 'N/A' }}</td>
+            <td>{{ userRole.assignedDate | date:'short' || 'N/A' }}</td>
+            <td>
+              <p-badge 
+                [value]="userRole.isActive ? 'Active' : 'Inactive'" 
+                [severity]="userRole.isActive ? 'success' : 'danger'"
+              ></p-badge>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Role Users Dialog -->
+<p-dialog 
+  header="Role Users" 
+  [(visible)]="showRoleUsersDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="role-users-dialog"
+  (onHide)="onRoleUsersDialogHide()"
+>
+  <form [formGroup]="roleUsersForm" (ngSubmit)="handleGetRoleUsers()">
+    <div class="form-field">
+      <label for="roleUsersRoleId">Role ID *</label>
+      <input 
+        pInputText 
+        id="roleUsersRoleId" 
+        formControlName="roleId" 
+        placeholder="Enter role ID"
+        [class.ng-invalid]="roleUsersForm.get('roleId')?.invalid && roleUsersForm.get('roleId')?.touched"
+      />
+      <small class="p-error" *ngIf="roleUsersForm.get('roleId')?.invalid && roleUsersForm.get('roleId')?.touched">
+        Role ID is required
+      </small>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="roleUsersPageNumber">Page Number</label>
+        <p-inputNumber 
+          id="roleUsersPageNumber" 
+          formControlName="pageNumber" 
+          [min]="1"
+          [showButtons]="true"
+        ></p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="roleUsersPageSize">Page Size</label>
+        <p-inputNumber 
+          id="roleUsersPageSize" 
+          formControlName="pageSize" 
+          [min]="1"
+          [max]="100"
+          [showButtons]="true"
+        ></p-inputNumber>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Get Users" 
+        icon="pi pi-users" 
+        [loading]="roleUsersLoading"
+        [disabled]="roleUsersForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Clear" 
+        icon="pi pi-refresh" 
+        class="p-button-secondary" 
+        (onClick)="resetRoleUsersForm()"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="roleUsersMessage" severity="info" [text]="roleUsersMessage"></p-message>
+
+    <div class="users-results" *ngIf="roleUsers.length > 0">
+      <h4>Role Users:</h4>
+      <p-table 
+        [value]="roleUsers" 
+        [paginator]="true" 
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Full Name</th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.userName || 'N/A' }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ (user.firstName || '') + ' ' + (user.lastName || '') || 'N/A' }}</td>
+            <td>
+              <p-badge 
+                [value]="user.isActive ? 'Active' : 'Inactive'" 
+                [severity]="user.isActive ? 'success' : 'danger'"
+              ></p-badge>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Bulk Assign Dialog -->
+<p-dialog 
+  header="Bulk Role Assignment" 
+  [(visible)]="showBulkAssignDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="bulk-assign-dialog"
+  (onHide)="onBulkAssignDialogHide()"
+>
+  <form [formGroup]="bulkAssignForm" (ngSubmit)="handleBulkAssign()">
+    <div class="form-field">
+      <label for="bulkUserIds">Users *</label>
+      <p-multiSelect 
+        id="bulkUserIds" 
+        formControlName="userIds"
+        [options]="availableUsers"
+        optionLabel="userName"
+        optionValue="id"
+        placeholder="Select users"
+        [filter]="true"
+        [showClear]="true"
+        [class.ng-invalid]="bulkAssignForm.get('userIds')?.invalid && bulkAssignForm.get('userIds')?.touched"
+      >
+        <ng-template let-user pTemplate="item">
+          <div class="user-option">
+            <span class="user-name">{{ getUserDisplayName(user) }}</span>
+            <small class="user-email">{{ user.email }}</small>
+          </div>
+        </ng-template>
+      </p-multiSelect>
+      <small class="p-error" *ngIf="bulkAssignForm.get('userIds')?.invalid && bulkAssignForm.get('userIds')?.touched">
+        At least one user must be selected
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="bulkRoleIds">Roles *</label>
+      <p-multiSelect 
+        id="bulkRoleIds" 
+        formControlName="roleIds"
+        [options]="availableRoles"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Select roles"
+        [filter]="true"
+        [showClear]="true"
+        [class.ng-invalid]="bulkAssignForm.get('roleIds')?.invalid && bulkAssignForm.get('roleIds')?.touched"
+      >
+        <ng-template let-role pTemplate="item">
+          <div class="role-option">
+            <span class="role-name">{{ getRoleDisplayName(role) }}</span>
+            <small class="role-description">{{ role.description }}</small>
+          </div>
+        </ng-template>
+      </p-multiSelect>
+      <small class="p-error" *ngIf="bulkAssignForm.get('roleIds')?.invalid && bulkAssignForm.get('roleIds')?.touched">
+        At least one role must be selected
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Bulk Assign" 
+        icon="pi pi-copy" 
+        [loading]="bulkAssignLoading"
+        [disabled]="bulkAssignForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showBulkAssignDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="bulkAssignMessage" severity="info" [text]="bulkAssignMessage"></p-message>
+  </form>
+</p-dialog>

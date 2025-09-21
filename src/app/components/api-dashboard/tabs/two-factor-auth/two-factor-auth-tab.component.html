@@ -1,0 +1,582 @@
+<div class="two-factor-auth-container">
+  <p-tabView>
+    <!-- Two-Factor Setup Tab -->
+    <p-tabPanel header="Setup Two-Factor Authentication" leftIcon="pi pi-shield">
+      <div class="setup-content">
+        <p-card>
+          <ng-template pTemplate="header">
+            <h3>Two-Factor Authentication Setup</h3>
+          </ng-template>
+          
+          <div class="form-container">
+            <div class="method-selection">
+              <h4>Choose Authentication Method</h4>
+              <div class="method-cards">
+                <div class="method-card" 
+                     *ngFor="let method of twoFactorMethods"
+                     [class.selected]="setupTwoFactorForm.get('method')?.value === method.value"
+                     (click)="setupTwoFactorForm.patchValue({method: method.value})">
+                  <i [class]="method.icon"></i>
+                  <span>{{ method.label }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <form [formGroup]="setupTwoFactorForm" (ngSubmit)="handleSetupTwoFactor()">
+              <div class="field">
+                <label for="setup-userId">User ID *</label>
+                <input pInputText 
+                       id="setup-userId" 
+                       formControlName="userId" 
+                       placeholder="Enter user ID"
+                       [class.ng-invalid]="setupTwoFactorForm.get('userId')?.invalid && setupTwoFactorForm.get('userId')?.touched" />
+                <small class="p-error" 
+                       *ngIf="setupTwoFactorForm.get('userId')?.invalid && setupTwoFactorForm.get('userId')?.touched">
+                  User ID is required
+                </small>
+              </div>
+
+              <div class="field" *ngIf="setupTwoFactorForm.get('method')?.value === 'sms'">
+                <label for="setup-phone">Phone Number *</label>
+                <input pInputText 
+                       id="setup-phone" 
+                       formControlName="phoneNumber" 
+                       placeholder="Enter phone number (e.g., +1234567890)"
+                       [class.ng-invalid]="setupTwoFactorForm.get('phoneNumber')?.invalid && setupTwoFactorForm.get('phoneNumber')?.touched" />
+                <small class="p-error" 
+                       *ngIf="setupTwoFactorForm.get('phoneNumber')?.invalid && setupTwoFactorForm.get('phoneNumber')?.touched">
+                  Valid phone number is required
+                </small>
+              </div>
+
+              <div class="field" *ngIf="setupTwoFactorForm.get('method')?.value === 'email'">
+                <label for="setup-email">Email Address *</label>
+                <input pInputText 
+                       id="setup-email" 
+                       formControlName="email" 
+                       placeholder="Enter email address"
+                       [class.ng-invalid]="setupTwoFactorForm.get('email')?.invalid && setupTwoFactorForm.get('email')?.touched" />
+                <small class="p-error" 
+                       *ngIf="setupTwoFactorForm.get('email')?.invalid && setupTwoFactorForm.get('email')?.touched">
+                  Valid email address is required
+                </small>
+              </div>
+
+              <div class="actions">
+                <p-button type="button" 
+                          label="Setup Two-Factor Authentication" 
+                          icon="pi pi-shield"
+                          [loading]="setupLoading"
+                          [disabled]="setupTwoFactorForm.invalid"
+                          (onClick)="openTwoFactorUI('setup')" />
+              </div>
+            </form>
+          </div>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- Two-Factor Verification Tab -->
+    <p-tabPanel header="Verify Two-Factor" leftIcon="pi pi-check-circle">
+      <div class="verify-content">
+        <p-card>
+          <ng-template pTemplate="header">
+            <h3>Verify Two-Factor Authentication</h3>
+          </ng-template>
+          
+          <form [formGroup]="verifyTwoFactorForm" (ngSubmit)="handleVerifyTwoFactor()">
+            <div class="field">
+              <label for="verify-userId">User ID *</label>
+              <input pInputText 
+                     id="verify-userId" 
+                     formControlName="userId" 
+                     placeholder="Enter user ID"
+                     [class.ng-invalid]="verifyTwoFactorForm.get('userId')?.invalid && verifyTwoFactorForm.get('userId')?.touched" />
+            </div>
+
+            <div class="field">
+              <label for="verify-method">Authentication Method *</label>
+              <p-dropdown id="verify-method"
+                          formControlName="method"
+                          [options]="twoFactorMethods"
+                          optionLabel="label"
+                          optionValue="value"
+                          placeholder="Select method" />
+            </div>
+
+            <div class="field">
+              <label for="verify-code">Verification Code *</label>
+              <input pInputText 
+                     id="verify-code" 
+                     formControlName="code" 
+                     placeholder="Enter 6-digit code"
+                     maxlength="6"
+                     [class.ng-invalid]="verifyTwoFactorForm.get('code')?.invalid && verifyTwoFactorForm.get('code')?.touched" />
+              <small class="p-error" 
+                     *ngIf="verifyTwoFactorForm.get('code')?.invalid && verifyTwoFactorForm.get('code')?.touched">
+                Please enter a valid 6-digit code
+              </small>
+            </div>
+
+            <div class="actions">
+              <p-button type="button" 
+                        label="Verify Code" 
+                        icon="pi pi-check"
+                        [loading]="verifyLoading"
+                        [disabled]="verifyTwoFactorForm.invalid"
+                        (onClick)="openTwoFactorUI('verify')" />
+            </div>
+          </form>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- Two-Factor Status Tab -->
+    <p-tabPanel header="Status & Management" leftIcon="pi pi-info-circle">
+      <div class="status-content">
+        <p-card>
+          <ng-template pTemplate="header">
+            <h3>Two-Factor Authentication Status</h3>
+          </ng-template>
+          
+          <form [formGroup]="statusForm" (ngSubmit)="handleGetStatus()">
+            <div class="field">
+              <label for="status-userId">User ID *</label>
+              <input pInputText 
+                     id="status-userId" 
+                     formControlName="userId" 
+                     placeholder="Enter user ID"
+                     [class.ng-invalid]="statusForm.get('userId')?.invalid && statusForm.get('userId')?.touched" />
+            </div>
+
+            <div class="actions">
+              <p-button type="button" 
+                        label="Get Status" 
+                        icon="pi pi-info"
+                        [loading]="statusLoading"
+                        [disabled]="statusForm.invalid"
+                        (onClick)="openTwoFactorUI('status')" />
+              
+              <p-button type="button" 
+                        label="Disable Two-Factor" 
+                        icon="pi pi-times"
+                        severity="danger"
+                        [disabled]="statusForm.invalid"
+                        (onClick)="openTwoFactorUI('disable')" />
+            </div>
+          </form>
+
+          <!-- Status Display -->
+          <div class="status-display" *ngIf="twoFactorInfo">
+            <p-divider />
+            <h4>Current Status</h4>
+            
+            <div class="status-overview">
+              <p-chip [label]="twoFactorInfo.isEnabled ? 'Enabled' : 'Disabled'"
+                      [styleClass]="twoFactorInfo.isEnabled ? 'success-chip' : 'danger-chip'" />
+              
+              <p-badge *ngIf="twoFactorInfo.hasRecoveryCodes"
+                       value="{{ twoFactorInfo.recoveryCodesCount }}"
+                       severity="info">
+                <span>Recovery Codes</span>
+              </p-badge>
+            </div>
+
+            <div class="methods-status" *ngIf="twoFactorInfo.methods?.length">
+              <h5>Enabled Methods</h5>
+              <div class="method-list">
+                <div class="method-item" *ngFor="let method of twoFactorInfo.methods">
+                  <i [class]="getMethodIcon(method.type)"></i>
+                  <span class="method-name">{{ getMethodLabel(method.type) }}</span>
+                  <p-chip [label]="method.isActive ? 'Active' : 'Inactive'"
+                          [styleClass]="method.isActive ? 'success-chip' : 'warning-chip'" />
+                  <span class="contact-info" *ngIf="method.maskedContact">
+                    ({{ method.maskedContact }})
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="last-used" *ngIf="twoFactorInfo.lastUsed">
+              <small>Last used: {{ twoFactorInfo.lastUsed | date:'medium' }}</small>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- Recovery Codes Tab -->
+    <p-tabPanel header="Recovery Codes" leftIcon="pi pi-key">
+      <div class="recovery-content">
+        <p-card>
+          <ng-template pTemplate="header">
+            <h3>Recovery Codes Management</h3>
+          </ng-template>
+          
+          <form [formGroup]="recoveryCodesForm" (ngSubmit)="handleGetRecoveryCodes()">
+            <div class="field">
+              <label for="recovery-userId">User ID *</label>
+              <input pInputText 
+                     id="recovery-userId" 
+                     formControlName="userId" 
+                     placeholder="Enter user ID"
+                     [class.ng-invalid]="recoveryCodesForm.get('userId')?.invalid && recoveryCodesForm.get('userId')?.touched" />
+            </div>
+
+            <div class="actions">
+              <p-button type="button" 
+                        label="Generate Codes" 
+                        icon="pi pi-key"
+                        [loading]="recoveryLoading"
+                        [disabled]="recoveryCodesForm.invalid"
+                        (onClick)="openTwoFactorUI('recovery-codes')" />
+            </div>
+          </form>
+
+          <!-- Recovery Codes Display -->
+          <div class="recovery-codes-display" *ngIf="recoveryCodes.length">
+            <p-divider />
+            <h4>Recovery Codes</h4>
+            <p-message severity="warn" 
+                       text="Save these codes in a secure location. Each code can only be used once." />
+            
+            <div class="codes-grid">
+              <div class="code-item" *ngFor="let code of recoveryCodes; let i = index">
+                <span class="code-number">{{ i + 1 }}.</span>
+                <code class="recovery-code">{{ code }}</code>
+                <p-button icon="pi pi-copy" 
+                          size="small"
+                          text
+                          (onClick)="copyToClipboard(code)" />
+              </div>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- API Documentation Tab -->
+    <p-tabPanel header="API Documentation" leftIcon="pi pi-book">
+      <div class="api-docs-content">
+        <p-card>
+          <ng-template pTemplate="header">
+            <h3>Two-Factor Authentication API Endpoints</h3>
+          </ng-template>
+          
+          <p-accordion [multiple]="true">
+            <p-accordionTab *ngFor="let endpoint of twoFactorEndpoints" 
+                            [header]="getAccordionHeader(endpoint)">
+              <div class="endpoint-details">
+                <div class="endpoint-info">
+                  <p><strong>Summary:</strong> {{ endpoint.summary }}</p>
+                  <p><strong>Authentication:</strong> 
+                    <p-chip [label]="endpoint.requiresAuth ? 'Required' : 'Not Required'"
+                            [styleClass]="endpoint.requiresAuth ? 'warning-chip' : 'success-chip'" />
+                  </p>
+                  <div *ngIf="endpoint.parameters?.length">
+                    <p><strong>Parameters:</strong></p>
+                    <ul>
+                      <li *ngFor="let param of endpoint.parameters">{{ param }}</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div class="endpoint-actions">
+                  <p-button label="Test Endpoint" 
+                            icon="pi pi-play"
+                            size="small"
+                            (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)" />
+                  
+                  <p-button label="Copy cURL" 
+                            icon="pi pi-copy"
+                            size="small"
+                            severity="secondary"
+                            (onClick)="copyCurlCommand(endpoint)" />
+                  
+                  <p-button label="View Schema" 
+                            icon="pi pi-eye"
+                            size="small"
+                            severity="info"
+                            (onClick)="viewEndpointSchema(endpoint)" />
+                </div>
+              </div>
+            </p-accordionTab>
+          </p-accordion>
+        </p-card>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<!-- Setup Dialog -->
+<p-dialog header="Setup Two-Factor Authentication" 
+          [(visible)]="showSetupDialog" 
+          [modal]="true" 
+          [closable]="true"
+          [style]="{width: '500px'}"
+          (onHide)="onSetupDialogHide()">
+  <form [formGroup]="setupTwoFactorForm" (ngSubmit)="handleSetupTwoFactor()">
+    <div class="dialog-content">
+      <p-message *ngIf="setupMessage" 
+                 [severity]="setupMessage.includes('Error') ? 'error' : 'success'"
+                 [text]="setupMessage" />
+      
+      <div class="field">
+        <label for="dialog-setup-userId">User ID *</label>
+        <input pInputText 
+               id="dialog-setup-userId" 
+               formControlName="userId" 
+               placeholder="Enter user ID" />
+      </div>
+
+      <div class="field">
+        <label for="dialog-setup-method">Method *</label>
+        <p-dropdown id="dialog-setup-method"
+                    formControlName="method"
+                    [options]="twoFactorMethods"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select method" />
+      </div>
+
+      <div class="field" *ngIf="setupTwoFactorForm.get('method')?.value === 'sms'">
+        <label for="dialog-setup-phone">Phone Number *</label>
+        <input pInputText 
+               id="dialog-setup-phone" 
+               formControlName="phoneNumber" 
+               placeholder="Enter phone number" />
+      </div>
+
+      <div class="field" *ngIf="setupTwoFactorForm.get('method')?.value === 'email'">
+        <label for="dialog-setup-email">Email *</label>
+        <input pInputText 
+               id="dialog-setup-email" 
+               formControlName="email" 
+               placeholder="Enter email address" />
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <p-button type="button" 
+                label="Cancel" 
+                icon="pi pi-times"
+                text
+                (onClick)="showSetupDialog = false" />
+      
+      <p-button type="submit" 
+                label="Setup" 
+                icon="pi pi-shield"
+                [loading]="setupLoading"
+                [disabled]="setupTwoFactorForm.invalid" />
+    </ng-template>
+  </form>
+</p-dialog>
+
+<!-- Verify Dialog -->
+<p-dialog header="Verify Two-Factor Authentication" 
+          [(visible)]="showVerifyDialog" 
+          [modal]="true" 
+          [closable]="true"
+          [style]="{width: '400px'}"
+          (onHide)="onVerifyDialogHide()">
+  <form [formGroup]="verifyTwoFactorForm" (ngSubmit)="handleVerifyTwoFactor()">
+    <div class="dialog-content">
+      <p-message *ngIf="verifyMessage" 
+                 [severity]="verifyMessage.includes('Error') ? 'error' : 'success'"
+                 [text]="verifyMessage" />
+      
+      <div class="field">
+        <label for="dialog-verify-code">Verification Code *</label>
+        <input pInputText 
+               id="dialog-verify-code" 
+               formControlName="code" 
+               placeholder="Enter 6-digit code"
+               maxlength="6" />
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <p-button type="button" 
+                label="Cancel" 
+                icon="pi pi-times"
+                text
+                (onClick)="showVerifyDialog = false" />
+      
+      <p-button type="submit" 
+                label="Verify" 
+                icon="pi pi-check"
+                [loading]="verifyLoading"
+                [disabled]="verifyTwoFactorForm.invalid" />
+    </ng-template>
+  </form>
+</p-dialog>
+
+<!-- Disable Dialog -->
+<p-dialog header="Disable Two-Factor Authentication" 
+          [(visible)]="showDisableDialog" 
+          [modal]="true" 
+          [closable]="true"
+          [style]="{width: '400px'}"
+          (onHide)="onDisableDialogHide()">
+  <form [formGroup]="disableTwoFactorForm" (ngSubmit)="handleDisableTwoFactor()">
+    <div class="dialog-content">
+      <p-message severity="warn" 
+                 text="This will disable two-factor authentication for the user. Please confirm with a verification code." />
+      
+      <p-message *ngIf="disableMessage" 
+                 [severity]="disableMessage.includes('Error') ? 'error' : 'success'"
+                 [text]="disableMessage" />
+      
+      <div class="field">
+        <label for="dialog-disable-code">Verification Code *</label>
+        <input pInputText 
+               id="dialog-disable-code" 
+               formControlName="verificationCode" 
+               placeholder="Enter verification code" />
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <p-button type="button" 
+                label="Cancel" 
+                icon="pi pi-times"
+                text
+                (onClick)="showDisableDialog = false" />
+      
+      <p-button type="submit" 
+                label="Disable" 
+                icon="pi pi-times"
+                severity="danger"
+                [loading]="disableLoading"
+                [disabled]="disableTwoFactorForm.invalid" />
+    </ng-template>
+  </form>
+</p-dialog>
+
+<!-- Status Dialog -->
+<p-dialog header="Two-Factor Authentication Status" 
+          [(visible)]="showStatusDialog" 
+          [modal]="true" 
+          [closable]="true"
+          [style]="{width: '600px'}"
+          (onHide)="onStatusDialogHide()">
+  <div class="dialog-content">
+    <p-message *ngIf="statusMessage" 
+               [severity]="statusMessage.includes('Error') ? 'error' : 'success'"
+               [text]="statusMessage" />
+    
+    <div class="status-details" *ngIf="twoFactorInfo">
+      <div class="status-header">
+        <h4>Status Overview</h4>
+        <p-chip [label]="twoFactorInfo.isEnabled ? 'Enabled' : 'Disabled'"
+                [styleClass]="twoFactorInfo.isEnabled ? 'success-chip' : 'danger-chip'" />
+      </div>
+
+      <div class="methods-list" *ngIf="twoFactorInfo.methods?.length">
+        <h5>Configured Methods</h5>
+        <div class="method-grid">
+          <div class="method-card" *ngFor="let method of twoFactorInfo.methods">
+            <i [class]="getMethodIcon(method.type)"></i>
+            <div class="method-info">
+              <span class="method-name">{{ getMethodLabel(method.type) }}</span>
+              <span class="method-contact" *ngIf="method.maskedContact">{{ method.maskedContact }}</span>
+            </div>
+            <p-chip [label]="method.isActive ? 'Active' : 'Inactive'"
+                    [styleClass]="method.isActive ? 'success-chip' : 'warning-chip'" />
+          </div>
+        </div>
+      </div>
+
+      <div class="recovery-info" *ngIf="twoFactorInfo.hasRecoveryCodes">
+        <h5>Recovery Codes</h5>
+        <p>{{ twoFactorInfo.recoveryCodesCount }} recovery codes available</p>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <p-button type="button" 
+              label="Close" 
+              icon="pi pi-times"
+              (onClick)="showStatusDialog = false" />
+  </ng-template>
+</p-dialog>
+
+<!-- Recovery Codes Dialog -->
+<p-dialog header="Recovery Codes" 
+          [(visible)]="showRecoveryCodesDialog" 
+          [modal]="true" 
+          [closable]="true"
+          [style]="{width: '500px'}"
+          (onHide)="onRecoveryDialogHide()">
+  <div class="dialog-content">
+    <p-message *ngIf="recoveryMessage" 
+               [severity]="recoveryMessage.includes('Error') ? 'error' : 'success'"
+               [text]="recoveryMessage" />
+    
+    <div class="recovery-codes-container" *ngIf="recoveryCodes.length">
+      <p-message severity="warn" 
+                 text="Save these codes securely. Each can only be used once." />
+      
+      <div class="codes-list">
+        <div class="code-row" *ngFor="let code of recoveryCodes; let i = index">
+          <span class="code-index">{{ i + 1 }}.</span>
+          <code class="recovery-code">{{ code }}</code>
+          <p-button icon="pi pi-copy" 
+                    size="small"
+                    text
+                    (onClick)="copyToClipboard(code)" />
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <p-button type="button" 
+              label="Close" 
+              icon="pi pi-times"
+              (onClick)="showRecoveryCodesDialog = false" />
+  </ng-template>
+</p-dialog>
+
+<!-- QR Code Dialog -->
+<p-dialog header="Authenticator Setup" 
+          [(visible)]="showQrCodeDialog" 
+          [modal]="true" 
+          [closable]="true"
+          [style]="{width: '450px'}"
+          (onHide)="onQrCodeDialogHide()">
+  <div class="dialog-content">
+    <div class="qr-code-container" *ngIf="qrCodeUrl">
+      <h5>Scan QR Code</h5>
+      <div class="qr-code-image">
+        <p-image [src]="qrCodeUrl" 
+                 alt="QR Code for authenticator setup"
+                 width="200"
+                 height="200" />
+      </div>
+      
+      <p-divider align="center">
+        <span>OR</span>
+      </p-divider>
+      
+      <div class="manual-key" *ngIf="manualEntryKey">
+        <h5>Manual Entry Key</h5>
+        <div class="key-container">
+          <code>{{ manualEntryKey }}</code>
+          <p-button icon="pi pi-copy" 
+                    size="small"
+                    text
+                    (onClick)="copyToClipboard(manualEntryKey)" />
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <p-button type="button" 
+              label="Close" 
+              icon="pi pi-times"
+              (onClick)="showQrCodeDialog = false" />
+  </ng-template>
+</p-dialog>

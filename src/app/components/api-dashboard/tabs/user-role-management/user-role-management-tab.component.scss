@@ -1,0 +1,543 @@
+.user-role-management-container {
+  width: 100%;
+  padding: 1rem;
+
+  .category-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--surface-border);
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-color-secondary);
+      font-size: 0.875rem;
+    }
+  }
+
+  .nested-tabs {
+    .p-tabview-nav {
+      background: var(--surface-card);
+      border-radius: 0.5rem 0.5rem 0 0;
+
+      .p-tabview-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+      }
+    }
+
+    .p-tabview-panel {
+      padding: 1.5rem;
+      background: var(--surface-card);
+      border-radius: 0 0 0.5rem 0.5rem;
+    }
+  }
+}
+
+// UI Interface Styles
+.user-role-ui-interface {
+  .ui-description {
+    margin-bottom: 1.5rem;
+
+    p {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+      color: var(--text-color-secondary);
+
+      .pi {
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    .feature-card {
+      background: var(--surface-ground);
+      border: 1px solid var(--surface-border);
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      text-align: center;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .pi {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      h5 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-color);
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0 0 1rem 0;
+        color: var(--text-color-secondary);
+        font-size: 0.875rem;
+        line-height: 1.4;
+      }
+
+      .p-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .quick-actions {
+    .actions-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+
+      .p-button {
+        flex: 1;
+        min-width: 150px;
+      }
+    }
+  }
+}
+
+// API Endpoints Styles
+.api-endpoints-interface {
+  .api-description {
+    margin-bottom: 1.5rem;
+
+    p {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+      color: var(--text-color-secondary);
+
+      .pi {
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .p-accordion {
+    .p-accordion-header {
+      .p-accordion-header-text {
+        font-weight: 500;
+      }
+    }
+
+    .endpoint-details {
+      .endpoint-info {
+        .endpoint-meta {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1rem;
+          flex-wrap: wrap;
+
+          .p-chip {
+            font-weight: 600;
+
+            &.method-get {
+              background: #28a745;
+              color: white;
+            }
+
+            &.method-post {
+              background: #007bff;
+              color: white;
+            }
+
+            &.method-put {
+              background: #ffc107;
+              color: #212529;
+            }
+
+            &.method-delete {
+              background: #dc3545;
+              color: white;
+            }
+
+            &.method-patch {
+              background: #6f42c1;
+              color: white;
+            }
+          }
+
+          .endpoint-path {
+            font-family: 'Courier New', monospace;
+            background: var(--surface-ground);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--text-color);
+          }
+        }
+
+        .endpoint-summary {
+          margin: 0 0 1rem 0;
+          color: var(--text-color-secondary);
+          line-height: 1.5;
+        }
+
+        .endpoint-parameters {
+          margin-bottom: 1.5rem;
+
+          h5 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+            font-weight: 600;
+          }
+
+          .parameters-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+
+            .parameter-chip {
+              background: var(--surface-ground);
+              color: var(--text-color);
+              border: 1px solid var(--surface-border);
+            }
+          }
+        }
+
+        .endpoint-actions {
+          display: flex;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+
+          .p-button {
+            flex: 1;
+            min-width: 120px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dialog Styles
+.assign-role-dialog,
+.remove-role-dialog,
+.user-roles-dialog,
+.role-users-dialog,
+.bulk-assign-dialog {
+  width: 90vw;
+  max-width: 700px;
+
+  .form-field {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+
+    input[pInputText],
+    .p-inputnumber,
+    .p-multiselect {
+      width: 100%;
+    }
+
+    .p-error {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--surface-border);
+
+    .p-button {
+      min-width: 120px;
+    }
+  }
+
+  .p-message {
+    margin-top: 1rem;
+  }
+}
+
+// Table Results Styles
+.roles-results,
+.users-results {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--surface-border);
+
+  h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-weight: 600;
+  }
+
+  .p-datatable {
+    border: 1px solid var(--surface-border);
+    border-radius: 0.5rem;
+
+    .p-datatable-thead > tr > th {
+      background: var(--surface-ground);
+      border-bottom: 1px solid var(--surface-border);
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .p-datatable-tbody > tr > td {
+      border-bottom: 1px solid var(--surface-border);
+      color: var(--text-color);
+    }
+
+    .p-datatable-tbody > tr:hover {
+      background: var(--surface-hover);
+    }
+  }
+}
+
+// Multi-Select Options Styling
+.user-option,
+.role-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .user-name,
+  .role-name {
+    font-weight: 500;
+    color: var(--text-color);
+  }
+
+  .user-email,
+  .role-description {
+    font-size: 0.75rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+// Multi-Select Customization
+.p-multiselect {
+  .p-multiselect-label-container {
+    .p-multiselect-label {
+      color: var(--text-color);
+    }
+
+    .p-multiselect-token {
+      background: var(--primary-color);
+      color: white;
+      margin: 0.125rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+
+      .p-multiselect-token-label {
+        font-weight: 500;
+      }
+
+      .p-multiselect-token-icon {
+        margin-left: 0.5rem;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &.p-multiselect-clearable .p-multiselect-clear-icon {
+    right: 2.5rem;
+  }
+}
+
+// Bulk Assignment Specific Styles
+.bulk-assign-dialog {
+  max-width: 800px;
+
+  .form-field {
+    .p-multiselect {
+      min-height: 3rem;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .user-role-management-container {
+    padding: 0.75rem;
+
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-actions .actions-row {
+      flex-direction: column;
+
+      .p-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .api-endpoints-interface {
+    .endpoint-details {
+      .endpoint-info {
+        .endpoint-meta {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .endpoint-actions {
+          flex-direction: column;
+
+          .p-button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  .assign-role-dialog,
+  .remove-role-dialog,
+  .user-roles-dialog,
+  .role-users-dialog,
+  .bulk-assign-dialog {
+    width: 95vw;
+
+    .form-actions {
+      flex-direction: column;
+
+      .p-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .roles-results,
+  .users-results {
+    .p-datatable {
+      font-size: 0.875rem;
+
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: 0.5rem;
+      }
+    }
+  }
+}
+
+// Loading States
+.p-button[loading] {
+  pointer-events: none;
+}
+
+// Form Validation States
+.ng-invalid.ng-touched {
+  border-color: var(--red-500) !important;
+  box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.2) !important;
+}
+
+// Status Badge Customization
+.p-badge {
+  &.p-badge-success {
+    background: var(--green-500);
+  }
+
+  &.p-badge-danger {
+    background: var(--red-500);
+  }
+
+  &.p-badge-warning {
+    background: var(--yellow-500);
+    color: var(--surface-900);
+  }
+
+  &.p-badge-info {
+    background: var(--blue-500);
+  }
+}
+
+// Custom Scrollbar for Tables
+.p-datatable-wrapper {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--surface-ground);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--surface-border);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--text-color-secondary);
+    }
+  }
+}
+
+// Animation for dialog transitions
+.p-dialog {
+  .p-dialog-content {
+    animation: fadeInUp 0.3s ease-out;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Hover effects for interactive elements
+.feature-card,
+.endpoint-details {
+  transition: all 0.3s ease;
+}
+
+// Focus states for accessibility
+.p-button:focus,
+.p-inputtext:focus,
+.p-multiselect:focus {
+  box-shadow: 0 0 0 0.2rem var(--primary-color) !important;
+}

@@ -1,0 +1,737 @@
+<div class="account-management-container">
+  <div class="category-header">
+    <h3>Account Management</h3>
+    <p>Comprehensive account administration with profile management, security, and lifecycle operations</p>
+  </div>
+
+  <p-tabView class="nested-tabs">
+    <!-- UI Interface Tab -->
+    <p-tabPanel header="UI Interface" leftIcon="pi pi-user-edit">
+      <div class="account-ui-interface">
+        <p-card header="Account Management Interface">
+          <div class="ui-description">
+            <p><i class="pi pi-info-circle"></i> Complete interface for managing user accounts, profiles, and security settings.</p>
+          </div>
+          
+          <div class="ui-features">
+            <h4>Available Features:</h4>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <i class="pi pi-user-edit"></i>
+                <h5>Update Account</h5>
+                <p>Modify user account information and details</p>
+                <p-button label="Update Account" icon="pi pi-pencil" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('update')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-lock"></i>
+                <h5>Change Password</h5>
+                <p>Update user password with security validation</p>
+                <p-button label="Change Password" icon="pi pi-lock" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('change-password')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-ban"></i>
+                <h5>Lock Account</h5>
+                <p>Temporarily lock user account with reasons</p>
+                <p-button label="Lock Account" icon="pi pi-ban" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('lock')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-id-card"></i>
+                <h5>Profile Management</h5>
+                <p>Manage user profile and personal information</p>
+                <p-button label="Profile" icon="pi pi-id-card" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('profile')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-eye"></i>
+                <h5>View Account</h5>
+                <p>Retrieve and display account information</p>
+                <p-button label="View Account" icon="pi pi-eye" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('get-account')"></p-button>
+              </div>
+              <div class="feature-card">
+                <i class="pi pi-times-circle"></i>
+                <h5>Deactivate Account</h5>
+                <p>Deactivate user account with data transfer options</p>
+                <p-button label="Deactivate" icon="pi pi-times-circle" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('deactivate')"></p-button>
+              </div>
+            </div>
+          </div>
+
+          <p-divider></p-divider>
+
+          <div class="quick-actions">
+            <h4>Quick Actions:</h4>
+            <div class="actions-row">
+              <p-button 
+                label="Current Profile" 
+                icon="pi pi-user" 
+                (onClick)="openAccountManagementUI('current-profile')"
+                class="p-button-outlined"
+              ></p-button>
+              <p-button 
+                label="Update Account" 
+                icon="pi pi-pencil" 
+                (onClick)="openAccountManagementUI('update')"
+                class="p-button-success"
+              ></p-button>
+              <p-button 
+                label="Security Settings" 
+                icon="pi pi-shield" 
+                (onClick)="openAccountManagementUI('change-password')"
+                class="p-button-info"
+              ></p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </p-tabPanel>
+
+    <!-- API Endpoints Tab -->
+    <p-tabPanel header="API Endpoints" leftIcon="pi pi-code">
+      <div class="api-endpoints-interface">
+        <p-card header="Account Management API Endpoints">
+          <div class="api-description">
+            <p><i class="pi pi-info-circle"></i> Complete list of API endpoints for account management operations.</p>
+          </div>
+
+          <p-accordion>
+            <p-accordionTab 
+              *ngFor="let endpoint of accountManagementEndpoints"
+              [header]="getAccordionHeader(endpoint)"
+            >
+              <div class="endpoint-details">
+                <div class="endpoint-info">
+                  <div class="endpoint-meta">
+                    <p-chip 
+                      [label]="endpoint.method" 
+                      [class]="'method-' + endpoint.method.toLowerCase()"
+                    ></p-chip>
+                    <span class="endpoint-path">{{ endpoint.endpoint }}</span>
+                    <p-badge 
+                      *ngIf="endpoint.requiresAuth" 
+                      value="AUTH" 
+                      severity="warning"
+                    ></p-badge>
+                  </div>
+                  <p class="endpoint-summary">{{ endpoint.summary }}</p>
+                  
+                  <div class="endpoint-parameters" *ngIf="endpoint.parameters && endpoint.parameters.length > 0">
+                    <h5>Parameters:</h5>
+                    <div class="parameters-list">
+                      <p-chip 
+                        *ngFor="let param of endpoint.parameters" 
+                        [label]="param"
+                        class="parameter-chip"
+                      ></p-chip>
+                    </div>
+                  </div>
+
+                  <div class="endpoint-actions">
+                    <p-button 
+                      label="Test Endpoint" 
+                      icon="pi pi-play" 
+                      size="small"
+                      (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)"
+                    ></p-button>
+                    <p-button 
+                      label="Copy cURL" 
+                      icon="pi pi-copy" 
+                      size="small"
+                      class="p-button-outlined"
+                      (onClick)="copyCurlCommand(endpoint)"
+                    ></p-button>
+                    <p-button 
+                      label="View Schema" 
+                      icon="pi pi-eye" 
+                      size="small"
+                      class="p-button-info"
+                      (onClick)="viewEndpointSchema(endpoint)"
+                    ></p-button>
+                  </div>
+                </div>
+              </div>
+            </p-accordionTab>
+          </p-accordion>
+        </p-card>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<!-- Update Account Dialog -->
+<p-dialog 
+  header="Update Account" 
+  [(visible)]="showUpdateAccountDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="update-account-dialog"
+  (onHide)="onUpdateDialogHide()"
+>
+  <form [formGroup]="updateAccountForm" (ngSubmit)="handleUpdateAccount()">
+    <div class="form-field">
+      <label for="updateUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="updateUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="updateAccountForm.get('userId')?.invalid && updateAccountForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="updateAccountForm.get('userId')?.invalid && updateAccountForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="updateEmail">Email</label>
+        <input 
+          pInputText 
+          id="updateEmail" 
+          formControlName="email" 
+          placeholder="Enter email address"
+          [class.ng-invalid]="updateAccountForm.get('email')?.invalid && updateAccountForm.get('email')?.touched"
+        />
+        <small class="p-error" *ngIf="updateAccountForm.get('email')?.invalid && updateAccountForm.get('email')?.touched">
+          Please enter a valid email address
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="updateUserName">Username</label>
+        <input 
+          pInputText 
+          id="updateUserName" 
+          formControlName="userName" 
+          placeholder="Enter username"
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="updateFirstName">First Name</label>
+        <input 
+          pInputText 
+          id="updateFirstName" 
+          formControlName="firstName" 
+          placeholder="Enter first name"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="updateLastName">Last Name</label>
+        <input 
+          pInputText 
+          id="updateLastName" 
+          formControlName="lastName" 
+          placeholder="Enter last name"
+        />
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="updatePhoneNumber">Phone Number</label>
+      <input 
+        pInputText 
+        id="updatePhoneNumber" 
+        formControlName="phoneNumber" 
+        placeholder="Enter phone number"
+      />
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Update Account" 
+        icon="pi pi-check" 
+        [loading]="updateAccountLoading"
+        [disabled]="updateAccountForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showUpdateAccountDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="updateAccountMessage" severity="info" [text]="updateAccountMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Change Password Dialog -->
+<p-dialog 
+  header="Change Password" 
+  [(visible)]="showChangePasswordDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="change-password-dialog"
+  (onHide)="onPasswordDialogHide()"
+>
+  <form [formGroup]="changePasswordForm" (ngSubmit)="handleChangePassword()">
+    <div class="form-field">
+      <label for="passwordUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="passwordUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="changePasswordForm.get('userId')?.invalid && changePasswordForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="changePasswordForm.get('userId')?.invalid && changePasswordForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="currentPassword">Current Password *</label>
+      <p-password 
+        id="currentPassword" 
+        formControlName="currentPassword" 
+        placeholder="Enter current password"
+        [toggleMask]="true"
+        [feedback]="false"
+        [class.ng-invalid]="changePasswordForm.get('currentPassword')?.invalid && changePasswordForm.get('currentPassword')?.touched"
+      ></p-password>
+      <small class="p-error" *ngIf="changePasswordForm.get('currentPassword')?.invalid && changePasswordForm.get('currentPassword')?.touched">
+        Current password is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="newPassword">New Password *</label>
+      <p-password 
+        id="newPassword" 
+        formControlName="newPassword" 
+        placeholder="Enter new password"
+        [toggleMask]="true"
+        [feedback]="true"
+        [class.ng-invalid]="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched"
+      ></p-password>
+      <small class="p-error" *ngIf="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
+        New password is required (minimum 6 characters)
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="confirmPassword">Confirm Password *</label>
+      <p-password 
+        id="confirmPassword" 
+        formControlName="confirmPassword" 
+        placeholder="Confirm new password"
+        [toggleMask]="true"
+        [feedback]="false"
+        [class.ng-invalid]="changePasswordForm.get('confirmPassword')?.invalid && changePasswordForm.get('confirmPassword')?.touched"
+      ></p-password>
+      <small class="p-error" *ngIf="changePasswordForm.get('confirmPassword')?.errors?.['passwordMismatch'] && changePasswordForm.get('confirmPassword')?.touched">
+        Passwords do not match
+      </small>
+      <small class="p-error" *ngIf="changePasswordForm.get('confirmPassword')?.errors?.['required'] && changePasswordForm.get('confirmPassword')?.touched">
+        Please confirm your password
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Change Password" 
+        icon="pi pi-lock" 
+        [loading]="changePasswordLoading"
+        [disabled]="changePasswordForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showChangePasswordDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="changePasswordMessage" severity="info" [text]="changePasswordMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Lock Account Dialog -->
+<p-dialog 
+  header="Lock Account" 
+  [(visible)]="showLockAccountDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="lock-account-dialog"
+  (onHide)="onLockDialogHide()"
+>
+  <form [formGroup]="lockAccountForm" (ngSubmit)="handleLockAccount()">
+    <div class="form-field">
+      <label for="lockUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="lockUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="lockAccountForm.get('userId')?.invalid && lockAccountForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="lockAccountForm.get('userId')?.invalid && lockAccountForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="lockoutEnd">Lockout End Date</label>
+      <p-calendar 
+        id="lockoutEnd" 
+        formControlName="lockoutEnd" 
+        placeholder="Select end date (optional)"
+        [showTime]="true"
+        [showSeconds]="false"
+        dateFormat="mm/dd/yy"
+        [showIcon]="true"
+      ></p-calendar>
+      <small class="help-text">Leave empty for indefinite lockout</small>
+    </div>
+
+    <div class="form-field">
+      <label for="lockReason">Reason for Lock</label>
+      <input 
+        pInputText 
+        id="lockReason" 
+        formControlName="reason" 
+        placeholder="Enter reason for locking the account"
+      />
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Lock Account" 
+        icon="pi pi-ban" 
+        [loading]="lockAccountLoading"
+        [disabled]="lockAccountForm.invalid"
+        severity="danger"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showLockAccountDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="lockAccountMessage" severity="info" [text]="lockAccountMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Profile Management Dialog -->
+<p-dialog 
+  header="Profile Management" 
+  [(visible)]="showProfileDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="profile-dialog"
+  (onHide)="onProfileDialogHide()"
+>
+  <form [formGroup]="profileForm" (ngSubmit)="handleUpdateProfile()">
+    <div class="form-field">
+      <label for="profileUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="profileUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="profileForm.get('userId')?.invalid && profileForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="profileForm.get('userId')?.invalid && profileForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="profileBio">Bio</label>
+      <textarea 
+        pInputTextarea 
+        id="profileBio" 
+        formControlName="bio" 
+        placeholder="Enter bio"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="profileWebsite">Website</label>
+        <input 
+          pInputText 
+          id="profileWebsite" 
+          formControlName="website" 
+          placeholder="Enter website URL"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="profileLocation">Location</label>
+        <input 
+          pInputText 
+          id="profileLocation" 
+          formControlName="location" 
+          placeholder="Enter location"
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="profileBirthDate">Birth Date</label>
+        <p-calendar 
+          id="profileBirthDate" 
+          formControlName="birthDate" 
+          placeholder="Select birth date"
+          dateFormat="mm/dd/yy"
+          [showIcon]="true"
+          [maxDate]="today"
+        ></p-calendar>
+      </div>
+
+      <div class="form-field">
+        <label for="profileAvatar">Avatar URL</label>
+        <input 
+          pInputText 
+          id="profileAvatar" 
+          formControlName="avatar" 
+          placeholder="Enter avatar image URL"
+        />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Update Profile" 
+        icon="pi pi-check" 
+        [loading]="profileLoading"
+        [disabled]="profileForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showProfileDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="profileMessage" severity="info" [text]="profileMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Get Account Dialog -->
+<p-dialog 
+  header="View Account" 
+  [(visible)]="showGetAccountDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="get-account-dialog"
+  (onHide)="onGetAccountDialogHide()"
+>
+  <form [formGroup]="getAccountForm" (ngSubmit)="handleGetAccount()">
+    <div class="form-field">
+      <label for="getAccountUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="getAccountUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="getAccountForm.get('userId')?.invalid && getAccountForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="getAccountForm.get('userId')?.invalid && getAccountForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Get Account" 
+        icon="pi pi-search" 
+        [loading]="getAccountLoading"
+        [disabled]="getAccountForm.invalid"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Clear" 
+        icon="pi pi-refresh" 
+        class="p-button-secondary" 
+        (onClick)="resetGetAccountForm()"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="getAccountMessage" severity="info" [text]="getAccountMessage"></p-message>
+
+    <div class="account-details" *ngIf="currentAccount">
+      <h4>Account Information:</h4>
+      <div class="account-card">
+        <div class="account-header">
+          <h5>{{ currentAccount.firstName }} {{ currentAccount.lastName }}</h5>
+          <p-badge 
+            [value]="getAccountStatusText(currentAccount)" 
+            [severity]="getAccountStatusClass(currentAccount) === 'status-active' ? 'success' : getAccountStatusClass(currentAccount) === 'status-locked' ? 'warning' : 'danger'"
+          ></p-badge>
+        </div>
+        
+        <div class="account-info-grid">
+          <div class="info-item">
+            <label>User ID:</label>
+            <span>{{ currentAccount.id }}</span>
+          </div>
+          <div class="info-item">
+            <label>Username:</label>
+            <span>{{ currentAccount.userName || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Email:</label>
+            <span>{{ currentAccount.email }}</span>
+          </div>
+          <div class="info-item">
+            <label>Phone:</label>
+            <span>{{ currentAccount.phoneNumber || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Email Confirmed:</label>
+            <p-badge 
+              [value]="currentAccount.emailConfirmed ? 'Yes' : 'No'" 
+              [severity]="currentAccount.emailConfirmed ? 'success' : 'danger'"
+            ></p-badge>
+          </div>
+          <div class="info-item">
+            <label>2FA Enabled:</label>
+            <p-badge 
+              [value]="currentAccount.twoFactorEnabled ? 'Yes' : 'No'" 
+              [severity]="currentAccount.twoFactorEnabled ? 'success' : 'danger'"
+            ></p-badge>
+          </div>
+          <div class="info-item">
+            <label>Failed Attempts:</label>
+            <span>{{ currentAccount.accessFailedCount }}</span>
+          </div>
+          <div class="info-item">
+            <label>Last Login:</label>
+            <span>{{ currentAccount.lastLoginDate | date:'short' || 'Never' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Created:</label>
+            <span>{{ currentAccount.createdDate | date:'short' }}</span>
+          </div>
+          <div class="info-item" *ngIf="currentAccount.lockoutEnd">
+            <label>Locked Until:</label>
+            <span>{{ currentAccount.lockoutEnd | date:'short' }}</span>
+          </div>
+        </div>
+
+        <div class="profile-section" *ngIf="currentAccount.profile">
+          <h6>Profile Information:</h6>
+          <div class="profile-info">
+            <div class="info-item" *ngIf="currentAccount.profile.bio">
+              <label>Bio:</label>
+              <span>{{ currentAccount.profile.bio }}</span>
+            </div>
+            <div class="info-item" *ngIf="currentAccount.profile.website">
+              <label>Website:</label>
+              <span>{{ currentAccount.profile.website }}</span>
+            </div>
+            <div class="info-item" *ngIf="currentAccount.profile.location">
+              <label>Location:</label>
+              <span>{{ currentAccount.profile.location }}</span>
+            </div>
+            <div class="info-item" *ngIf="currentAccount.profile.birthDate">
+              <label>Birth Date:</label>
+              <span>{{ currentAccount.profile.birthDate | date:'shortDate' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Deactivate Account Dialog -->
+<p-dialog 
+  header="Deactivate Account" 
+  [(visible)]="showDeactivateDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="deactivate-dialog"
+  (onHide)="onDeactivateDialogHide()"
+>
+  <form [formGroup]="deactivateForm" (ngSubmit)="handleDeactivateAccount()">
+    <div class="form-field">
+      <label for="deactivateUserId">User ID *</label>
+      <input 
+        pInputText 
+        id="deactivateUserId" 
+        formControlName="userId" 
+        placeholder="Enter user ID"
+        [class.ng-invalid]="deactivateForm.get('userId')?.invalid && deactivateForm.get('userId')?.touched"
+      />
+      <small class="p-error" *ngIf="deactivateForm.get('userId')?.invalid && deactivateForm.get('userId')?.touched">
+        User ID is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="deactivateReason">Reason for Deactivation</label>
+      <textarea 
+        pInputTextarea 
+        id="deactivateReason" 
+        formControlName="reason" 
+        placeholder="Enter reason for deactivation"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="form-field">
+      <label for="transferDataTo">Transfer Data To (User ID)</label>
+      <input 
+        pInputText 
+        id="transferDataTo" 
+        formControlName="transferDataTo" 
+        placeholder="Enter user ID to transfer data to (optional)"
+      />
+      <small class="help-text">Specify another user to transfer data ownership</small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        type="submit" 
+        label="Deactivate Account" 
+        icon="pi pi-times-circle" 
+        [loading]="deactivateLoading"
+        [disabled]="deactivateForm.invalid"
+        severity="danger"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showDeactivateDialog = false"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="deactivateMessage" severity="info" [text]="deactivateMessage"></p-message>
+  </form>
+</p-dialog>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog></p-confirmDialog>

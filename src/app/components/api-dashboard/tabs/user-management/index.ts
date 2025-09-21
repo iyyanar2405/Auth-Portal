@@ -1,0 +1,1 @@
+export { UserManagementTabComponent } from './user-management-tab.component';
