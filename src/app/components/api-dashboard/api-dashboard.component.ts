@@ -1548,6 +1548,108 @@ interface TestPayload {
         </div>
       </div>
     </p-dialog>
+
+    <!-- Password Reset Dialog -->
+    <p-dialog 
+      header="Reset Password" 
+      [(visible)]="showPasswordResetDialog" 
+      [modal]="true" 
+      [style]="{width: '450px'}" 
+      [draggable]="false" 
+      [resizable]="false"
+      (onHide)="closePasswordResetDialog()"
+      class="password-reset-dialog"
+    >
+      <div class="password-reset-dialog-content">
+        <form [formGroup]="passwordResetForm" (ngSubmit)="onPasswordReset()" class="password-reset-form">
+          <div class="form-field">
+            <label for="oldPassword">Current Password *</label>
+            <input 
+              type="password" 
+              id="oldPassword" 
+              formControlName="oldPassword" 
+              placeholder="Enter your current password"
+              [class.ng-invalid]="isPasswordResetFieldInvalid('oldPassword')"
+            />
+            <small class="p-error" *ngIf="isPasswordResetFieldInvalid('oldPassword')">
+              {{ getPasswordResetFieldError('oldPassword') }}
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="newPassword">New Password *</label>
+            <input 
+              type="password" 
+              id="newPassword" 
+              formControlName="newPassword" 
+              placeholder="Enter your new password (min 6 characters)"
+              [class.ng-invalid]="isPasswordResetFieldInvalid('newPassword')"
+            />
+            <small class="p-error" *ngIf="isPasswordResetFieldInvalid('newPassword')">
+              {{ getPasswordResetFieldError('newPassword') }}
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="confirmNewPassword">Confirm New Password *</label>
+            <input 
+              type="password" 
+              id="confirmNewPassword" 
+              formControlName="confirmPassword" 
+              placeholder="Confirm your new password"
+              [class.ng-invalid]="isPasswordResetFieldInvalid('confirmPassword')"
+            />
+            <small class="p-error" *ngIf="isPasswordResetFieldInvalid('confirmPassword')">
+              {{ getPasswordResetFieldError('confirmPassword') }}
+            </small>
+          </div>
+
+          <div class="form-actions">
+            <p-button 
+              label="Cancel" 
+              icon="pi pi-times" 
+              type="button"
+              class="p-button-outlined" 
+              (onClick)="closePasswordResetDialog()"
+            ></p-button>
+            <p-button 
+              label="Reset Password" 
+              icon="pi pi-refresh" 
+              type="submit"
+              [loading]="isResettingPassword"
+              [disabled]="passwordResetForm.invalid || isResettingPassword"
+            ></p-button>
+          </div>
+        </form>
+
+        <!-- Password Reset Result -->
+        <div class="result-display" *ngIf="passwordResetResult">
+          <div class="result-header" [ngClass]="passwordResetResult.success ? 'success' : 'error'">
+            <i [class]="passwordResetResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ passwordResetResult.success ? 'Password Reset Successful!' : 'Password Reset Failed' }}</span>
+          </div>
+          
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ passwordResetResult.status }}</p>
+            <p><strong>Time:</strong> {{ passwordResetResult.timestamp | date:'medium' }}</p>
+            
+            <div *ngIf="passwordResetResult.success && passwordResetResult.data" class="success-data">
+              <h4>Reset Details:</h4>
+              <pre>{{ passwordResetResult.data | json }}</pre>
+            </div>
+            
+            <div *ngIf="!passwordResetResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ passwordResetResult.error }}</p>
+              <details *ngIf="passwordResetResult.fullError">
+                <summary>Technical Details</summary>
+                <pre>{{ passwordResetResult.fullError | json }}</pre>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
   `,
   styles: [`
     .api-dashboard-container {
@@ -2082,46 +2184,31 @@ interface TestPayload {
     }
 
     /* Registration Dialog Styles */
-    .register-form {
+    .register-form, .password-reset-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
     }
 
-    .register-form .form-field {
+    .register-form .form-field, .password-reset-form .form-field {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
     }
 
-    .register-form label {
-      font-weight: 600;
-      color: #374151;
-    }
-
-    .register-form input {
-      padding: 0.75rem;
+    .register-form input, .password-reset-form input {
       border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
     }
 
-    .register-form input:focus {
+    .register-form input:focus, .password-reset-form input:focus {
       outline: none;
       border-color: #3b82f6;
     }
 
-    .register-form input.ng-invalid.ng-touched {
+    .register-form input.ng-invalid.ng-touched, .password-reset-form input.ng-invalid.ng-touched {
       border-color: #ef4444;
     }
 
-    .register-form .p-error {
-      color: #ef4444;
-      font-size: 0.75rem;
-    }
-
-    .register-form .form-actions {
+    .register-form .form-actions, .password-reset-form .form-actions {
       display: flex;
-      gap: 1rem;
       justify-content: flex-end;
     }
 
@@ -2172,6 +2259,12 @@ export class ApiDashboardComponent implements OnInit {
   isRegistering = false;
   registerResult: any = null;
   showRegisterDialog = false;
+
+  // Password reset form properties
+  passwordResetForm: FormGroup;
+  isResettingPassword = false;
+  passwordResetResult: any = null;
+  showPasswordResetDialog = false;
   
   testPayload: TestPayload = {
     endpoint: '',
@@ -2217,6 +2310,14 @@ export class ApiDashboardComponent implements OnInit {
     }, { 
       validators: this.passwordMatchValidator 
     });
+
+    this.passwordResetForm = this.fb.group({
+      oldPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { 
+      validators: this.passwordResetMatchValidator 
+    });
   }
 
   // Password match validator for registration form
@@ -2225,6 +2326,22 @@ export class ApiDashboardComponent implements OnInit {
     const confirmPassword = formGroup.get('confirmPassword');
     
     if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    } else {
+      if (confirmPassword?.hasError('passwordMismatch')) {
+        confirmPassword.setErrors(null);
+      }
+      return null;
+    }
+  }
+
+  // Password match validator for password reset form
+  passwordResetMatchValidator(formGroup: FormGroup) {
+    const newPassword = formGroup.get('newPassword');
+    const confirmPassword = formGroup.get('confirmPassword');
+    
+    if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     } else {
@@ -2460,7 +2577,7 @@ export class ApiDashboardComponent implements OnInit {
         this.openRegisterDialog();
         break;
       case 'reset':
-        console.log('Navigate to password reset form');
+        this.openPasswordResetDialog();
         break;
       case 'tokens':
         console.log('Navigate to token management');
@@ -2659,6 +2776,18 @@ export class ApiDashboardComponent implements OnInit {
     this.registerResult = null;
   }
 
+  openPasswordResetDialog(): void {
+    this.showPasswordResetDialog = true;
+    this.passwordResetForm.reset();
+    this.passwordResetResult = null;
+  }
+
+  closePasswordResetDialog(): void {
+    this.showPasswordResetDialog = false;
+    this.passwordResetForm.reset();
+    this.passwordResetResult = null;
+  }
+
   onLogin(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -2785,6 +2914,60 @@ export class ApiDashboardComponent implements OnInit {
       });
   }
 
+  onPasswordReset(): void {
+    if (this.passwordResetForm.invalid) {
+      this.passwordResetForm.markAllAsTouched();
+      return;
+    }
+
+    this.isResettingPassword = true;
+    this.passwordResetResult = null;
+
+    const passwordResetData = {
+      oldPassword: this.passwordResetForm.get('oldPassword')?.value,
+      newPassword: this.passwordResetForm.get('newPassword')?.value,
+      confirmPassword: this.passwordResetForm.get('confirmPassword')?.value,
+      statusMessage: "Password reset request"
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+
+    console.log('Sending password reset request:', passwordResetData);
+
+    // Call the /api/manage/changePassword endpoint
+    this.http.post('http://localhost:7136/api/manage/changePassword', passwordResetData, { headers, observe: 'response' })
+      .subscribe({
+        next: (response) => {
+          this.isResettingPassword = false;
+          this.passwordResetResult = {
+            success: true,
+            status: response.status,
+            data: response.body,
+            timestamp: new Date()
+          };
+          console.log('Password reset successful:', response.body);
+        },
+        error: (error) => {
+          this.isResettingPassword = false;
+          console.error('Password reset error details:', error);
+          console.error('Error status:', error.status);
+          console.error('Error message:', error.message);
+          console.error('Error body:', error.error);
+          
+          this.passwordResetResult = {
+            success: false,
+            status: error.status || 500,
+            error: error.error?.message || error.error?.title || error.message || 'Password reset failed',
+            timestamp: new Date(),
+            fullError: error.error // Add full error details for debugging
+          };
+        }
+      });
+  }
+
   // Check if user is logged in by checking for access_token in cookies
   isLoggedIn(): boolean {
     return this.getCookie('access_token') !== null;
@@ -2836,6 +3019,32 @@ export class ApiDashboardComponent implements OnInit {
       }
       if (field.errors['passwordMismatch']) {
         return 'Passwords do not match';
+      }
+    }
+    return '';
+  }
+
+  isPasswordResetFieldInvalid(fieldName: string): boolean {
+    const field = this.passwordResetForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getPasswordResetFieldError(fieldName: string): string {
+    const field = this.passwordResetForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'oldPassword': 'Current password',
+          'newPassword': 'New password',
+          'confirmPassword': 'Confirm password'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+      if (field.errors['minlength']) {
+        return `New password must be at least ${field.errors['minlength'].requiredLength} characters`;
+      }
+      if (field.errors['passwordMismatch']) {
+        return 'New passwords do not match';
       }
     }
     return '';
