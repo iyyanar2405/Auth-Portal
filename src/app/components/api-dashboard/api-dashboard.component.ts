@@ -1410,6 +1410,144 @@ interface TestPayload {
         </div>
       </div>
     </p-dialog>
+
+    <!-- Registration Dialog -->
+    <p-dialog 
+      [(visible)]="showRegisterDialog" 
+      [modal]="true" 
+      [closable]="true" 
+      [resizable]="false" 
+      [draggable]="true"
+      header="User Registration" 
+      styleClass="register-dialog" 
+      (onHide)="closeRegisterDialog()"
+    >
+      <div class="register-dialog-content">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
+          
+          <!-- Username Field -->
+          <div class="form-field">
+            <label for="registerUserName">Username</label>
+            <input 
+              id="registerUserName"
+              type="text" 
+              pInputText 
+              formControlName="userName"
+              placeholder="Enter username"
+              [class.ng-invalid]="isRegisterFieldInvalid('userName')"
+            />
+            <small 
+              class="p-error" 
+              *ngIf="isRegisterFieldInvalid('userName')"
+            >
+              {{ getRegisterFieldError('userName') }}
+            </small>
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-field">
+            <label for="registerEmail">Email</label>
+            <input 
+              id="registerEmail"
+              type="email" 
+              pInputText 
+              formControlName="email"
+              placeholder="Enter email address"
+              [class.ng-invalid]="isRegisterFieldInvalid('email')"
+            />
+            <small 
+              class="p-error" 
+              *ngIf="isRegisterFieldInvalid('email')"
+            >
+              {{ getRegisterFieldError('email') }}
+            </small>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-field">
+            <label for="registerPassword">Password</label>
+            <input 
+              id="registerPassword"
+              type="password" 
+              pInputText 
+              formControlName="password"
+              placeholder="Enter password"
+              [class.ng-invalid]="isRegisterFieldInvalid('password')"
+            />
+            <small 
+              class="p-error" 
+              *ngIf="isRegisterFieldInvalid('password')"
+            >
+              {{ getRegisterFieldError('password') }}
+            </small>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="form-field">
+            <label for="registerConfirmPassword">Confirm Password</label>
+            <input 
+              id="registerConfirmPassword"
+              type="password" 
+              pInputText 
+              formControlName="confirmPassword"
+              placeholder="Confirm password"
+              [class.ng-invalid]="isRegisterFieldInvalid('confirmPassword')"
+            />
+            <small 
+              class="p-error" 
+              *ngIf="isRegisterFieldInvalid('confirmPassword')"
+            >
+              {{ getRegisterFieldError('confirmPassword') }}
+            </small>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-actions">
+            <p-button 
+              type="submit" 
+              label="Register" 
+              icon="pi pi-user-plus"
+              class="p-button-success"
+              [loading]="isRegistering"
+              [disabled]="registerForm.invalid || isRegistering"
+            ></p-button>
+            <p-button 
+              type="button" 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-secondary"
+              (onClick)="closeRegisterDialog()"
+            ></p-button>
+          </div>
+        </form>
+
+        <!-- Registration Result -->
+        <div class="result-display" *ngIf="registerResult">
+          <div class="result-header" [ngClass]="registerResult.success ? 'success' : 'error'">
+            <i [class]="registerResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ registerResult.success ? 'Registration Successful!' : 'Registration Failed' }}</span>
+          </div>
+          
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ registerResult.status }}</p>
+            <p><strong>Time:</strong> {{ registerResult.timestamp | date:'medium' }}</p>
+            
+            <div *ngIf="registerResult.success && registerResult.data" class="success-data">
+              <h4>Registration Details:</h4>
+              <pre>{{ registerResult.data | json }}</pre>
+            </div>
+            
+            <div *ngIf="!registerResult.success" class="error-data">
+              <p><strong>Error:</strong> {{ registerResult.error }}</p>
+              <details *ngIf="registerResult.fullError">
+                <summary>Full Error Details (for debugging)</summary>
+                <pre>{{ registerResult.fullError | json }}</pre>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
   `,
   styles: [`
     .api-dashboard-container {
@@ -1943,6 +2081,50 @@ interface TestPayload {
       max-height: 150px;
     }
 
+    /* Registration Dialog Styles */
+    .register-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .register-form .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .register-form label {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .register-form input {
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+    }
+
+    .register-form input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .register-form input.ng-invalid.ng-touched {
+      border-color: #ef4444;
+    }
+
+    .register-form .p-error {
+      color: #ef4444;
+      font-size: 0.75rem;
+    }
+
+    .register-form .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
     @media (max-width: 768px) {
       .dashboard-stats {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1985,6 +2167,12 @@ export class ApiDashboardComponent implements OnInit {
   loginResult: any = null;
   showLoginDialog = false;
   
+  // Registration form properties
+  registerForm: FormGroup;
+  isRegistering = false;
+  registerResult: any = null;
+  showRegisterDialog = false;
+  
   testPayload: TestPayload = {
     endpoint: '',
     method: 'GET',
@@ -2020,6 +2208,31 @@ export class ApiDashboardComponent implements OnInit {
       userName: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+
+    this.registerForm = this.fb.group({
+      userName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { 
+      validators: this.passwordMatchValidator 
+    });
+  }
+
+  // Password match validator for registration form
+  passwordMatchValidator(formGroup: FormGroup) {
+    const password = formGroup.get('password');
+    const confirmPassword = formGroup.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    } else {
+      if (confirmPassword?.hasError('passwordMismatch')) {
+        confirmPassword.setErrors(null);
+      }
+      return null;
+    }
   }
 
   ngOnInit(): void {
@@ -2241,10 +2454,10 @@ export class ApiDashboardComponent implements OnInit {
     // For now, just log the action
     switch (action) {
       case 'login':
-        console.log('Navigate to login form');
+        this.openLoginDialog();
         break;
       case 'register':
-        console.log('Navigate to user registration form');
+        this.openRegisterDialog();
         break;
       case 'reset':
         console.log('Navigate to password reset form');
@@ -2433,6 +2646,19 @@ export class ApiDashboardComponent implements OnInit {
     this.loginResult = null;
   }
 
+  // Registration dialog methods
+  openRegisterDialog(): void {
+    this.showRegisterDialog = true;
+    this.registerForm.reset();
+    this.registerResult = null;
+  }
+
+  closeRegisterDialog(): void {
+    this.showRegisterDialog = false;
+    this.registerForm.reset();
+    this.registerResult = null;
+  }
+
   onLogin(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -2505,6 +2731,60 @@ export class ApiDashboardComponent implements OnInit {
     this.showLoginDialog = false;
   }
 
+  onRegister(): void {
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
+
+    this.isRegistering = true;
+    this.registerResult = null;
+
+    const registerData = {
+      userName: this.registerForm.get('userName')?.value,
+      email: this.registerForm.get('email')?.value,
+      password: this.registerForm.get('password')?.value,
+      confirmPassword: this.registerForm.get('confirmPassword')?.value
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+
+    console.log('Sending registration request:', registerData);
+
+    // Call the /api/Authorize/register endpoint
+    this.http.post('http://localhost:7136/api/Authorize/register', registerData, { headers, observe: 'response' })
+      .subscribe({
+        next: (response) => {
+          this.isRegistering = false;
+          this.registerResult = {
+            success: true,
+            status: response.status,
+            data: response.body,
+            timestamp: new Date()
+          };
+          console.log('Registration successful:', response.body);
+        },
+        error: (error) => {
+          this.isRegistering = false;
+          console.error('Registration error details:', error);
+          console.error('Error status:', error.status);
+          console.error('Error message:', error.message);
+          console.error('Error body:', error.error);
+          
+          this.registerResult = {
+            success: false,
+            status: error.status || 500,
+            error: error.error?.message || error.error?.title || error.message || 'Registration failed',
+            timestamp: new Date(),
+            fullError: error.error // Add full error details for debugging
+          };
+        }
+      });
+  }
+
   // Check if user is logged in by checking for access_token in cookies
   isLoggedIn(): boolean {
     return this.getCookie('access_token') !== null;
@@ -2531,6 +2811,31 @@ export class ApiDashboardComponent implements OnInit {
       }
       if (field.errors['minlength']) {
         return `Password must be at least ${field.errors['minlength'].requiredLength} characters`;
+      }
+    }
+    return '';
+  }
+
+  // Registration form validation methods
+  isRegisterFieldInvalid(fieldName: string): boolean {
+    const field = this.registerForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getRegisterFieldError(fieldName: string): string {
+    const field = this.registerForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        return `${fieldName} is required`;
+      }
+      if (field.errors['email']) {
+        return 'Please enter a valid email address';
+      }
+      if (field.errors['minlength']) {
+        return `Password must be at least ${field.errors['minlength'].requiredLength} characters`;
+      }
+      if (field.errors['passwordMismatch']) {
+        return 'Passwords do not match';
       }
     }
     return '';
