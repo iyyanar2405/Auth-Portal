@@ -55,22 +55,40 @@
             <h4>Quick Actions:</h4>
             <div class="actions-row">
               <p-button 
-                label="All Claims" 
-                icon="pi pi-tags" 
+                label="GetClaims" 
+                icon="pi pi-list" 
                 (onClick)="openEndpointTester('/api/Claims', 'GET')"
                 class="p-button-outlined"
               ></p-button>
               <p-button 
-                label="Create Claim" 
+                label="InsertClaims" 
                 icon="pi pi-plus" 
                 (onClick)="openClaimsManagementUI('create')"
                 class="p-button-success"
               ></p-button>
               <p-button 
-                label="Search Claims" 
-                icon="pi pi-search" 
-                (onClick)="openClaimsManagementUI('search')"
+                label="User-Update" 
+                icon="pi pi-user-edit" 
+                (onClick)="openClaimsManagementUI('user-update')"
+                class="p-button-warning"
+              ></p-button>
+              <p-button 
+                label="Role-Update" 
+                icon="pi pi-cog" 
+                (onClick)="openClaimsManagementUI('role-update')"
                 class="p-button-info"
+              ></p-button>
+              <p-button 
+                label="User-Delete" 
+                icon="pi pi-user-minus" 
+                (onClick)="openClaimsManagementUI('user-delete')"
+                class="p-button-danger"
+              ></p-button>
+              <p-button 
+                label="Role-Delete" 
+                icon="pi pi-trash" 
+                (onClick)="openClaimsManagementUI('role-delete')"
+                class="p-button-danger"
               ></p-button>
             </div>
           </div>

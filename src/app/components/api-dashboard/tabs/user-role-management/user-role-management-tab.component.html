@@ -55,22 +55,22 @@
             <h4>Quick Actions:</h4>
             <div class="actions-row">
               <p-button 
-                label="All Assignments" 
+                label="Get-UserRoles" 
                 icon="pi pi-list" 
                 (onClick)="openEndpointTester('/api/UserRoles', 'GET')"
                 class="p-button-outlined"
               ></p-button>
               <p-button 
-                label="Assign Role" 
+                label="Add-UserRoles" 
                 icon="pi pi-plus" 
                 (onClick)="openUserRoleManagementUI('assign')"
                 class="p-button-success"
               ></p-button>
               <p-button 
-                label="Bulk Operations" 
-                icon="pi pi-copy" 
-                (onClick)="openUserRoleManagementUI('bulk-assign')"
-                class="p-button-info"
+                label="Delete-User-Roles" 
+                icon="pi pi-trash" 
+                (onClick)="openUserRoleManagementUI('delete')"
+                class="p-button-danger"
               ></p-button>
             </div>
           </div>

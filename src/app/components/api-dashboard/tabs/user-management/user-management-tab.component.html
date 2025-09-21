@@ -61,22 +61,34 @@
             <h4>Quick Actions:</h4>
             <div class="actions-row">
               <p-button 
-                label="All Users" 
+                label="GetUser" 
                 icon="pi pi-users" 
                 (onClick)="openEndpointTester('/api/User', 'GET')"
                 class="p-button-outlined"
               ></p-button>
               <p-button 
-                label="Create User" 
+                label="GetUser-Id" 
+                icon="pi pi-user" 
+                (onClick)="openUserManagementUI('get-by-id')"
+                class="p-button-info"
+              ></p-button>
+              <p-button 
+                label="InsertUserWithRole" 
                 icon="pi pi-user-plus" 
-                (onClick)="openEndpointTester('/api/User', 'POST')"
+                (onClick)="openUserManagementUI('create-with-role')"
                 class="p-button-success"
               ></p-button>
               <p-button 
-                label="User Search" 
-                icon="pi pi-search" 
-                (onClick)="openUserManagementUI('list')"
-                class="p-button-info"
+                label="UpdateUser" 
+                icon="pi pi-user-edit" 
+                (onClick)="openUserManagementUI('update')"
+                class="p-button-warning"
+              ></p-button>
+              <p-button 
+                label="Delete-User" 
+                icon="pi pi-user-minus" 
+                (onClick)="openUserManagementUI('delete')"
+                class="p-button-danger"
               ></p-button>
             </div>
           </div>

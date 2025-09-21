@@ -55,22 +55,28 @@
             <h4>Quick Actions:</h4>
             <div class="actions-row">
               <p-button 
-                label="All Roles" 
-                icon="pi pi-key" 
+                label="GetRoles" 
+                icon="pi pi-list" 
                 (onClick)="openEndpointTester('/api/Role', 'GET')"
                 class="p-button-outlined"
               ></p-button>
               <p-button 
-                label="Create Role" 
+                label="InsertRoles" 
                 icon="pi pi-plus" 
                 (onClick)="openRoleManagementUI('create')"
                 class="p-button-success"
               ></p-button>
               <p-button 
-                label="Role Search" 
-                icon="pi pi-search" 
-                (onClick)="openRoleManagementUI('list')"
-                class="p-button-info"
+                label="UpdateRole" 
+                icon="pi pi-pencil" 
+                (onClick)="openRoleManagementUI('edit')"
+                class="p-button-warning"
+              ></p-button>
+              <p-button 
+                label="DeleteRole" 
+                icon="pi pi-trash" 
+                (onClick)="openRoleManagementUI('delete')"
+                class="p-button-danger"
               ></p-button>
             </div>
           </div>
