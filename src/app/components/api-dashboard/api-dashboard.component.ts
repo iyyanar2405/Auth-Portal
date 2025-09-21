@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { TabViewModule } from 'primeng/tabview';
@@ -42,6 +43,7 @@ interface TestPayload {
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     CardModule,
     TabViewModule,
@@ -183,7 +185,24 @@ interface TestPayload {
                           <i class="pi pi-sign-in"></i>
                           <h5>User Login</h5>
                           <p>Secure login with email and password</p>
-                          <p-button label="Login Form" icon="pi pi-external-link" class="p-button-outlined" size="small" (onClick)="openAuthenticationUI('login')"></p-button>
+                          <p-button 
+                            *ngIf="!isLoggedIn()" 
+                            label="Login Form" 
+                            icon="pi pi-external-link" 
+                            class="p-button-outlined" 
+                            size="small" 
+                            (onClick)="openAuthenticationUI('login')"
+                          ></p-button>
+                          <div *ngIf="isLoggedIn()" class="logged-in-status">
+                            <span class="login-status">✅ Logged In</span>
+                            <p-button 
+                              label="Logout" 
+                              icon="pi pi-sign-out" 
+                              class="p-button-danger" 
+                              size="small" 
+                              (onClick)="logout()"
+                            ></p-button>
+                          </div>
                         </div>
                         <div class="feature-card">
                           <i class="pi pi-user-plus"></i>
@@ -211,7 +230,7 @@ interface TestPayload {
                     <div class="quick-auth-actions">
                       <h4>Quick Actions:</h4>
                       <div class="actions-row">
-                        <p-button label="Login Now" icon="pi pi-sign-in" (onClick)="openAuthenticationUI('login')" class="p-button-success"></p-button>
+                        <p-button label="Login Form" icon="pi pi-sign-in" (onClick)="openLoginDialog()" class="p-button-success"></p-button>
                         <p-button label="Check Token" icon="pi pi-shield" class="p-button-info" (onClick)="openAuthenticationUI('validate')"></p-button>
                         <p-button label="Logout" icon="pi pi-sign-out" class="p-button-warning" (onClick)="openAuthenticationUI('logout')"></p-button>
                         <p-button label="User Profile" icon="pi pi-user" class="p-button-secondary" (onClick)="openAuthenticationUI('profile')"></p-button>
@@ -1280,6 +1299,117 @@ interface TestPayload {
         </p-tabPanel>
       </p-tabView>
     </div>
+
+    <!-- Login Dialog Modal -->
+    <p-dialog 
+      header="User Login" 
+      [(visible)]="showLoginDialog" 
+      [modal]="true" 
+      [style]="{width: '500px'}"
+      [draggable]="false"
+      [resizable]="false"
+      (onHide)="closeLoginDialog()"
+    >
+      <div class="login-dialog-content">
+        <p class="form-description">
+          <i class="pi pi-info-circle"></i> 
+          This form calls the <code>/api/Authorize/token</code> POST endpoint to authenticate users.
+        </p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="userName">Email Address:</label>
+              <input 
+                id="userName"
+                type="email" 
+                pInputText 
+                formControlName="userName"
+                placeholder="Enter your email address"
+                [class.ng-invalid]="isFieldInvalid('userName')"
+              />
+              <small class="error-message" *ngIf="isFieldInvalid('userName')">
+                {{ getFieldError('userName') }}
+              </small>
+            </div>
+
+            <div class="form-field">
+              <label for="password">Password:</label>
+              <input 
+                id="password"
+                type="password" 
+                pInputText 
+                formControlName="password"
+                placeholder="Enter your password"
+                [class.ng-invalid]="isFieldInvalid('password')"
+              />
+              <small class="error-message" *ngIf="isFieldInvalid('password')">
+                {{ getFieldError('password') }}
+              </small>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <p-button 
+              type="submit"
+              label="Login" 
+              icon="pi pi-sign-in"
+              [loading]="isLoggingIn"
+              [disabled]="loginForm.invalid || isLoggingIn"
+              class="p-button-success"
+            ></p-button>
+            <p-button 
+              type="button"
+              label="Cancel" 
+              icon="pi pi-times"
+              (onClick)="closeLoginDialog()"
+              class="p-button-secondary"
+            ></p-button>
+          </div>
+        </form>
+
+        <!-- Login Result Display -->
+        <div *ngIf="loginResult" class="login-result">
+          <p-divider></p-divider>
+          <h5>API Response:</h5>
+          <div class="result-container" [ngClass]="loginResult.success ? 'success' : 'error'">
+            <div class="result-header">
+              <i [class]="loginResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+              <span>{{ loginResult.success ? 'Login Successful' : 'Login Failed' }}</span>
+              <p-badge 
+                [value]="loginResult.status.toString()" 
+                [severity]="loginResult.success ? 'success' : 'danger'"
+              ></p-badge>
+            </div>
+            
+            <div class="result-details">
+              <h6>Response Data:</h6>
+              <pre>{{ loginResult.data ? (loginResult.data | json) : (loginResult.fullError ? (loginResult.fullError | json) : loginResult.error) }}</pre>
+              <div *ngIf="!loginResult.success && loginResult.fullError" class="error-debugging">
+                <h6>Debug Information:</h6>
+                <div class="debug-item">
+                  <strong>Status:</strong> {{ loginResult.status }}
+                </div>
+                <div class="debug-item" *ngIf="loginResult.fullError?.type">
+                  <strong>Error Type:</strong> {{ loginResult.fullError.type }}
+                </div>
+                <div class="debug-item" *ngIf="loginResult.fullError?.title">
+                  <strong>Title:</strong> {{ loginResult.fullError.title }}
+                </div>
+                <div class="debug-item" *ngIf="loginResult.fullError?.detail">
+                  <strong>Detail:</strong> {{ loginResult.fullError.detail }}
+                </div>
+                <div class="debug-item" *ngIf="loginResult.fullError?.errors">
+                  <strong>Validation Errors:</strong>
+                  <pre class="validation-errors">{{ loginResult.fullError.errors | json }}</pre>
+                </div>
+              </div>
+              <small>Timestamp: {{ loginResult.timestamp | date:'medium' }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
   `,
   styles: [`
     .api-dashboard-container {
@@ -1611,6 +1741,21 @@ interface TestPayload {
       margin-bottom: 1rem;
     }
 
+    .logged-in-status {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .login-status {
+      color: #10b981;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
     .quick-user-actions, .quick-auth-actions, .quick-role-actions, .quick-claims-actions, .quick-user-role-actions, .quick-account-actions, .quick-two-factor-actions {
       margin-top: 1.5rem;
     }
@@ -1631,6 +1776,173 @@ interface TestPayload {
       margin-bottom: 1rem;
     }
 
+    /* Login Dialog Styles */
+    .login-dialog-content {
+      padding: 0.5rem 0;
+    }
+
+    .form-description {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem;
+      background-color: #f3f4f6;
+      border-radius: 0.5rem;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .form-description code {
+      background-color: #1f2937;
+      color: #60a5fa;
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    .login-form {
+      padding: 1rem 0;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-field label {
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    .form-field input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-field input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-field input.ng-invalid {
+      border-color: #ef4444;
+    }
+
+    .error-message {
+      color: #ef4444;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-start;
+    }
+
+    .login-result {
+      margin-top: 1.5rem;
+    }
+
+    .result-container {
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+
+    .result-container.success {
+      border-color: #10b981;
+      background-color: #ecfdf5;
+    }
+
+    .result-container.error {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .result-header i {
+      font-size: 1.25rem;
+    }
+
+    .result-container.success .result-header i {
+      color: #10b981;
+    }
+
+    .result-container.error .result-header i {
+      color: #ef4444;
+    }
+
+    .result-details h6 {
+      margin: 0 0 0.5rem 0;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    .result-details pre {
+      background-color: #f3f4f6;
+      padding: 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #d1d5db;
+    }
+
+    .result-details small {
+      color: #6b7280;
+      font-size: 0.75rem;
+    }
+
+    .error-debugging {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 0.375rem;
+    }
+
+    .debug-item {
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .debug-item strong {
+      color: #374151;
+    }
+
+    .validation-errors {
+      background-color: #fff5f5;
+      border: 1px solid #fed7d7;
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      max-height: 150px;
+    }
+
     @media (max-width: 768px) {
       .dashboard-stats {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1648,6 +1960,10 @@ interface TestPayload {
         flex-direction: column;
         align-items: stretch;
       }
+
+      .form-actions {
+        flex-direction: column;
+      }
       
       .endpoint-meta {
         flex-direction: column;
@@ -1662,6 +1978,12 @@ interface TestPayload {
 })
 export class ApiDashboardComponent implements OnInit {
   endpoints: ApiEndpointInfo[] = API_ENDPOINTS_INFO;
+  
+  // Form properties
+  loginForm: FormGroup;
+  isLoggingIn = false;
+  loginResult: any = null;
+  showLoginDialog = false;
   
   testPayload: TestPayload = {
     endpoint: '',
@@ -1690,10 +2012,43 @@ export class ApiDashboardComponent implements OnInit {
   "timestamp": "2025-01-20T10:30:00Z"
 }`;
 
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient
+  ) {
+    this.loginForm = this.fb.group({
+      userName: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
+
   ngOnInit(): void {
     // Initialize with a sample endpoint for testing
     this.testPayload.endpoint = '/api/manage/userInfo';
     this.testPayload.method = 'GET';
+  }
+
+  // Cookie management methods
+  setCookie(name: string, value: string, days: number = 7): void {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/;SameSite=Strict`;
+  }
+
+  getCookie(name: string): string | null {
+    const nameEQ = `${name}=`;
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  deleteCookie(name: string): void {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
   }
 
   getTotalEndpointsCount(): number {
@@ -2064,5 +2419,120 @@ export class ApiDashboardComponent implements OnInit {
       default:
         console.log('Unknown two-factor authentication action:', action);
     }
+  }
+
+  openLoginDialog(): void {
+    this.showLoginDialog = true;
+    this.loginForm.reset();
+    this.loginResult = null;
+  }
+
+  closeLoginDialog(): void {
+    this.showLoginDialog = false;
+    this.loginForm.reset();
+    this.loginResult = null;
+  }
+
+  onLogin(): void {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    this.isLoggingIn = true;
+    this.loginResult = null;
+
+    const loginData = {
+      userName: this.loginForm.get('userName')?.value,
+      password: this.loginForm.get('password')?.value,
+      deviceCode: '0'
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+
+    console.log('Sending login request:', loginData);
+
+    // Call the /api/Authorize/token endpoint
+    this.http.post('http://localhost:7136/api/Authorize/token', loginData, { headers, observe: 'response' })
+      .subscribe({
+        next: (response) => {
+          this.isLoggingIn = false;
+          
+          // Extract access_token from response and save to cookies
+          const responseData = response.body as any;
+          if (responseData && responseData.access_token) {
+            this.setCookie('access_token', responseData.access_token, 7); // Save for 7 days
+            console.log('Access token saved to cookies');
+          }
+          
+          this.loginResult = {
+            success: true,
+            status: response.status,
+            data: response.body,
+            timestamp: new Date()
+          };
+          console.log('Login successful:', response.body);
+        },
+        error: (error) => {
+          this.isLoggingIn = false;
+          console.error('Login error details:', error);
+          console.error('Error status:', error.status);
+          console.error('Error message:', error.message);
+          console.error('Error body:', error.error);
+          
+          this.loginResult = {
+            success: false,
+            status: error.status || 500,
+            error: error.error?.message || error.error?.title || error.message || 'Login failed',
+            timestamp: new Date(),
+            fullError: error.error // Add full error details for debugging
+          };
+        }
+      });
+  }
+
+  logout(): void {
+    // Clear the access_token from cookies
+    this.deleteCookie('access_token');
+    console.log('User logged out, access token cleared from cookies');
+    
+    // Reset login form and result
+    this.loginForm.reset();
+    this.loginResult = null;
+    this.showLoginDialog = false;
+  }
+
+  // Check if user is logged in by checking for access_token in cookies
+  isLoggedIn(): boolean {
+    return this.getCookie('access_token') !== null;
+  }
+
+  // Get the current access token from cookies
+  getAccessToken(): string | null {
+    return this.getCookie('access_token');
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.loginForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getFieldError(fieldName: string): string {
+    const field = this.loginForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        return `${fieldName} is required`;
+      }
+      if (field.errors['email']) {
+        return 'Please enter a valid email address';
+      }
+      if (field.errors['minlength']) {
+        return `Password must be at least ${field.errors['minlength'].requiredLength} characters`;
+      }
+    }
+    return '';
   }
 }
