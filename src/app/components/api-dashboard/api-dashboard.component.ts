@@ -1718,6 +1718,102 @@ interface TestPayload {
         </div>
       </div>
     </p-dialog>
+
+    <!-- Confirm Email Dialog -->
+    <p-dialog 
+      [(visible)]="showConfirmEmailDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Confirm Email"
+      (onHide)="closeConfirmEmailDialog()"
+    >
+      <div class="confirm-email-dialog">
+        <form [formGroup]="confirmEmailForm" (ngSubmit)="onConfirmEmail()" class="confirm-email-form">
+          <div class="form-field">
+            <label for="userId">User ID *</label>
+            <input 
+              type="text" 
+              id="userId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isConfirmEmailFieldInvalid('userId')"
+            />
+            <div 
+              *ngIf="isConfirmEmailFieldInvalid('userId')" 
+              class="error-message"
+            >
+              {{ getConfirmEmailFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="code">Confirmation Code *</label>
+            <input 
+              type="text" 
+              id="code"
+              formControlName="code" 
+              pInputText 
+              placeholder="Enter confirmation code"
+              [class.ng-invalid]="isConfirmEmailFieldInvalid('code')"
+            />
+            <div 
+              *ngIf="isConfirmEmailFieldInvalid('code')" 
+              class="error-message"
+            >
+              {{ getConfirmEmailFieldError('code') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Confirm Email" 
+              icon="pi pi-check"
+              [disabled]="confirmEmailForm.invalid || isConfirmingEmail"
+              [loading]="isConfirmingEmail"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeConfirmEmailDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <!-- Confirm Email Result -->
+        <div *ngIf="confirmEmailResult" class="result-section">
+          <div class="result-header" [ngClass]="confirmEmailResult.success ? 'success' : 'error'">
+            <i [class]="confirmEmailResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ confirmEmailResult.success ? 'Email Confirmed Successfully!' : 'Email Confirmation Failed' }}</span>
+          </div>
+          
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ confirmEmailResult.status }}</p>
+            <p><strong>Time:</strong> {{ confirmEmailResult.timestamp | date:'medium' }}</p>
+            
+            <div *ngIf="confirmEmailResult.success && confirmEmailResult.data" class="success-data">
+              <h4>Confirmation Details:</h4>
+              <pre>{{ confirmEmailResult.data | json }}</pre>
+            </div>
+            
+            <div *ngIf="!confirmEmailResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ confirmEmailResult.error }}</p>
+              <details *ngIf="confirmEmailResult.fullError">
+                <summary>Technical Details</summary>
+                <pre>{{ confirmEmailResult.fullError | json }}</pre>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
   `,
   styles: [`
     .api-dashboard-container {
@@ -1736,14 +1832,9 @@ interface TestPayload {
       margin-bottom: 0.5rem;
     }
 
-    .dashboard-header h1 i {
-      margin-right: 0.5rem;
-    }
-
     .dashboard-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
       margin-top: 2rem;
     }
 
@@ -1773,18 +1864,12 @@ interface TestPayload {
     .category-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1rem;
       margin-top: 1rem;
-    }
-
-    .category-card {
-      height: 100%;
     }
 
     .category-info {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
       margin-bottom: 1rem;
     }
 
@@ -1796,18 +1881,9 @@ interface TestPayload {
     .category-methods {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1rem;
     }
 
     .category-endpoints {
-      padding: 1rem 0;
     }
 
     .category-header {
@@ -2252,30 +2328,30 @@ interface TestPayload {
     }
 
     /* Registration Dialog Styles */
-    .register-form, .password-reset-form {
+    .register-form, .password-reset-form, .confirm-email-form {
       display: flex;
       flex-direction: column;
     }
 
-    .register-form .form-field, .password-reset-form .form-field {
+    .register-form .form-field, .password-reset-form .form-field, .confirm-email-form .form-field {
       display: flex;
       flex-direction: column;
     }
 
-    .register-form input, .password-reset-form input {
+    .register-form input, .password-reset-form input, .confirm-email-form input {
       border: 1px solid #d1d5db;
     }
 
-    .register-form input:focus, .password-reset-form input:focus {
+    .register-form input:focus, .password-reset-form input:focus, .confirm-email-form input:focus {
       outline: none;
       border-color: #3b82f6;
     }
 
-    .register-form input.ng-invalid.ng-touched, .password-reset-form input.ng-invalid.ng-touched {
+    .register-form input.ng-invalid.ng-touched, .password-reset-form input.ng-invalid.ng-touched, .confirm-email-form input.ng-invalid.ng-touched {
       border-color: #ef4444;
     }
 
-    .register-form .form-actions, .password-reset-form .form-actions {
+    .register-form .form-actions, .password-reset-form .form-actions, .confirm-email-form .form-actions {
       display: flex;
       justify-content: flex-end;
     }
@@ -2333,6 +2409,12 @@ export class ApiDashboardComponent implements OnInit {
   isResettingPassword = false;
   passwordResetResult: any = null;
   showPasswordResetDialog = false;
+
+  // Confirm Email form properties
+  confirmEmailForm: FormGroup;
+  isConfirmingEmail = false;
+  confirmEmailResult: any = null;
+  showConfirmEmailDialog = false;
   
   testPayload: TestPayload = {
     endpoint: '',
@@ -2385,6 +2467,11 @@ export class ApiDashboardComponent implements OnInit {
       confirmPassword: ['', [Validators.required]]
     }, { 
       validators: this.passwordResetMatchValidator 
+    });
+
+    this.confirmEmailForm = this.fb.group({
+      userId: ['', [Validators.required]],
+      code: ['', [Validators.required]]
     });
   }
 
@@ -3121,8 +3208,9 @@ export class ApiDashboardComponent implements OnInit {
   // Quick Actions authentication handlers
   handleConfirmEmail(): void {
     console.log('Confirm Email clicked');
-    // TODO: Implement confirm email functionality
-    alert('Confirm Email functionality - Implementation pending');
+    this.showConfirmEmailDialog = true;
+    this.confirmEmailResult = null;
+    this.confirmEmailForm.reset();
   }
 
   handleRefreshToken(): void {
@@ -3189,5 +3277,85 @@ export class ApiDashboardComponent implements OnInit {
     console.log('QR Code clicked');
     // TODO: Implement QR Code functionality
     alert('QR Code functionality - Implementation pending');
+  }
+
+  // Confirm Email Dialog Methods
+  openConfirmEmailDialog(): void {
+    this.showConfirmEmailDialog = true;
+    this.confirmEmailResult = null;
+    this.confirmEmailForm.reset();
+  }
+
+  closeConfirmEmailDialog(): void {
+    this.showConfirmEmailDialog = false;
+    this.confirmEmailResult = null;
+  }
+
+  onConfirmEmail(): void {
+    if (this.confirmEmailForm.invalid) {
+      return;
+    }
+
+    this.isConfirmingEmail = true;
+    this.confirmEmailResult = null;
+
+    const confirmEmailData = {
+      userId: this.confirmEmailForm.get('userId')?.value,
+      code: this.confirmEmailForm.get('code')?.value
+    };
+
+    console.log('Sending confirm email request:', confirmEmailData);
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJpeXlhbmFybXNlY0BnbWFpbC5jb20iLCJqdGkiOiI4ZDViNTIwMi03Nzg0LTQ3NTQtODFjOS1iZGFmMzk4MDYwZjQiLCJlbWFpbCI6Iml5eWFuYXJtc2VjQGdtYWlsLmNvbSIsImlzcyI6IkhhZHZpZGEgSW5jIiwidWlkIjoiNzQ1ODBmOGQtYzVhYi00ZmEzLTgzYzgtMTkxNWU4ZjIwMDY0IiwiaXAiOiIxOTIuMTY4LjI5LjE1MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Iml5eWFuYXJtc2VjQGdtYWlsLmNvbSIsInJvbGVzIjoiQ2hvcnVzIFNpdGUgQWRtaW4iLCJleHAiOjE3NTg0NTIxMTJ9.'
+    });
+
+    this.http.post('http://localhost:7136/api/authorize/confirmEmail', confirmEmailData, { 
+      headers, 
+      observe: 'response',
+      responseType: 'text'
+    }).subscribe({
+      next: (response) => {
+        this.isConfirmingEmail = false;
+        console.log('Confirm email successful:', response.body);
+        this.confirmEmailResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isConfirmingEmail = false;
+        console.error('Confirm email error details:', error);
+        this.confirmEmailResult = {
+          success: false,
+          status: error.status || 0,
+          error: error.error?.message || error.error?.title || error.message || 'Email confirmation failed',
+          fullError: error,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isConfirmEmailFieldInvalid(fieldName: string): boolean {
+    const field = this.confirmEmailForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getConfirmEmailFieldError(fieldName: string): string {
+    const field = this.confirmEmailForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'userId': 'User ID',
+          'code': 'Confirmation code'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+    }
+    return '';
   }
 }
