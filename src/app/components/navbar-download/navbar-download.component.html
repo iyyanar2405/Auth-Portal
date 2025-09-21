@@ -1,6 +1,6 @@
  <ng-container *transloco="let t">
  @if(downloadCount > 0) {
-        <customer-portal-navbar-button
+        <auth-portal-navbar-button
           iconPosition="right"
           [badgeCounter]="badgeCounter"
           [icon]="downloadIcon"
@@ -8,7 +8,7 @@
           [isDownload]="true"
           [label]="t('exportDocument.downloads')"
           (clickEvent)="onToggleDownloadOverlay(downloadOverlay, $event)">
-        </customer-portal-navbar-button>
+        </auth-portal-navbar-button>
       }
 
       <p-overlayPanel #downloadOverlay styleClass="is-caret-hidden">

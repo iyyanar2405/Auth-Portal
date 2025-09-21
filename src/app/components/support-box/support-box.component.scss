@@ -1,4 +1,4 @@
-@use '../../../styles/pattern/pattern/colors';
+@use '../../../styles/pattern/colors';
 @use '../../../styles/pattern/utility';
 
 :host {
@@ -9,6 +9,6 @@
   padding: utility.get-rem(8) utility.get-rem(10);
 }
 
-shared-button {
-  color: colors.get-color('UiWhite');
+.support-button {
+  color: #ffffff;
 }

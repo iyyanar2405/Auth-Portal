@@ -3,10 +3,10 @@ import { TranslocoService } from '@jsverse/transloco';
 import { NgxsModule } from '@ngxs/store';
 import { MessageService } from 'primeng/api';
 
-import { LoggingService, ServiceNowService } from '@customer-portal/core';
-import { UnreadActionsStoreService } from '@customer-portal/data-access/actions';
-import { UnreadNotificationsStoreService } from '@customer-portal/data-access/notifications';
-import { createTranslationServiceMock } from '@customer-portal/shared';
+import { LoggingService, ServiceNowService } from '@auth-portal/core';
+import { UnreadActionsStoreService } from '@auth-portal/data-access/actions';
+import { UnreadNotificationsStoreService } from '@auth-portal/data-access/notifications';
+import { createTranslationServiceMock } from '@auth-portal/shared';
 
 import { NavbarComponent } from './navbar.component';
 

@@ -8,21 +8,27 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
+import { BehaviorSubject } from 'rxjs';
 
-import {
-  DocumentDownloadTask,
-  DocumentQueueService,
-} from '@customer-portal/data-access/documents/services';
+// Mock interfaces and services
+interface DocumentDownloadTask {
+  id: string;
+  fileName: string;
+  progress: number;
+  status: 'downloading' | 'completed' | 'failed';
+}
+
+class DocumentQueueService {
+  downloadTasks$ = new BehaviorSubject<DocumentDownloadTask[]>([]);
+}
 
 import { NavbarButtonComponent } from '../navbar-button';
 
 @Component({
-  selector: 'customer-portal-navbar-download',
+  selector: 'auth-portal-navbar-download',
   imports: [
     CommonModule,
-    TranslocoDirective,
     OverlayPanelModule,
     NavbarButtonComponent,
   ],
@@ -48,7 +54,6 @@ export class NavbarDownloadComponent implements OnInit {
   }
 
   constructor(
-    private ts: TranslocoService,
     private documentQueueService: DocumentQueueService,
     private cdr: ChangeDetectorRef,
   ) {}

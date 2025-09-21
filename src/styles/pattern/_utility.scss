@@ -1,0 +1,134 @@
+// Utility SCSS patterns for Auth Portal
+
+// Base unit for rem calculations
+$base-font-size: 16px;
+
+// Function to convert pixels to rem
+@function get-rem($px) {
+  @if type-of($px) == string {
+    // If it's a string (like calc() expression), return as-is
+    @return $px;
+  }
+  @return ($px / 16) * 1rem;
+}
+
+// Spacing utilities
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-xxl: 3rem;
+
+// Common utility classes
+.d-flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+// Margin utilities
+.m-0 { margin: 0; }
+.m-1 { margin: $spacing-xs; }
+.m-2 { margin: $spacing-sm; }
+.m-3 { margin: $spacing-md; }
+.m-4 { margin: $spacing-lg; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: $spacing-xs; }
+.mt-2 { margin-top: $spacing-sm; }
+.mt-3 { margin-top: $spacing-md; }
+.mt-4 { margin-top: $spacing-lg; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: $spacing-xs; }
+.mb-2 { margin-bottom: $spacing-sm; }
+.mb-3 { margin-bottom: $spacing-md; }
+.mb-4 { margin-bottom: $spacing-lg; }
+
+.ml-0 { margin-left: 0; }
+.ml-1 { margin-left: $spacing-xs; }
+.ml-2 { margin-left: $spacing-sm; }
+.ml-3 { margin-left: $spacing-md; }
+.ml-4 { margin-left: $spacing-lg; }
+
+.mr-0 { margin-right: 0; }
+.mr-1 { margin-right: $spacing-xs; }
+.mr-2 { margin-right: $spacing-sm; }
+.mr-3 { margin-right: $spacing-md; }
+.mr-4 { margin-right: $spacing-lg; }
+
+// Padding utilities
+.p-0 { padding: 0; }
+.p-1 { padding: $spacing-xs; }
+.p-2 { padding: $spacing-sm; }
+.p-3 { padding: $spacing-md; }
+.p-4 { padding: $spacing-lg; }
+
+.pt-0 { padding-top: 0; }
+.pt-1 { padding-top: $spacing-xs; }
+.pt-2 { padding-top: $spacing-sm; }
+.pt-3 { padding-top: $spacing-md; }
+.pt-4 { padding-top: $spacing-lg; }
+
+.pb-0 { padding-bottom: 0; }
+.pb-1 { padding-bottom: $spacing-xs; }
+.pb-2 { padding-bottom: $spacing-sm; }
+.pb-3 { padding-bottom: $spacing-md; }
+.pb-4 { padding-bottom: $spacing-lg; }
+
+.pl-0 { padding-left: 0; }
+.pl-1 { padding-left: $spacing-xs; }
+.pl-2 { padding-left: $spacing-sm; }
+.pl-3 { padding-left: $spacing-md; }
+.pl-4 { padding-left: $spacing-lg; }
+
+.pr-0 { padding-right: 0; }
+.pr-1 { padding-right: $spacing-xs; }
+.pr-2 { padding-right: $spacing-sm; }
+.pr-3 { padding-right: $spacing-md; }
+.pr-4 { padding-right: $spacing-lg; }
+
+// Border utilities
+.border {
+  border: 1px solid #dee2e6;
+}
+
+.border-0 {
+  border: 0;
+}
+
+.border-radius {
+  border-radius: 0.25rem;
+}
+
+// Shadow utilities
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.shadow {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.shadow-lg {
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}

@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
-
-import { SidebarComponent } from '../sidebar';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
-  selector: 'customer-portal-sidebar-mobile',
+  selector: 'auth-portal-sidebar-mobile',
   imports: [CommonModule, SidebarModule, SidebarComponent],
   templateUrl: './sidebar-mobile.component.html',
   styleUrl: './sidebar-mobile.component.scss',

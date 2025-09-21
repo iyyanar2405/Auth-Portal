@@ -1,12 +1,12 @@
 <ng-container *transloco="let t">
-  <customer-portal-navbar-button
+  <auth-portal-navbar-button
     icon="search"
     [isActive]="isButtonSearchActive()"
     [isDisabled]="false"
     [label]="t('search')"
     (clickEvent)="searchOverlay.toggle($event)"
   >
-  </customer-portal-navbar-button>
+  </auth-portal-navbar-button>
 
   <p-overlayPanel
     #searchOverlay

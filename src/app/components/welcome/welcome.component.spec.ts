@@ -3,7 +3,7 @@ import {
   AuthService, 
   createAuthServiceMock,
   getTranslocoModule 
-} from '@customer-portal/shared';
+} from '@auth-portal/shared';
 import { WelcomeComponent } from './welcome.component';
 
 describe('WelcomeComponent', () => {

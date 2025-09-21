@@ -1,0 +1,141 @@
+// Color variables for Auth Portal theme
+
+// Primary colors
+$primary-color: #007bff;
+$primary-dark: #0056b3;
+$primary-light: #66b3ff;
+
+// Secondary colors
+$secondary-color: #6c757d;
+$secondary-dark: #495057;
+$secondary-light: #adb5bd;
+
+// Success colors
+$success-color: #28a745;
+$success-dark: #1e7e34;
+$success-light: #71dd8a;
+
+// Danger colors
+$danger-color: #dc3545;
+$danger-dark: #c82333;
+$danger-light: #f1b0b7;
+
+// Warning colors
+$warning-color: #ffc107;
+$warning-dark: #e0a800;
+$warning-light: #fff3cd;
+
+// Info colors
+$info-color: #17a2b8;
+$info-dark: #138496;
+$info-light: #b3e5fc;
+
+// Light colors
+$light-color: #f8f9fa;
+$light-dark: #e9ecef;
+$light-light: #ffffff;
+
+// Dark colors
+$dark-color: #343a40;
+$dark-dark: #212529;
+$dark-light: #6c757d;
+
+// Background colors
+$bg-primary: $primary-color;
+$bg-secondary: $secondary-color;
+$bg-success: $success-color;
+$bg-danger: $danger-color;
+$bg-warning: $warning-color;
+$bg-info: $info-color;
+$bg-light: $light-color;
+$bg-dark: $dark-color;
+$bg-white: #ffffff;
+
+// Text colors
+$text-primary: $primary-color;
+$text-secondary: $secondary-color;
+$text-success: $success-color;
+$text-danger: $danger-color;
+$text-warning: $warning-dark;
+$text-info: $info-color;
+$text-light: $light-color;
+$text-dark: $dark-color;
+$text-muted: #6c757d;
+$text-white: #ffffff;
+
+// Border colors
+$border-primary: $primary-color;
+$border-secondary: $secondary-color;
+$border-success: $success-color;
+$border-danger: $danger-color;
+$border-warning: $warning-color;
+$border-info: $info-color;
+$border-light: $light-dark;
+$border-dark: $dark-color;
+$border-white: #ffffff;
+
+// Additional utility colors
+$body-bg: #ffffff;
+$body-color: #212529;
+$link-color: $primary-color;
+$link-hover-color: $primary-dark;
+
+// Component specific colors
+$navbar-bg: #ffffff;
+$navbar-border: #dee2e6;
+$sidebar-bg: #f8f9fa;
+$sidebar-border: #dee2e6;
+$footer-bg: #f8f9fa;
+$footer-border: #dee2e6;
+
+// Input colors
+$input-bg: #ffffff;
+$input-border: #ced4da;
+$input-focus-border: $primary-color;
+$input-placeholder-color: #6c757d;
+
+// Button colors
+$btn-primary-bg: $primary-color;
+$btn-primary-border: $primary-color;
+$btn-secondary-bg: $secondary-color;
+$btn-secondary-border: $secondary-color;
+
+// Alert colors
+$alert-primary-bg: #cce7ff;
+$alert-primary-border: #99d6ff;
+$alert-success-bg: #d4edda;
+$alert-success-border: #c3e6cb;
+$alert-danger-bg: #f8d7da;
+$alert-danger-border: #f1aeb5;
+$alert-warning-bg: #fff3cd;
+$alert-warning-border: #ffeaa7;
+$alert-info-bg: #d1ecf1;
+$alert-info-border: #b3e5fc;
+
+// Color map for get-color function
+$color-map: (
+  'primary': $primary-color,
+  'secondary': $secondary-color,
+  'success': $success-color,
+  'danger': $danger-color,
+  'warning': $warning-color,
+  'info': $info-color,
+  'light': $light-color,
+  'dark': $dark-color,
+  'white': #ffffff,
+  'UiWhite': #ffffff,
+  'DarkBlue': #343a40,
+  'LandGreen': #28a745,
+  '5kyBlue10': #e3f2fd,
+  'SkyBlue90': #f8f9fa,
+  'Sandstone30': #666666
+);
+
+// Function to get color from map
+@function get-color($color-name) {
+  @if map-has-key($color-map, $color-name) {
+    @return map-get($color-map, $color-name);
+  }
+  @warn "Color '#{$color-name}' not found in color map";
+  @return #000000; // fallback color
+}

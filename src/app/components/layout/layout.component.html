@@ -3,21 +3,21 @@
   <lib-spinner></lib-spinner>
 } @else {
   @if (coBrowsingSharedService.getCoBrowsingUserEmail()) {
-    <customer-portal-navbar-co-browsing></customer-portal-navbar-co-browsing>
+    <auth-portal-navbar-co-browsing></auth-portal-navbar-co-browsing>
   }
   <div class="app-container">
-    <customer-portal-navbar
+    <auth-portal-navbar
       (toggleSidebarEvent)="sidebarMobile.onToggle($event)">
-    </customer-portal-navbar>
-    <customer-portal-sidebar></customer-portal-sidebar>
-    <customer-portal-footer></customer-portal-footer>
+    </auth-portal-navbar>
+    <auth-portal-sidebar></auth-portal-sidebar>
+    <auth-portal-footer></auth-portal-footer>
     <main [ngClass]="{ 'no-breadcrumb': breadcrumbVisibility }">
-      <customer-portal-breadcrumb></customer-portal-breadcrumb>
+      <auth-portal-breadcrumb></auth-portal-breadcrumb>
       <div class="content">
         <router-outlet></router-outlet>
         <lib-spinner></lib-spinner>
       </div>
-      <customer-portal-sidebar-mobile #sidebarMobile></customer-portal-sidebar-mobile>
+      <auth-portal-sidebar-mobile #sidebarMobile></auth-portal-sidebar-mobile>
     </main>
   </div>
 }

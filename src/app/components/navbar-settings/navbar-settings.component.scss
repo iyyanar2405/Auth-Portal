@@ -44,7 +44,7 @@ tr {
   gap: utility.get-rem(2);
 }
 
-customer-portal-navbar-button.back::ng-deep {
+auth-portal-navbar-button.back::ng-deep {
   background-color: colors.get-color('Sandstone95');
 
   @include mixins.respond-to(tablet) {

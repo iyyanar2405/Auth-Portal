@@ -6,13 +6,13 @@ import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 
-import { SessionTimeoutService, SpinnerComponent } from '@customer-portal/core';
-import { CustomConfirmDialogComponent } from '@customer-portal/shared/components/custom-confirm-dialog';
-import { CustomToastComponent } from '@customer-portal/shared/components/custom-toast';
-import { AuthTokenConstants } from '@customer-portal/shared/constants';
-import { BreadcrumbService } from '@customer-portal/shared/services/breadcrumb';
-import { CoBrowsingSharedService } from '@customer-portal/shared/services/co-browsing';
-import { ScriptLoaderService } from '@customer-portal/shared/services/loader';
+import { SessionTimeoutService, SpinnerComponent } from '@auth-portal/core';
+import { CustomConfirmDialogComponent } from '@auth-portal/shared/components/custom-confirm-dialog';
+import { CustomToastComponent } from '@auth-portal/shared/components/custom-toast';
+import { AuthTokenConstants } from '@auth-portal/shared/constants';
+import { BreadcrumbService } from '@auth-portal/shared/services/breadcrumb';
+import { CoBrowsingSharedService } from '@auth-portal/shared/services/co-browsing';
+import { ScriptLoaderService } from '@auth-portal/shared/services/loader';
 
 import { BreadcrumbComponent } from '../breadcrumb';
 import { FooterComponent } from '../footer';
@@ -22,7 +22,7 @@ import { SidebarComponent } from '../sidebar';
 import { SidebarMobileComponent } from '../sidebar-mobile';
 
 @Component({
-  selector: 'customer-portal-layout',
+  selector: 'auth-portal-layout',
   standalone: true,
   imports: [
     ButtonModule,
@@ -44,7 +44,7 @@ import { SidebarMobileComponent } from '../sidebar-mobile';
   styleUrls: ['./layout.component.scss'],
 })
 export class LayoutComponent implements OnInit {
-  title = 'customer-portal';
+  title = 'auth-portal';
   isLoggedIn = false;
   isDnvUser = false;
   breadcrumbVisibility = false;

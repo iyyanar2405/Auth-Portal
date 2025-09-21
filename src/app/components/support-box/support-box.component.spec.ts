@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@jsverse/transloco';
-import { createTranslationServiceMock } from '@customer-portal/shared';
+import { createTranslationServiceMock } from '@auth-portal/shared';
 import { SupportBoxComponent } from './support-box.component';
 
 describe('SupportBoxComponent', () => {

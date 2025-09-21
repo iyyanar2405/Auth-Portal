@@ -1,44 +1,44 @@
 <ng-container *transloco="let t">
   <nav [ariaLabel]="t('navbarSearch')">
     <div class="wrapper">
-      <customer-portal-navbar-button
+      <auth-portal-navbar-button
         class="mobile-menu"
         icon="bars"
         [ariaLabel]="t('toggleMenu')"
         (clickEvent)="onToggleSidebar(true)">
-      </customer-portal-navbar-button>
+      </auth-portal-navbar-button>
     </div>
 
     <div class="wrapper">
-      <customer-portal-navbar-button
+      <auth-portal-navbar-button
         icon="custom-check-list"
         iconPosition="right"
         [badgeCounter]="unreadActionsStoreService.unreadActions()"
         [isDisabled]="false"
         [label]="t('actions')"
         (clickEvent)="onActionsClick('actions')">
-      </customer-portal-navbar-button>
+      </auth-portal-navbar-button>
 
-      <customer-portal-navbar-button
+      <auth-portal-navbar-button
         icon="bell"
         iconPosition="right"
         [badgeCounter]="unreadNotificationsStoreService.unreadNotifications()"
         [isDisabled]="false"
         [label]="t('notifications')"
         (clickEvent)="onNavigateTo('notifications')">
-      </customer-portal-navbar-button>
+      </auth-portal-navbar-button>
 
       @if (!coBrowsingSharedService.getCoBrowsingUserEmail()) {
-        <customer-portal-navbar-button
+        <auth-portal-navbar-button
           icon="question-circle"
           iconPosition="right"
           [isDisabled]="false"
           [label]="t('serviceNow.help')"
           (clickEvent)="openServiceNowGeneralHelp()">
-        </customer-portal-navbar-button>
+        </auth-portal-navbar-button>
       }
-      <customer-portal-navbar-download></customer-portal-navbar-download>
-      <customer-portal-navbar-settings></customer-portal-navbar-settings>
+      <auth-portal-navbar-download></auth-portal-navbar-download>
+      <auth-portal-navbar-settings></auth-portal-navbar-settings>
     </div>
   </nav>
 </ng-container>

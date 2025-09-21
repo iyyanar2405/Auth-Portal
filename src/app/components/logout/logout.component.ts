@@ -1,33 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { TranslocoDirective } from '@jsverse/transloco';
-
-import { environment } from '@customer-portal/environments';
-import {
-  SharedButtonComponent,
-  SharedButtonType,
-} from '@customer-portal/shared/components/button';
-import { AuthService } from '@customer-portal/shared/services';
+import { Router } from '@angular/router';
+import { LocalAuthService } from '../../../../libs/shared/src/services/auth.service';
 
 @Component({
-  selector: 'customer-portal-logout',
-  imports: [CommonModule, SharedButtonComponent, TranslocoDirective],
+  selector: 'auth-portal-logout',
+  imports: [CommonModule],
   templateUrl: './logout.component.html',
   styleUrl: './logout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogoutComponent implements OnInit {
-  dnvLink = environment.dnvLink;
-  sharedButtonType = SharedButtonType;
+  dnvLink = 'https://www.dnv.com';
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: LocalAuthService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.authService.resetLogoutState();
+    // Perform logout and redirect
+    this.authService.logout();
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 2000); // Wait 2 seconds then redirect
   }
 
   onLoginClick(): void {
-    this.authService.login();
+    this.router.navigate(['/login']);
   }
 
   onGoToDnvClick(): void {

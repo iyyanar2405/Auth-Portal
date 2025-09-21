@@ -4,7 +4,7 @@ import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService } from 'primeng/api';
 import { concatMap, take } from 'rxjs';
 
-import { AppInitializerService } from '@customer-portal/permissions';
+import { AppInitializerService } from '@auth-portal/permissions';
 import {
     buttonStyleClass,
     CoBrowsingCookieService,
@@ -12,10 +12,10 @@ import {
     Language,
     ShareBButtonComponent,
     ShareBButtonType,
-} from '@customer-portal/shared';
+} from '@auth-portal/shared';
 
 @Component({
-    selector: 'customer-portal-navbar-co-browsing',
+    selector: 'auth-portal-navbar-co-browsing',
     standalone: true,
     imports: [CommonModule, TranslocoDirective, ShareBButtonComponent],
     templateUrl: './navbar-co-browsing.component.html',

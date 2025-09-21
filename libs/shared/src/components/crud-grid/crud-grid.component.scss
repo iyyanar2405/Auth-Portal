@@ -1,0 +1,225 @@
+.crud-card {
+  ::ng-deep .p-card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+
+  ::ng-deep .p-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .api-docs-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+
+    h3 {
+      color: #1f2937;
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+    }
+
+    .api-info {
+      p {
+        margin-bottom: 0.5rem;
+        color: #374151;
+
+        code {
+          background: #e5e7eb;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-family: 'Courier New', monospace;
+          font-size: 0.875rem;
+          color: #1f2937;
+        }
+      }
+
+      .api-methods {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+
+        .method-item {
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #e5e7eb;
+
+          &:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+          }
+
+          h4 {
+            color: #667eea;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+          }
+
+          p {
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+          }
+
+          .code-example {
+            margin: 0.75rem 0;
+
+            strong {
+              color: #374151;
+              font-size: 0.875rem;
+            }
+
+            pre {
+              background: #f3f4f6;
+              padding: 1rem;
+              border-radius: 4px;
+              border-left: 4px solid #667eea;
+              overflow-x: auto;
+              font-size: 0.8rem;
+              color: #1f2937;
+              margin: 0.5rem 0;
+              line-height: 1.4;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ::ng-deep .p-toolbar {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+
+    .p-toolbar-group-start,
+    .p-toolbar-group-end {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  ::ng-deep .p-datatable {
+    .p-datatable-header {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .p-datatable-thead > tr > th {
+      background: #f3f4f6;
+      color: #374151;
+      font-weight: 600;
+      border-color: #e5e7eb;
+    }
+
+    .p-datatable-tbody > tr > td {
+      border-color: #e5e7eb;
+      color: #374151;
+    }
+
+    .p-datatable-tbody > tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    .p-datatable-tbody > tr:hover {
+      background: #f3f4f6;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+
+    .p-button {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  .form-field {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .p-error {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+  }
+
+  ::ng-deep .p-dialog {
+    .p-dialog-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .p-dialog-content {
+      padding: 2rem;
+    }
+  }
+
+  ::ng-deep .p-tag {
+    &.p-tag-success {
+      background: #10b981;
+    }
+
+    &.p-tag-info {
+      background: #3b82f6;
+    }
+
+    &.p-tag-warning {
+      background: #f59e0b;
+    }
+
+    &.p-tag-danger {
+      background: #ef4444;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .crud-card {
+    .api-docs-section {
+      padding: 1rem;
+
+      .api-info .api-methods .method-item .code-example pre {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+      }
+    }
+
+    ::ng-deep .p-toolbar {
+      flex-direction: column;
+      gap: 1rem;
+
+      .p-toolbar-group-start,
+      .p-toolbar-group-end {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      width: fit-content;
+    }
+  }
+}

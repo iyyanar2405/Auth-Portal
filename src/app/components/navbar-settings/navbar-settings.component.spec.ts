@@ -8,13 +8,13 @@ import {
   createSettingsCoBrowsingStoreServiceMock,
   ProfileLanguageStoreService,
   SettingsCoBrowsingStoreService,
-} from '@customer-portal/data-access/settings';
+} from '@auth-portal/data-access/settings';
 import {
   AuthService,
   createAuthServiceMock,
   createTranslationServiceMock,
   Language,
-} from '@customer-portal/shared';
+} from '@auth-portal/shared';
 
 import { NavbarSettingsComponent } from './navbar-settings.component';
 

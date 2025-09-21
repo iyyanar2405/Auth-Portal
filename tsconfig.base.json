@@ -8,8 +8,7 @@
     "lib": ["es2020", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@auth-portal/libs": ["libs/src/index.ts"],
-      "@auth-portal/shared": ["shared/src/index.ts"]
+      "@auth-portal/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -3,8 +3,8 @@ import { TranslocoService } from '@jsverse/transloco';
 import { 
   createProfileStoreServiceMock, 
   ProfileStoreService 
-} from '@customer-portal/data-access/settings';
-import { createTranslationServiceMock } from '@customer-portal/shared';
+} from '@auth-portal/data-access/settings';
+import { createTranslationServiceMock } from '@auth-portal/shared';
 import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {

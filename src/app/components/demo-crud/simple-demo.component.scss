@@ -1,0 +1,224 @@
+.demo-container {
+  padding: 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+
+  ::ng-deep .p-card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+
+  ::ng-deep .p-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 12px 12px 0 0;
+  }
+
+  ::ng-deep .p-tabview {
+    .p-tabview-nav {
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+
+      .p-tabview-nav-link {
+        color: #374151;
+        font-weight: 500;
+
+        &.p-highlight {
+          color: #667eea;
+          border-bottom-color: #667eea;
+        }
+      }
+    }
+
+    .p-tabview-panels {
+      background: white;
+      padding: 2rem;
+    }
+  }
+
+  .api-docs {
+    h3 {
+      color: #1f2937;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .api-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+
+      h4 {
+        color: #374151;
+        margin-bottom: 1rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      .endpoint {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 6px;
+        border-left: 4px solid #667eea;
+
+        strong {
+          color: #667eea;
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        .code-block {
+          margin-top: 1rem;
+
+          p {
+            color: #374151;
+            margin: 0.5rem 0;
+            font-weight: 500;
+          }
+
+          pre {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+            color: #1f2937;
+            margin: 0.5rem 0;
+            line-height: 1.4;
+            font-family: 'Courier New', monospace;
+          }
+        }
+      }
+    }
+  }
+
+  .crud-demo {
+    h3 {
+      color: #1f2937;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    p {
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+
+    ::ng-deep .p-datatable {
+      .p-datatable-thead > tr > th {
+        background: #f3f4f6;
+        color: #374151;
+        font-weight: 600;
+        border-color: #e5e7eb;
+      }
+
+      .p-datatable-tbody > tr > td {
+        border-color: #e5e7eb;
+        color: #374151;
+      }
+
+      .p-datatable-tbody > tr:nth-child(even) {
+        background: #f9fafb;
+      }
+
+      .p-datatable-tbody > tr:hover {
+        background: #f3f4f6;
+      }
+    }
+
+    .status-active {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .status-inactive {
+      color: #ef4444;
+      font-weight: 600;
+    }
+  }
+
+  .menu-config {
+    h3 {
+      color: #1f2937;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    p {
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+
+    .menu-item {
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+
+      h4 {
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      p {
+        color: #6b7280;
+        margin-bottom: 1rem;
+      }
+
+      .api-ref {
+        strong {
+          color: #374151;
+          font-weight: 600;
+        }
+
+        code {
+          background: #e5e7eb;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-family: 'Courier New', monospace;
+          font-size: 0.875rem;
+          color: #1f2937;
+          margin-left: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .actions {
+    margin-top: 2rem;
+    text-align: center;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .demo-container {
+    padding: 1rem;
+
+    ::ng-deep .p-tabview-panels {
+      padding: 1rem;
+    }
+
+    .api-docs .api-section {
+      padding: 1rem;
+
+      .endpoint .code-block pre {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+      }
+    }
+
+    .menu-config .menu-item {
+      padding: 1rem;
+    }
+  }
+}

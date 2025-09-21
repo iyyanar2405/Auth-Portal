@@ -2,97 +2,69 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   OnInit,
   output,
+  inject
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
-
-import {
-  BaseServiceNowParams,
-  LoggingService,
-  ServiceNowService,
-} from '@customer-portal/core';
-import { UnreadActionsStoreService } from '@customer-portal/data-access/actions/state';
-import { UnreadNotificationsStoreService } from '@customer-portal/data-access/notifications/state';
-import {
-  ProfileLanguageStoreService,
-  ProfileStoreService,
-} from '@customer-portal/data-access/settings';
-import { getToastContentBySeverity } from '@customer-portal/shared/helpers';
-import { ToastSeverity } from '@customer-portal/shared/models';
-import { CoBrowsingSharedService } from '@customer-portal/shared/services';
-
-import { NavbarButtonComponent } from '../navbar-button';
-import { NavbarDownloadComponent } from '../navbar-download';
-import { NavbarSettingsComponent } from '../navbar-settings';
+import { ButtonModule } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
-  selector: 'customer-portal-navbar',
+  selector: 'auth-portal-navbar',
+  standalone: true,
   imports: [
     CommonModule,
-    TranslocoDirective,
-    NavbarButtonComponent,
-    NavbarSettingsComponent,
-    NavbarDownloadComponent,
+    ButtonModule,
+    MenuModule
   ],
-  providers: [UnreadNotificationsStoreService, UnreadActionsStoreService],
-  templateUrl: './navbar.component.html',
+  template: `
+    <nav class="navbar-container">
+      <div class="navbar-left">
+        <p-button 
+          icon="pi pi-bars" 
+          [text]="true"
+          (click)="toggleSidebar()"
+          class="sidebar-toggle">
+        </p-button>
+        <h3 class="navbar-title">Auth Portal</h3>
+      </div>
+      <div class="navbar-right">
+        <p-button 
+          label="Profile" 
+          icon="pi pi-user"
+          [text]="true"
+          class="profile-btn">
+        </p-button>
+        <p-button 
+          label="Logout" 
+          icon="pi pi-sign-out"
+          [text]="true"
+          (click)="logout()"
+          class="logout-btn">
+        </p-button>
+      </div>
+    </nav>
+  `,
   styleUrl: './navbar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent implements OnInit {
   public toggleSidebarEvent = output<boolean>();
-  serviceNowService = inject(ServiceNowService);
-
-  messageService = inject(MessageService);
-  loggingService = inject(LoggingService);
-
-  constructor(
-    private readonly router: Router,
-    public unreadNotificationsStoreService: UnreadNotificationsStoreService,
-    public unreadActionsStoreService: UnreadActionsStoreService,
-    private ts: TranslocoService,
-    public readonly coBrowsingSharedService: CoBrowsingSharedService,
-    public profileLanguageStoreService: ProfileLanguageStoreService,
-    public profileStoreService: ProfileStoreService,
-  ) {}
+  private router = inject(Router);
 
   ngOnInit(): void {
-    this.unreadNotificationsStoreService.loadUnreadNotifications();
-    this.unreadActionsStoreService.loadUnreadActions();
+    // Initialize navbar
   }
 
-  onToggleSidebar(value: boolean): void {
-    this.toggleSidebarEvent.emit(value);
+  toggleSidebar(): void {
+    this.toggleSidebarEvent.emit(true);
   }
 
-  onNavigateTo(route: string): void {
-    this.router.navigate([`/${route}`]);
-  }
-
-  onActionsClick(route: string): void {
-    this.router.navigate([`/${route}`]);
-  }
-
-  openServiceNowGeneralHelp(): void {
-    try {
-      const helpParams: BaseServiceNowParams = {
-        language: this.profileLanguageStoreService.languageLabel(),
-        reportingCountry:
-          this.profileStoreService.profileInformation().countryCode,
-      };
-      this.serviceNowService.openCatalogItemSupport(helpParams);
-    } catch (error) {
-      const message = getToastContentBySeverity(ToastSeverity.Error);
-      message.summary = this.ts.translate('serviceNow.error');
-      this.messageService.add(message);
-
-      this.loggingService.logException(
-        error instanceof Error ? error : new Error(String(error)),
-      );
-    }
+  logout(): void {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    this.router.navigate(['/login']);
   }
 }

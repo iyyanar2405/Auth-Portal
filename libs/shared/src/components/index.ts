@@ -1,6 +1,7 @@
 export * from './actions-menu';
 export * from './button';
 export * from './chart';
+export * from './crud-grid';
 export * from './custom-card';
 export * from './custom-confirm-dialog';
 export * from './custom-dynamic-card';

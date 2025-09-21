@@ -1,51 +1,57 @@
-@use 'pattern/colors';
-@use 'pattern/mixins';
-@use 'pattern/typography';
-@use 'pattern/utility';
+@use '../../../styles/pattern/colors';
+@use '../../../styles/pattern/utility';
+
+.breadcrumb-container {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 0.75rem 1rem;
+}
 
 :host {
-  max-height: utility.get-rem(40);
-  background-color: colors.get-color('SkyBlue90');
-  @include mixins.gutter-for(top, right, left);
-  @include mixins.gutter-for(0.25, top);
-
-  @include mixins.respond-to(phone) {
-    max-height: utility.get-rem(55);
-  }
+  display: block;
+  width: 100%;
 }
 
-p-breadcrumb.p-element {
-  display: flex;
-  padding: utility.get-rem(12) 0;
-  padding-bottom: utility.get-rem(4);
-}
-
-p-breadcrumb.p-element::ng-deep {
+::ng-deep {
   .p-breadcrumb {
     border: 0;
     background-color: transparent;
+    padding: 0;
   }
 
   .p-breadcrumb-list {
-    gap: utility.get-rem(8);
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
   }
 
   .p-menuitem-separator {
-    margin: 0;
+    margin: 0 0.25rem;
+    color: #6c757d;
   }
 
   .p-menuitem-link {
-    @extend %#{typography.$text-m-pattern};
-    height: utility.get-rem(20);
-    color: colors.get-color('Sandstone30');
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+  }
 
-    @include mixins.respond-to(phone) {
-      height: auto;
-    }
+  .p-menuitem-link:hover {
+    background-color: #e9ecef;
+    color: #007bff;
   }
 
   .p-menuitem-icon {
-    font-size: utility.get-rem(14);
-    color: colors.get-color('Sandstone30');
+    font-size: 0.875rem;
+    margin-right: 0.25rem;
+  }
+
+  .p-breadcrumb-list li:last-child .p-menuitem-link {
+    color: #495057;
+    font-weight: 500;
+    pointer-events: none;
   }
 }

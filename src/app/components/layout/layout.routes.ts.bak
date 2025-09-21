@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 
-import { pagePermissionGuard } from '@customer-portal/permissions';
-import { RouteConfig } from '@customer-portal/shared/constants';
+import { pagePermissionGuard } from '@auth-portal/permissions';
+import { RouteConfig } from '@auth-portal/shared/constants';
 
 import { LayoutComponent } from './layout.component';
 
@@ -18,7 +18,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Overview.path,
         loadChildren: () =>
-          import('@customer-portal/features/overview').then(
+          import('@auth-portal/features/overview').then(
             (r) => r.OVERVIEW_ROUTES,
           ),
         title: RouteConfig.Overview.title,
@@ -26,7 +26,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.ExternalApps.path,
         loadChildren: () =>
-          import('@customer-portal/features/external-apps').then(
+          import('@auth-portal/features/external-apps').then(
             (r) => r.EXTERNAL_APPS_ROUTES,
           ),
         data: {
@@ -39,7 +39,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Audits.path,
         loadChildren: () =>
-          import('@customer-portal/features/audit').then((r) => r.AUDIT_ROUTES),
+          import('@auth-portal/features/audit').then((r) => r.AUDIT_ROUTES),
         data: {
           breadcrumb: {
             i18nKey: RouteConfig.Audits.i18nKey,
@@ -52,7 +52,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Certificates.path,
         loadChildren: () =>
-          import('@customer-portal/features/certificates').then(
+          import('@auth-portal/features/certificates').then(
             (r) => r.CERTIFICATES_ROUTES,
           ),
         data: {
@@ -67,7 +67,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Contracts.path,
         loadChildren: () =>
-          import('@customer-portal/features/contracts').then(
+          import('@auth-portal/features/contracts').then(
             (r) => r.CONTRACTS_ROUTES,
           ),
         data: {
@@ -82,7 +82,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Financials.path,
         loadChildren: () =>
-          import('@customer-portal/features/financials').then(
+          import('@auth-portal/features/financials').then(
             (r) => r.FINANCIALS_ROUTES,
           ),
         data: {
@@ -97,7 +97,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Findings.path,
         loadChildren: () =>
-          import('@customer-portal/features/findings').then(
+          import('@auth-portal/features/findings').then(
             (r) => r.FINDINGS_ROUTES,
           ),
         data: {
@@ -112,7 +112,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Schedule.path,
         loadChildren: () =>
-          import('@customer-portal/features/schedules').then(
+          import('@auth-portal/features/schedules').then(
             (r) => r.SCHEDULES_ROUTES,
           ),
         data: {
@@ -127,7 +127,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Actions.path,
         loadChildren: () =>
-          import('@customer-portal/features/actions').then(
+          import('@auth-portal/features/actions').then(
             (r) => r.ACTIONS_ROUTES,
           ),
         data: {
@@ -140,7 +140,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Notifications.path,
         loadChildren: () =>
-          import('@customer-portal/features/notifications').then(
+          import('@auth-portal/features/notifications').then(
             (r) => r.NOTIFICATIONS_ROUTES,
           ),
         data: {
@@ -153,7 +153,7 @@ export const LAYOUT_ROUTES: Route[] = [
       {
         path: RouteConfig.Settings.path,
         loadChildren: () =>
-          import('@customer-portal/features/settings').then(
+          import('@auth-portal/features/settings').then(
             (r) => r.SETTINGS_ROUTES,
           ),
         data: {

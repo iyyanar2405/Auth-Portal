@@ -1,11 +1,11 @@
 <ng-container *transloco="let t">
-  <customer-portal-navbar-button
+  <auth-portal-navbar-button
     icon="cog"
     iconPosition="right"
     [isActive]="isButtonSettingsActive()"
     [label]="t('settings')"
     (clickEvent)="onToggleOverlayPanel(settingsOverlay, $event)">
-  </customer-portal-navbar-button>
+  </auth-portal-navbar-button>
 
   <p-overlayPanel
     #settingsOverlay
@@ -18,25 +18,25 @@
         tabindex="0"
         [ngClass]="{ 'is-language-picker': isLanguagePickerVisible }">
         @if (isLanguagePickerVisible) {
-          <customer-portal-navbar-button
+          <auth-portal-navbar-button
             class="back"
             icon="arrow-left"
             [label]="t('back')"
             (clickEvent)="onChangeLanguagePickerVisibility(false)">
-          </customer-portal-navbar-button>
+          </auth-portal-navbar-button>
 
           <div class="grouping">
             @for (language of languages(); track language) {
-              <customer-portal-navbar-button
+              <auth-portal-navbar-button
                 [isMobileTextVisible]="true"
                 [label]="t('language.' + language)"
                 (clickEvent)="onChangeLanguage(language)">
-              </customer-portal-navbar-button>
+              </auth-portal-navbar-button>
             }
           </div>
         } @else {
           <div class="grouping">
-            <customer-portal-navbar-button
+            <auth-portal-navbar-button
               icon="user"
               [label]="t('navbar.personalInformation')"
               (clickEvent)="
@@ -47,9 +47,9 @@
                   $event
                 )
               ">
-            </customer-portal-navbar-button>
+            </auth-portal-navbar-button>
 
-            <customer-portal-navbar-button
+            <auth-portal-navbar-button
               icon="building"
               [label]="t('navbar.companyDetails')"
               (clickEvent)="
@@ -60,9 +60,9 @@
                   $event
                 )
               ">
-            </customer-portal-navbar-button>
+            </auth-portal-navbar-button>
 
-            <customer-portal-navbar-button
+            <auth-portal-navbar-button
               icon="sitemap"
               [label]="t('navbar.members')"
               (clickEvent)="
@@ -73,24 +73,24 @@
                   $event
                 )
               ">
-            </customer-portal-navbar-button>
+            </auth-portal-navbar-button>
           </div>
 
           <tr aria-hidden="true"></tr>
 
           <div class="grouping">
-            <customer-portal-navbar-button
+            <auth-portal-navbar-button
               icon="language"
               [label]="t('navbar.language')"
               (clickEvent)="onChangeLanguagePickerVisibility(true)">
-            </customer-portal-navbar-button>
+            </auth-portal-navbar-button>
 
             @if (!isDnvUser()) {
-              <customer-portal-navbar-button
+              <auth-portal-navbar-button
                 icon="sign-out"
                 [label]="t('navbar.logOut')"
                 (clickEvent)="onLogoutClick(settingsOverlay, $event)">
-              </customer-portal-navbar-button>
+              </auth-portal-navbar-button>
             }
           </div>
         }

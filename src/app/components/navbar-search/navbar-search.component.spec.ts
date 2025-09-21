@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@jsverse/transloco';
 
-import { createTranslocoServiceMock } from '@customer-portal/shared/testing';
+import { createTranslocoServiceMock } from '@auth-portal/shared/testing';
 
 import { NavbarSearchComponent } from './navbar-search.component';
 
