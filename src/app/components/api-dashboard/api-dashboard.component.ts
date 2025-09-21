@@ -20,6 +20,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { PanelModule } from 'primeng/panel';
 import { DividerModule } from 'primeng/divider';
+import { CheckboxModule } from 'primeng/checkbox';
 import { API_ENDPOINTS_INFO, API_CATEGORIES, ApiEndpointInfo } from '../../../../libs/shared/src/models/api-models';
 
 interface EndpointTestResult {
@@ -61,7 +62,8 @@ interface TestPayload {
     ProgressSpinnerModule,
     TooltipModule,
     PanelModule,
-    DividerModule
+    DividerModule,
+    CheckboxModule
   ],
   template: `
     <div class="api-dashboard-container">
@@ -1814,6 +1816,829 @@ interface TestPayload {
         </div>
       </div>
     </p-dialog>
+
+    <!-- Refresh Token Dialog -->
+    <p-dialog 
+      [(visible)]="showRefreshTokenDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Refresh Token"
+      (onHide)="closeRefreshTokenDialog()"
+    >
+      <div class="refresh-token-dialog">
+        <form [formGroup]="refreshTokenForm" (ngSubmit)="onRefreshToken()" class="refresh-token-form">
+          <div class="form-field">
+            <label for="refreshUserId">User ID *</label>
+            <input 
+              type="text" 
+              id="refreshUserId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isRefreshTokenFieldInvalid('userId')"
+            />
+            <div 
+              *ngIf="isRefreshTokenFieldInvalid('userId')" 
+              class="error-message"
+            >
+              {{ getRefreshTokenFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Refresh Token" 
+              icon="pi pi-refresh"
+              [disabled]="refreshTokenForm.invalid || isRefreshingToken"
+              [loading]="isRefreshingToken"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeRefreshTokenDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <!-- Refresh Token Result -->
+        <div *ngIf="refreshTokenResult" class="result-section">
+          <div class="result-header" [ngClass]="refreshTokenResult.success ? 'success' : 'error'">
+            <i [class]="refreshTokenResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ refreshTokenResult.success ? 'Token Refreshed Successfully!' : 'Token Refresh Failed' }}</span>
+          </div>
+          
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ refreshTokenResult.status }}</p>
+            <p><strong>Time:</strong> {{ refreshTokenResult.timestamp | date:'medium' }}</p>
+            
+            <div *ngIf="refreshTokenResult.success && refreshTokenResult.data" class="success-data">
+              <h4>New Token Details:</h4>
+              <pre>{{ refreshTokenResult.data | json }}</pre>
+            </div>
+            
+            <div *ngIf="!refreshTokenResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ refreshTokenResult.error }}</p>
+              <details *ngIf="refreshTokenResult.fullError">
+                <summary>Technical Details</summary>
+                <pre>{{ refreshTokenResult.fullError | json }}</pre>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Authentication Login Dialog -->
+    <p-dialog 
+      [(visible)]="showAuthLoginDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Authentication Login"
+      (onHide)="closeAuthLoginDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="authLoginForm" (ngSubmit)="onAuthLogin()" class="auth-form">
+          <div class="form-field">
+            <label for="authUserName">User Name *</label>
+            <input 
+              type="text" 
+              id="authUserName"
+              formControlName="userName" 
+              pInputText 
+              placeholder="Enter User Name"
+              [class.ng-invalid]="isAuthLoginFieldInvalid('userName')"
+            />
+            <div *ngIf="isAuthLoginFieldInvalid('userName')" class="error-message">
+              {{ getAuthLoginFieldError('userName') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="authPassword">Password *</label>
+            <input 
+              type="password" 
+              id="authPassword"
+              formControlName="password" 
+              pInputText 
+              placeholder="Enter Password"
+              [class.ng-invalid]="isAuthLoginFieldInvalid('password')"
+            />
+            <div *ngIf="isAuthLoginFieldInvalid('password')" class="error-message">
+              {{ getAuthLoginFieldError('password') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="authDeviceCode">Device Code *</label>
+            <input 
+              type="text" 
+              id="authDeviceCode"
+              formControlName="deviceCode" 
+              pInputText 
+              placeholder="Enter Device Code"
+              [class.ng-invalid]="isAuthLoginFieldInvalid('deviceCode')"
+            />
+            <div *ngIf="isAuthLoginFieldInvalid('deviceCode')" class="error-message">
+              {{ getAuthLoginFieldError('deviceCode') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Login" 
+              icon="pi pi-sign-in"
+              [disabled]="authLoginForm.invalid || isAuthLoggingIn"
+              [loading]="isAuthLoggingIn"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeAuthLoginDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="authLoginResult" class="result-section">
+          <div class="result-header" [ngClass]="authLoginResult.success ? 'success' : 'error'">
+            <i [class]="authLoginResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ authLoginResult.success ? 'Login Successful!' : 'Login Failed' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ authLoginResult.status }}</p>
+            <p><strong>Time:</strong> {{ authLoginResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="authLoginResult.success && authLoginResult.data" class="success-data">
+              <h4>Response:</h4>
+              <pre>{{ authLoginResult.data | json }}</pre>
+            </div>
+            <div *ngIf="!authLoginResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ authLoginResult.error }}</p>
+              <details *ngIf="authLoginResult.fullError">
+                <summary>Technical Details</summary>
+                <pre>{{ authLoginResult.fullError | json }}</pre>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Authentication Logout Dialog -->
+    <p-dialog 
+      [(visible)]="showAuthLogoutDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '400px'}"
+      header="Authentication Logout"
+      (onHide)="closeAuthLogoutDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="authLogoutForm" (ngSubmit)="onAuthLogout()" class="auth-form">
+          <p>Are you sure you want to logout?</p>
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Logout" 
+              icon="pi pi-sign-out"
+              [disabled]="isAuthLoggingOut"
+              [loading]="isAuthLoggingOut"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeAuthLogoutDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="authLogoutResult" class="result-section">
+          <div class="result-header" [ngClass]="authLogoutResult.success ? 'success' : 'error'">
+            <i [class]="authLogoutResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ authLogoutResult.success ? 'Logout Successful!' : 'Logout Failed' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ authLogoutResult.status }}</p>
+            <p><strong>Time:</strong> {{ authLogoutResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="!authLogoutResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ authLogoutResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Is Authenticated Dialog -->
+    <p-dialog 
+      [(visible)]="showIsAuthenticatedDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '400px'}"
+      header="Check Authentication Status"
+      (onHide)="closeIsAuthenticatedDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="isAuthenticatedForm" (ngSubmit)="onIsAuthenticated()" class="auth-form">
+          <p>Check current authentication status</p>
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Check Status" 
+              icon="pi pi-user"
+              [disabled]="isCheckingAuthentication"
+              [loading]="isCheckingAuthentication"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeIsAuthenticatedDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="isAuthenticatedResult" class="result-section">
+          <div class="result-header" [ngClass]="isAuthenticatedResult.success ? 'success' : 'error'">
+            <i [class]="isAuthenticatedResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ isAuthenticatedResult.success ? 'Authentication Check Complete!' : 'Authentication Check Failed' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ isAuthenticatedResult.status }}</p>
+            <p><strong>Time:</strong> {{ isAuthenticatedResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="isAuthenticatedResult.success && isAuthenticatedResult.data" class="success-data">
+              <h4>Authentication Status:</h4>
+              <pre>{{ isAuthenticatedResult.data | json }}</pre>
+            </div>
+            <div *ngIf="!isAuthenticatedResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ isAuthenticatedResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Forgot Password Dialog -->
+    <p-dialog 
+      [(visible)]="showForgotPasswordDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Forgot Password"
+      (onHide)="closeForgotPasswordDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPassword()" class="auth-form">
+          <div class="form-field">
+            <label for="forgotEmail">Email *</label>
+            <input 
+              type="email" 
+              id="forgotEmail"
+              formControlName="email" 
+              pInputText 
+              placeholder="Enter Email Address"
+              [class.ng-invalid]="isForgotPasswordFieldInvalid('email')"
+            />
+            <div *ngIf="isForgotPasswordFieldInvalid('email')" class="error-message">
+              {{ getForgotPasswordFieldError('email') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Send Reset Link" 
+              icon="pi pi-envelope"
+              [disabled]="forgotPasswordForm.invalid || isSendingForgotPassword"
+              [loading]="isSendingForgotPassword"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeForgotPasswordDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="forgotPasswordResult" class="result-section">
+          <div class="result-header" [ngClass]="forgotPasswordResult.success ? 'success' : 'error'">
+            <i [class]="forgotPasswordResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ forgotPasswordResult.success ? 'Reset Link Sent!' : 'Failed to Send Reset Link' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ forgotPasswordResult.status }}</p>
+            <p><strong>Time:</strong> {{ forgotPasswordResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="!forgotPasswordResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ forgotPasswordResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Resend Verification Email Dialog -->
+    <p-dialog 
+      [(visible)]="showResendVerificationEmailDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Resend Verification Email"
+      (onHide)="closeResendVerificationEmailDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="resendVerificationEmailForm" (ngSubmit)="onResendVerificationEmail()" class="auth-form">
+          <div class="form-field">
+            <label for="resendUserId">User ID *</label>
+            <input 
+              type="text" 
+              id="resendUserId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isResendVerificationEmailFieldInvalid('userId')"
+            />
+            <div *ngIf="isResendVerificationEmailFieldInvalid('userId')" class="error-message">
+              {{ getResendVerificationEmailFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="resendLastName">Last Name *</label>
+            <input 
+              type="text" 
+              id="resendLastName"
+              formControlName="lastName" 
+              pInputText 
+              placeholder="Enter Last Name"
+              [class.ng-invalid]="isResendVerificationEmailFieldInvalid('lastName')"
+            />
+            <div *ngIf="isResendVerificationEmailFieldInvalid('lastName')" class="error-message">
+              {{ getResendVerificationEmailFieldError('lastName') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="resendEmail">Email *</label>
+            <input 
+              type="email" 
+              id="resendEmail"
+              formControlName="email" 
+              pInputText 
+              placeholder="Enter Email Address"
+              [class.ng-invalid]="isResendVerificationEmailFieldInvalid('email')"
+            />
+            <div *ngIf="isResendVerificationEmailFieldInvalid('email')" class="error-message">
+              {{ getResendVerificationEmailFieldError('email') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Resend Email" 
+              icon="pi pi-envelope"
+              [disabled]="resendVerificationEmailForm.invalid || isResendingVerificationEmail"
+              [loading]="isResendingVerificationEmail"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeResendVerificationEmailDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="resendVerificationEmailResult" class="result-section">
+          <div class="result-header" [ngClass]="resendVerificationEmailResult.success ? 'success' : 'error'">
+            <i [class]="resendVerificationEmailResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ resendVerificationEmailResult.success ? 'Verification Email Sent!' : 'Failed to Send Email' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ resendVerificationEmailResult.status }}</p>
+            <p><strong>Time:</strong> {{ resendVerificationEmailResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="!resendVerificationEmailResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ resendVerificationEmailResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Set TFA Dialog -->
+    <p-dialog 
+      [(visible)]="showSetTfaDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Set Two-Factor Authentication"
+      (onHide)="closeSetTfaDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="setTfaForm" (ngSubmit)="onSetTfa()" class="auth-form">
+          <div class="form-field">
+            <label for="setTfaUserId">User ID *</label>
+            <input 
+              type="text" 
+              id="setTfaUserId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isSetTfaFieldInvalid('userId')"
+            />
+            <div *ngIf="isSetTfaFieldInvalid('userId')" class="error-message">
+              {{ getSetTfaFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="setTfaEnabled">Enable TFA</label>
+            <p-checkbox 
+              formControlName="isEnabled" 
+              binary="true"
+              label="Enable Two-Factor Authentication"
+            ></p-checkbox>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Update TFA" 
+              icon="pi pi-shield"
+              [disabled]="setTfaForm.invalid || isSettingTfa"
+              [loading]="isSettingTfa"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeSetTfaDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="setTfaResult" class="result-section">
+          <div class="result-header" [ngClass]="setTfaResult.success ? 'success' : 'error'">
+            <i [class]="setTfaResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ setTfaResult.success ? 'TFA Updated Successfully!' : 'Failed to Update TFA' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ setTfaResult.status }}</p>
+            <p><strong>Time:</strong> {{ setTfaResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="!setTfaResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ setTfaResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Set Password Dialog -->
+    <p-dialog 
+      [(visible)]="showSetPasswordDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Set Password"
+      (onHide)="closeSetPasswordDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="setPasswordForm" (ngSubmit)="onSetPassword()" class="auth-form">
+          <div class="form-field">
+            <label for="setPasswordUserId">User ID *</label>
+            <input 
+              type="text" 
+              id="setPasswordUserId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isSetPasswordFieldInvalid('userId')"
+            />
+            <div *ngIf="isSetPasswordFieldInvalid('userId')" class="error-message">
+              {{ getSetPasswordFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="setPasswordNew">New Password *</label>
+            <input 
+              type="password" 
+              id="setPasswordNew"
+              formControlName="Password" 
+              pInputText 
+              placeholder="Enter New Password"
+              [class.ng-invalid]="isSetPasswordFieldInvalid('Password')"
+            />
+            <div *ngIf="isSetPasswordFieldInvalid('Password')" class="error-message">
+              {{ getSetPasswordFieldError('Password') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="setPasswordConfirm">Confirm Password *</label>
+            <input 
+              type="password" 
+              id="setPasswordConfirm"
+              formControlName="ConfirmPassword" 
+              pInputText 
+              placeholder="Confirm New Password"
+              [class.ng-invalid]="isSetPasswordFieldInvalid('ConfirmPassword')"
+            />
+            <div *ngIf="isSetPasswordFieldInvalid('ConfirmPassword')" class="error-message">
+              {{ getSetPasswordFieldError('ConfirmPassword') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Set Password" 
+              icon="pi pi-key"
+              [disabled]="setPasswordForm.invalid || isSettingPassword"
+              [loading]="isSettingPassword"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeSetPasswordDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="setPasswordResult" class="result-section">
+          <div class="result-header" [ngClass]="setPasswordResult.success ? 'success' : 'error'">
+            <i [class]="setPasswordResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ setPasswordResult.success ? 'Password Set Successfully!' : 'Failed to Set Password' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ setPasswordResult.status }}</p>
+            <p><strong>Time:</strong> {{ setPasswordResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="!setPasswordResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ setPasswordResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Send TFA SMS Dialog -->
+    <p-dialog 
+      [(visible)]="showSendTfaSmsDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Send TFA SMS"
+      (onHide)="closeSendTfaSmsDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="sendTfaSmsForm" (ngSubmit)="onSendTfaSms()" class="auth-form">
+          <div class="form-field">
+            <label for="sendTfaSmsUserId">User ID *</label>
+            <input 
+              type="text" 
+              id="sendTfaSmsUserId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isSendTfaSmsFieldInvalid('userId')"
+            />
+            <div *ngIf="isSendTfaSmsFieldInvalid('userId')" class="error-message">
+              {{ getSendTfaSmsFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Send SMS" 
+              icon="pi pi-mobile"
+              [disabled]="sendTfaSmsForm.invalid || isSendingTfaSms"
+              [loading]="isSendingTfaSms"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeSendTfaSmsDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="sendTfaSmsResult" class="result-section">
+          <div class="result-header" [ngClass]="sendTfaSmsResult.success ? 'success' : 'error'">
+            <i [class]="sendTfaSmsResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ sendTfaSmsResult.success ? 'TFA SMS Sent!' : 'Failed to Send TFA SMS' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ sendTfaSmsResult.status }}</p>
+            <p><strong>Time:</strong> {{ sendTfaSmsResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="!sendTfaSmsResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ sendTfaSmsResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- Verify TFA Code Dialog -->
+    <p-dialog 
+      [(visible)]="showVerifyTfaCodeDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Verify TFA Code"
+      (onHide)="closeVerifyTfaCodeDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="verifyTfaCodeForm" (ngSubmit)="onVerifyTfaCode()" class="auth-form">
+          <div class="form-field">
+            <label for="verifyTfaUserId">User ID *</label>
+            <input 
+              type="text" 
+              id="verifyTfaUserId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isVerifyTfaCodeFieldInvalid('userId')"
+            />
+            <div *ngIf="isVerifyTfaCodeFieldInvalid('userId')" class="error-message">
+              {{ getVerifyTfaCodeFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="verifyTfaCode">TFA Code *</label>
+            <input 
+              type="text" 
+              id="verifyTfaCode"
+              formControlName="Code" 
+              pInputText 
+              placeholder="Enter TFA Code"
+              [class.ng-invalid]="isVerifyTfaCodeFieldInvalid('Code')"
+            />
+            <div *ngIf="isVerifyTfaCodeFieldInvalid('Code')" class="error-message">
+              {{ getVerifyTfaCodeFieldError('Code') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="verifyTfaRemember">Remember Me</label>
+            <p-checkbox 
+              formControlName="RememberMe" 
+              binary="true"
+              label="Remember this device"
+            ></p-checkbox>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Verify Code" 
+              icon="pi pi-check"
+              [disabled]="verifyTfaCodeForm.invalid || isVerifyingTfaCode"
+              [loading]="isVerifyingTfaCode"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeVerifyTfaCodeDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="verifyTfaCodeResult" class="result-section">
+          <div class="result-header" [ngClass]="verifyTfaCodeResult.success ? 'success' : 'error'">
+            <i [class]="verifyTfaCodeResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ verifyTfaCodeResult.success ? 'TFA Code Verified!' : 'TFA Code Verification Failed' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ verifyTfaCodeResult.status }}</p>
+            <p><strong>Time:</strong> {{ verifyTfaCodeResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="verifyTfaCodeResult.success && verifyTfaCodeResult.data" class="success-data">
+              <h4>Verification Result:</h4>
+              <pre>{{ verifyTfaCodeResult.data | json }}</pre>
+            </div>
+            <div *ngIf="!verifyTfaCodeResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ verifyTfaCodeResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+
+    <!-- QR Code Dialog -->
+    <p-dialog 
+      [(visible)]="showQrCodeDialog" 
+      [modal]="true" 
+      [closable]="true"
+      [style]="{width: '450px'}"
+      header="Generate QR Code"
+      (onHide)="closeQrCodeDialog()"
+    >
+      <div class="auth-dialog">
+        <form [formGroup]="qrCodeForm" (ngSubmit)="onGenerateQrCode()" class="auth-form">
+          <div class="form-field">
+            <label for="qrCodeUserId">User ID *</label>
+            <input 
+              type="text" 
+              id="qrCodeUserId"
+              formControlName="userId" 
+              pInputText 
+              placeholder="Enter User ID"
+              [class.ng-invalid]="isQrCodeFieldInvalid('userId')"
+            />
+            <div *ngIf="isQrCodeFieldInvalid('userId')" class="error-message">
+              {{ getQrCodeFieldError('userId') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              pButton 
+              label="Generate QR Code" 
+              icon="pi pi-qrcode"
+              [disabled]="qrCodeForm.invalid || isGeneratingQrCode"
+              [loading]="isGeneratingQrCode"
+            ></button>
+            <button 
+              type="button" 
+              pButton 
+              label="Cancel" 
+              icon="pi pi-times"
+              class="p-button-outlined"
+              (click)="closeQrCodeDialog()"
+            ></button>
+          </div>
+        </form>
+
+        <div *ngIf="qrCodeResult" class="result-section">
+          <div class="result-header" [ngClass]="qrCodeResult.success ? 'success' : 'error'">
+            <i [class]="qrCodeResult.success ? 'pi pi-check-circle' : 'pi pi-times-circle'"></i>
+            <span>{{ qrCodeResult.success ? 'QR Code Generated!' : 'QR Code Generation Failed' }}</span>
+          </div>
+          <div class="result-details">
+            <p><strong>Status:</strong> {{ qrCodeResult.status }}</p>
+            <p><strong>Time:</strong> {{ qrCodeResult.timestamp | date:'medium' }}</p>
+            <div *ngIf="qrCodeResult.success && qrCodeResult.data" class="success-data">
+              <h4>QR Code Data:</h4>
+              <pre>{{ qrCodeResult.data | json }}</pre>
+            </div>
+            <div *ngIf="!qrCodeResult.success" class="error-data">
+              <h4>Error Details:</h4>
+              <p><strong>Error:</strong> {{ qrCodeResult.error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
   `,
   styles: [`
     .api-dashboard-container {
@@ -1902,7 +2727,6 @@ interface TestPayload {
     .endpoint-meta {
       display: flex;
       align-items: center;
-      gap: 1rem;
       margin-bottom: 1rem;
       flex-wrap: wrap;
     }
@@ -1932,7 +2756,6 @@ interface TestPayload {
     .parameters-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
     }
 
     .parameter-chip {
@@ -1942,24 +2765,20 @@ interface TestPayload {
 
     .endpoint-actions {
       display: flex;
-      gap: 0.5rem;
       flex-wrap: wrap;
     }
 
     .api-tester {
       max-width: 800px;
-      margin: 0 auto;
     }
 
     .tester-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
     }
 
     .form-row {
       display: flex;
-      gap: 1rem;
       align-items: end;
     }
 
@@ -1980,18 +2799,14 @@ interface TestPayload {
 
     .form-actions {
       display: flex;
-      gap: 1rem;
     }
 
     .test-results {
-      margin-top: 1rem;
     }
 
     .result-meta {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
     }
 
     .timestamp {
@@ -2023,13 +2838,11 @@ interface TestPayload {
 
     .documentation {
       max-width: 800px;
-      margin: 0 auto;
     }
 
     .doc-content h3 {
       color: #2563eb;
       margin-top: 2rem;
-      margin-bottom: 1rem;
     }
 
     .doc-content h3:first-child {
@@ -2116,19 +2929,16 @@ interface TestPayload {
 
     .feature-card h5 {
       color: #1f2937;
-      margin-bottom: 0.5rem;
     }
 
     .feature-card p {
       color: #6b7280;
       font-size: 0.9rem;
-      margin-bottom: 1rem;
     }
 
     .logged-in-status {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
     }
 
     .login-status {
@@ -2137,7 +2947,6 @@ interface TestPayload {
       font-size: 0.9rem;
       display: flex;
       align-items: center;
-      gap: 0.25rem;
     }
 
     .quick-user-actions, .quick-auth-actions, .quick-role-actions, .quick-claims-actions, .quick-user-role-actions, .quick-account-actions, .quick-two-factor-actions {
@@ -2146,18 +2955,15 @@ interface TestPayload {
 
     .quick-user-actions h4, .quick-auth-actions h4, .quick-role-actions h4, .quick-claims-actions h4, .quick-user-role-actions h4, .quick-account-actions h4, .quick-two-factor-actions h4 {
       color: #374151;
-      margin-bottom: 1rem;
     }
 
     .actions-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
     }
 
     .ui-features h4 {
       color: #374151;
-      margin-bottom: 1rem;
     }
 
     /* Login Dialog Styles */
@@ -2180,7 +2986,6 @@ interface TestPayload {
       padding: 0.125rem 0.375rem;
       border-radius: 0.25rem;
       font-family: 'Courier New', monospace;
-      font-size: 0.875rem;
     }
 
     .login-form {
@@ -2190,7 +2995,6 @@ interface TestPayload {
     .form-row {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
       margin-bottom: 1.5rem;
     }
 
@@ -2261,7 +3065,6 @@ interface TestPayload {
     .result-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
       margin-bottom: 1rem;
       font-weight: 600;
     }
@@ -2328,30 +3131,30 @@ interface TestPayload {
     }
 
     /* Registration Dialog Styles */
-    .register-form, .password-reset-form, .confirm-email-form {
+    .register-form, .password-reset-form, .confirm-email-form, .refresh-token-form {
       display: flex;
       flex-direction: column;
     }
 
-    .register-form .form-field, .password-reset-form .form-field, .confirm-email-form .form-field {
+    .register-form .form-field, .password-reset-form .form-field, .confirm-email-form .form-field, .refresh-token-form .form-field, .auth-form .form-field {
       display: flex;
       flex-direction: column;
     }
 
-    .register-form input, .password-reset-form input, .confirm-email-form input {
+    .register-form input, .password-reset-form input, .confirm-email-form input, .refresh-token-form input, .auth-form input {
       border: 1px solid #d1d5db;
     }
 
-    .register-form input:focus, .password-reset-form input:focus, .confirm-email-form input:focus {
+    .register-form input:focus, .password-reset-form input:focus, .confirm-email-form input:focus, .refresh-token-form input:focus, .auth-form input:focus {
       outline: none;
       border-color: #3b82f6;
     }
 
-    .register-form input.ng-invalid.ng-touched, .password-reset-form input.ng-invalid.ng-touched, .confirm-email-form input.ng-invalid.ng-touched {
+    .register-form input.ng-invalid.ng-touched, .password-reset-form input.ng-invalid.ng-touched, .confirm-email-form input.ng-invalid.ng-touched, .refresh-token-form input.ng-invalid.ng-touched, .auth-form input.ng-invalid.ng-touched {
       border-color: #ef4444;
     }
 
-    .register-form .form-actions, .password-reset-form .form-actions, .confirm-email-form .form-actions {
+    .register-form .form-actions, .password-reset-form .form-actions, .confirm-email-form .form-actions, .refresh-token-form .form-actions, .auth-form .form-actions {
       display: flex;
       justify-content: flex-end;
     }
@@ -2415,6 +3218,63 @@ export class ApiDashboardComponent implements OnInit {
   isConfirmingEmail = false;
   confirmEmailResult: any = null;
   showConfirmEmailDialog = false;
+
+  // Refresh Token form properties
+  refreshTokenForm: FormGroup;
+  isRefreshingToken = false;
+  refreshTokenResult: any = null;
+  showRefreshTokenDialog = false;
+
+  // Authentication endpoints form properties
+  authLoginForm: FormGroup;
+  isAuthLoggingIn = false;
+  authLoginResult: any = null;
+  showAuthLoginDialog = false;
+
+  authLogoutForm: FormGroup;
+  isAuthLoggingOut = false;
+  authLogoutResult: any = null;
+  showAuthLogoutDialog = false;
+
+  isAuthenticatedForm: FormGroup;
+  isCheckingAuthentication = false;
+  isAuthenticatedResult: any = null;
+  showIsAuthenticatedDialog = false;
+
+  forgotPasswordForm: FormGroup;
+  isSendingForgotPassword = false;
+  forgotPasswordResult: any = null;
+  showForgotPasswordDialog = false;
+
+  resendVerificationEmailForm: FormGroup;
+  isResendingVerificationEmail = false;
+  resendVerificationEmailResult: any = null;
+  showResendVerificationEmailDialog = false;
+
+  setTfaForm: FormGroup;
+  isSettingTfa = false;
+  setTfaResult: any = null;
+  showSetTfaDialog = false;
+
+  setPasswordForm: FormGroup;
+  isSettingPassword = false;
+  setPasswordResult: any = null;
+  showSetPasswordDialog = false;
+
+  sendTfaSmsForm: FormGroup;
+  isSendingTfaSms = false;
+  sendTfaSmsResult: any = null;
+  showSendTfaSmsDialog = false;
+
+  verifyTfaCodeForm: FormGroup;
+  isVerifyingTfaCode = false;
+  verifyTfaCodeResult: any = null;
+  showVerifyTfaCodeDialog = false;
+
+  qrCodeForm: FormGroup;
+  isGeneratingQrCode = false;
+  qrCodeResult: any = null;
+  showQrCodeDialog = false;
   
   testPayload: TestPayload = {
     endpoint: '',
@@ -2472,6 +3332,62 @@ export class ApiDashboardComponent implements OnInit {
     this.confirmEmailForm = this.fb.group({
       userId: ['', [Validators.required]],
       code: ['', [Validators.required]]
+    });
+
+    this.refreshTokenForm = this.fb.group({
+      userId: ['', [Validators.required]]
+    });
+
+    // Authentication endpoints forms initialization
+    this.authLoginForm = this.fb.group({
+      userName: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      deviceCode: ['', [Validators.required]]
+    });
+
+    this.authLogoutForm = this.fb.group({
+      // No fields required for logout
+    });
+
+    this.isAuthenticatedForm = this.fb.group({
+      // No fields required for authentication check
+    });
+
+    this.forgotPasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
+
+    this.resendVerificationEmailForm = this.fb.group({
+      userId: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]]
+    });
+
+    this.setTfaForm = this.fb.group({
+      userId: ['', [Validators.required]],
+      isEnabled: [false, [Validators.required]]
+    });
+
+    this.setPasswordForm = this.fb.group({
+      userId: ['', [Validators.required]],
+      Password: ['', [Validators.required, Validators.minLength(6)]],
+      ConfirmPassword: ['', [Validators.required]]
+    }, { 
+      validators: this.passwordMatchValidator 
+    });
+
+    this.sendTfaSmsForm = this.fb.group({
+      userId: ['', [Validators.required]]
+    });
+
+    this.verifyTfaCodeForm = this.fb.group({
+      userId: ['', [Validators.required]],
+      Code: ['', [Validators.required]],
+      RememberMe: [false]
+    });
+
+    this.qrCodeForm = this.fb.group({
+      userId: ['', [Validators.required]]
     });
   }
 
@@ -3215,67 +4131,57 @@ export class ApiDashboardComponent implements OnInit {
 
   handleRefreshToken(): void {
     console.log('Refresh Token clicked');
-    // TODO: Implement refresh token functionality
-    alert('Refresh Token functionality - Implementation pending');
+    this.openRefreshTokenDialog();
   }
 
   handleLogin(): void {
     console.log('Login clicked');
-    // TODO: Implement login functionality
-    alert('Login functionality - Implementation pending');
+    this.openAuthLoginDialog();
   }
 
   handleLogout(): void {
     console.log('Logout clicked');
-    // TODO: Implement logout functionality
-    alert('Logout functionality - Implementation pending');
+    this.openAuthLogoutDialog();
   }
 
   handleIsAuthenticated(): void {
     console.log('Is Authenticated clicked');
-    // TODO: Implement authentication check functionality
-    alert('Is Authenticated check - Implementation pending');
+    this.openIsAuthenticatedDialog();
   }
 
   handleForgotPassword(): void {
     console.log('Forgot Password clicked');
-    // TODO: Implement forgot password functionality
-    alert('Forgot Password functionality - Implementation pending');
+    this.openForgotPasswordDialog();
   }
 
   handleResendVerificationEmail(): void {
     console.log('Resend Verification Email clicked');
-    // TODO: Implement resend verification email functionality
-    alert('Resend Verification Email functionality - Implementation pending');
+    this.openResendVerificationEmailDialog();
   }
 
   handleSetTfa(): void {
     console.log('Set TFA clicked');
-    // TODO: Implement set TFA functionality
-    alert('Set TFA functionality - Implementation pending');
+    this.openSetTfaDialog();
   }
 
   handleSetPassword(): void {
     console.log('Set Password clicked');
-    // TODO: Implement set password functionality
-    alert('Set Password functionality - Implementation pending');
+    this.openSetPasswordDialog();
   }
 
   handleSendTfaSMS(): void {
     console.log('Send TFA SMS clicked');
-    // TODO: Implement send TFA SMS functionality
-    alert('Send TFA SMS functionality - Implementation pending');
+    this.openSendTfaSmsDialog();
   }
 
   handleVerifyTFACode(): void {
     console.log('Verify TFA Code clicked');
-    // TODO: Implement verify TFA code functionality
-    alert('Verify TFA Code functionality - Implementation pending');
+    this.openVerifyTfaCodeDialog();
   }
 
   handleQRCode(): void {
     console.log('QR Code clicked');
-    // TODO: Implement QR Code functionality
+    this.openQrCodeDialog();
     alert('QR Code functionality - Implementation pending');
   }
 
@@ -3355,6 +4261,709 @@ export class ApiDashboardComponent implements OnInit {
         };
         return `${fieldLabels[fieldName] || fieldName} is required`;
       }
+    }
+    return '';
+  }
+
+  // Refresh Token Dialog Methods
+  openRefreshTokenDialog(): void {
+    this.showRefreshTokenDialog = true;
+    this.refreshTokenResult = null;
+    this.refreshTokenForm.reset();
+  }
+
+  closeRefreshTokenDialog(): void {
+    this.showRefreshTokenDialog = false;
+    this.refreshTokenResult = null;
+    this.refreshTokenForm.reset();
+  }
+
+  onRefreshToken(): void {
+    if (this.refreshTokenForm.invalid) {
+      return;
+    }
+
+    this.isRefreshingToken = true;
+    this.refreshTokenResult = null;
+
+    const userId = this.refreshTokenForm.get('userId')?.value;
+    const refreshTokenUrl = `http://localhost:7136/api/authorize/refresh-token/${userId}`;
+
+    console.log('Sending refresh token request for userId:', userId);
+
+    const httpOptions = {
+      headers: {
+        'accept': 'text/plain'
+      },
+      observe: 'response' as const
+    };
+
+    this.http.post(refreshTokenUrl, '', httpOptions).subscribe({
+      next: (response) => {
+        this.isRefreshingToken = false;
+        console.log('Refresh token successful:', response.body);
+        
+        this.refreshTokenResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isRefreshingToken = false;
+        console.error('Refresh token error details:', error);
+        
+        this.refreshTokenResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          fullError: error,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isRefreshTokenFieldInvalid(fieldName: string): boolean {
+    const field = this.refreshTokenForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getRefreshTokenFieldError(fieldName: string): string {
+    const field = this.refreshTokenForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'userId': 'User ID'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+    }
+    return '';
+  }
+
+  // Authentication Login Dialog Methods
+  openAuthLoginDialog(): void {
+    this.showAuthLoginDialog = true;
+    this.authLoginResult = null;
+    this.authLoginForm.reset();
+  }
+
+  closeAuthLoginDialog(): void {
+    this.showAuthLoginDialog = false;
+    this.authLoginResult = null;
+    this.authLoginForm.reset();
+  }
+
+  onAuthLogin(): void {
+    if (this.authLoginForm.invalid) return;
+
+    this.isAuthLoggingIn = true;
+    this.authLoginResult = null;
+
+    const loginData = {
+      userName: this.authLoginForm.get('userName')?.value,
+      password: this.authLoginForm.get('password')?.value,
+      deviceCode: this.authLoginForm.get('deviceCode')?.value
+    };
+
+    const httpOptions = {
+      headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post('http://localhost:7136/api/authorize/login', loginData, httpOptions).subscribe({
+      next: (response) => {
+        this.isAuthLoggingIn = false;
+        this.authLoginResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isAuthLoggingIn = false;
+        this.authLoginResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          fullError: error,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isAuthLoginFieldInvalid(fieldName: string): boolean {
+    const field = this.authLoginForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getAuthLoginFieldError(fieldName: string): string {
+    const field = this.authLoginForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'userName': 'User Name',
+          'password': 'Password',
+          'deviceCode': 'Device Code'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+    }
+    return '';
+  }
+
+  // Authentication Logout Dialog Methods
+  openAuthLogoutDialog(): void {
+    this.showAuthLogoutDialog = true;
+    this.authLogoutResult = null;
+  }
+
+  closeAuthLogoutDialog(): void {
+    this.showAuthLogoutDialog = false;
+    this.authLogoutResult = null;
+  }
+
+  onAuthLogout(): void {
+    this.isAuthLoggingOut = true;
+    this.authLogoutResult = null;
+
+    const httpOptions = {
+      headers: { 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post('http://localhost:7136/api/authorize/logout', '', httpOptions).subscribe({
+      next: (response) => {
+        this.isAuthLoggingOut = false;
+        this.authLogoutResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isAuthLoggingOut = false;
+        this.authLogoutResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  // Is Authenticated Dialog Methods
+  openIsAuthenticatedDialog(): void {
+    this.showIsAuthenticatedDialog = true;
+    this.isAuthenticatedResult = null;
+  }
+
+  closeIsAuthenticatedDialog(): void {
+    this.showIsAuthenticatedDialog = false;
+    this.isAuthenticatedResult = null;
+  }
+
+  onIsAuthenticated(): void {
+    this.isCheckingAuthentication = true;
+    this.isAuthenticatedResult = null;
+
+    const httpOptions = {
+      headers: { 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.get('http://localhost:7136/api/authorize/isauthenticated', httpOptions).subscribe({
+      next: (response) => {
+        this.isCheckingAuthentication = false;
+        this.isAuthenticatedResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isCheckingAuthentication = false;
+        this.isAuthenticatedResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  // Forgot Password Dialog Methods
+  openForgotPasswordDialog(): void {
+    this.showForgotPasswordDialog = true;
+    this.forgotPasswordResult = null;
+    this.forgotPasswordForm.reset();
+  }
+
+  closeForgotPasswordDialog(): void {
+    this.showForgotPasswordDialog = false;
+    this.forgotPasswordResult = null;
+    this.forgotPasswordForm.reset();
+  }
+
+  onForgotPassword(): void {
+    if (this.forgotPasswordForm.invalid) return;
+
+    this.isSendingForgotPassword = true;
+    this.forgotPasswordResult = null;
+
+    const email = this.forgotPasswordForm.get('email')?.value;
+    const forgotPasswordUrl = `http://localhost:7136/api/authorize/forgotPassword?email=${encodeURIComponent(email)}`;
+
+    const httpOptions = {
+      headers: { 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post(forgotPasswordUrl, '', httpOptions).subscribe({
+      next: (response) => {
+        this.isSendingForgotPassword = false;
+        this.forgotPasswordResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isSendingForgotPassword = false;
+        this.forgotPasswordResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isForgotPasswordFieldInvalid(fieldName: string): boolean {
+    const field = this.forgotPasswordForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getForgotPasswordFieldError(fieldName: string): string {
+    const field = this.forgotPasswordForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) return 'Email is required';
+      if (field.errors['email']) return 'Please enter a valid email address';
+    }
+    return '';
+  }
+
+  // Resend Verification Email Dialog Methods
+  openResendVerificationEmailDialog(): void {
+    this.showResendVerificationEmailDialog = true;
+    this.resendVerificationEmailResult = null;
+    this.resendVerificationEmailForm.reset();
+  }
+
+  closeResendVerificationEmailDialog(): void {
+    this.showResendVerificationEmailDialog = false;
+    this.resendVerificationEmailResult = null;
+    this.resendVerificationEmailForm.reset();
+  }
+
+  onResendVerificationEmail(): void {
+    if (this.resendVerificationEmailForm.invalid) return;
+
+    this.isResendingVerificationEmail = true;
+    this.resendVerificationEmailResult = null;
+
+    const payload = {
+      userId: this.resendVerificationEmailForm.get('userId')?.value,
+      lastName: this.resendVerificationEmailForm.get('lastName')?.value,
+      email: this.resendVerificationEmailForm.get('email')?.value
+    };
+
+    const httpOptions = {
+      headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post('http://localhost:7136/api/authorize/resendVerificationEmail', payload, httpOptions).subscribe({
+      next: (response) => {
+        this.isResendingVerificationEmail = false;
+        this.resendVerificationEmailResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isResendingVerificationEmail = false;
+        this.resendVerificationEmailResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isResendVerificationEmailFieldInvalid(fieldName: string): boolean {
+    const field = this.resendVerificationEmailForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getResendVerificationEmailFieldError(fieldName: string): string {
+    const field = this.resendVerificationEmailForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'userId': 'User ID',
+          'lastName': 'Last Name',
+          'email': 'Email'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+      if (field.errors['email']) return 'Please enter a valid email address';
+    }
+    return '';
+  }
+
+  // Set TFA Dialog Methods
+  openSetTfaDialog(): void {
+    this.showSetTfaDialog = true;
+    this.setTfaResult = null;
+    this.setTfaForm.reset();
+  }
+
+  closeSetTfaDialog(): void {
+    this.showSetTfaDialog = false;
+    this.setTfaResult = null;
+    this.setTfaForm.reset();
+  }
+
+  onSetTfa(): void {
+    if (this.setTfaForm.invalid) return;
+
+    this.isSettingTfa = true;
+    this.setTfaResult = null;
+
+    const userId = this.setTfaForm.get('userId')?.value;
+    const isEnabled = this.setTfaForm.get('isEnabled')?.value;
+    const setTfaUrl = `http://localhost:7136/api/authorize/settfa/${userId}?isEnabled=${isEnabled}`;
+
+    const httpOptions = {
+      headers: { 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post(setTfaUrl, '', httpOptions).subscribe({
+      next: (response) => {
+        this.isSettingTfa = false;
+        this.setTfaResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isSettingTfa = false;
+        this.setTfaResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isSetTfaFieldInvalid(fieldName: string): boolean {
+    const field = this.setTfaForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getSetTfaFieldError(fieldName: string): string {
+    const field = this.setTfaForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) return 'User ID is required';
+    }
+    return '';
+  }
+
+  // Set Password Dialog Methods
+  openSetPasswordDialog(): void {
+    this.showSetPasswordDialog = true;
+    this.setPasswordResult = null;
+    this.setPasswordForm.reset();
+  }
+
+  closeSetPasswordDialog(): void {
+    this.showSetPasswordDialog = false;
+    this.setPasswordResult = null;
+    this.setPasswordForm.reset();
+  }
+
+  onSetPassword(): void {
+    if (this.setPasswordForm.invalid) return;
+
+    this.isSettingPassword = true;
+    this.setPasswordResult = null;
+
+    const payload = {
+      userId: this.setPasswordForm.get('userId')?.value,
+      Password: this.setPasswordForm.get('Password')?.value,
+      ConfirmPassword: this.setPasswordForm.get('ConfirmPassword')?.value
+    };
+
+    const httpOptions = {
+      headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post('http://localhost:7136/api/authorize/setpassword', payload, httpOptions).subscribe({
+      next: (response) => {
+        this.isSettingPassword = false;
+        this.setPasswordResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isSettingPassword = false;
+        this.setPasswordResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isSetPasswordFieldInvalid(fieldName: string): boolean {
+    const field = this.setPasswordForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getSetPasswordFieldError(fieldName: string): string {
+    const field = this.setPasswordForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'userId': 'User ID',
+          'Password': 'Password',
+          'ConfirmPassword': 'Confirm Password'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+      if (field.errors['minlength']) return 'Password must be at least 6 characters long';
+      if (field.errors['passwordMismatch']) return 'Passwords do not match';
+    }
+    return '';
+  }
+
+  // Send TFA SMS Dialog Methods
+  openSendTfaSmsDialog(): void {
+    this.showSendTfaSmsDialog = true;
+    this.sendTfaSmsResult = null;
+    this.sendTfaSmsForm.reset();
+  }
+
+  closeSendTfaSmsDialog(): void {
+    this.showSendTfaSmsDialog = false;
+    this.sendTfaSmsResult = null;
+    this.sendTfaSmsForm.reset();
+  }
+
+  onSendTfaSms(): void {
+    if (this.sendTfaSmsForm.invalid) return;
+
+    this.isSendingTfaSms = true;
+    this.sendTfaSmsResult = null;
+
+    const userId = this.sendTfaSmsForm.get('userId')?.value;
+    const sendTfaSmsUrl = `http://localhost:7136/api/authorize/SendTfaSMS/${userId}`;
+
+    const httpOptions = {
+      headers: { 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post(sendTfaSmsUrl, '', httpOptions).subscribe({
+      next: (response) => {
+        this.isSendingTfaSms = false;
+        this.sendTfaSmsResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isSendingTfaSms = false;
+        this.sendTfaSmsResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isSendTfaSmsFieldInvalid(fieldName: string): boolean {
+    const field = this.sendTfaSmsForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getSendTfaSmsFieldError(fieldName: string): string {
+    const field = this.sendTfaSmsForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) return 'User ID is required';
+    }
+    return '';
+  }
+
+  // Verify TFA Code Dialog Methods
+  openVerifyTfaCodeDialog(): void {
+    this.showVerifyTfaCodeDialog = true;
+    this.verifyTfaCodeResult = null;
+    this.verifyTfaCodeForm.reset();
+  }
+
+  closeVerifyTfaCodeDialog(): void {
+    this.showVerifyTfaCodeDialog = false;
+    this.verifyTfaCodeResult = null;
+    this.verifyTfaCodeForm.reset();
+  }
+
+  onVerifyTfaCode(): void {
+    if (this.verifyTfaCodeForm.invalid) return;
+
+    this.isVerifyingTfaCode = true;
+    this.verifyTfaCodeResult = null;
+
+    const payload = {
+      userId: this.verifyTfaCodeForm.get('userId')?.value,
+      Code: this.verifyTfaCodeForm.get('Code')?.value,
+      RememberMe: this.verifyTfaCodeForm.get('RememberMe')?.value
+    };
+
+    const httpOptions = {
+      headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.post('http://localhost:7136/api/authorize/VerifyTFACode', payload, httpOptions).subscribe({
+      next: (response) => {
+        this.isVerifyingTfaCode = false;
+        this.verifyTfaCodeResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isVerifyingTfaCode = false;
+        this.verifyTfaCodeResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isVerifyTfaCodeFieldInvalid(fieldName: string): boolean {
+    const field = this.verifyTfaCodeForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getVerifyTfaCodeFieldError(fieldName: string): string {
+    const field = this.verifyTfaCodeForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'userId': 'User ID',
+          'Code': 'TFA Code'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+    }
+    return '';
+  }
+
+  // QR Code Dialog Methods
+  openQrCodeDialog(): void {
+    this.showQrCodeDialog = true;
+    this.qrCodeResult = null;
+    this.qrCodeForm.reset();
+  }
+
+  closeQrCodeDialog(): void {
+    this.showQrCodeDialog = false;
+    this.qrCodeResult = null;
+    this.qrCodeForm.reset();
+  }
+
+  onGenerateQrCode(): void {
+    if (this.qrCodeForm.invalid) return;
+
+    this.isGeneratingQrCode = true;
+    this.qrCodeResult = null;
+
+    const userId = this.qrCodeForm.get('userId')?.value;
+    const qrCodeUrl = `http://localhost:7136/api/authorize/QRCode/${userId}`;
+
+    const httpOptions = {
+      headers: { 'accept': '*/*' },
+      observe: 'response' as const
+    };
+
+    this.http.get(qrCodeUrl, httpOptions).subscribe({
+      next: (response) => {
+        this.isGeneratingQrCode = false;
+        this.qrCodeResult = {
+          success: true,
+          status: response.status,
+          data: response.body,
+          timestamp: new Date()
+        };
+      },
+      error: (error) => {
+        this.isGeneratingQrCode = false;
+        this.qrCodeResult = {
+          success: false,
+          status: error.status,
+          error: error.error || error.message,
+          timestamp: new Date()
+        };
+      }
+    });
+  }
+
+  isQrCodeFieldInvalid(fieldName: string): boolean {
+    const field = this.qrCodeForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getQrCodeFieldError(fieldName: string): string {
+    const field = this.qrCodeForm.get(fieldName);
+    if (field?.errors) {
+      if (field.errors['required']) return 'User ID is required';
     }
     return '';
   }
