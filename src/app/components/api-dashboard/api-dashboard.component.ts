@@ -1289,11 +1289,6 @@ export class ApiDashboardComponent implements OnInit {
     // Initialize with a sample endpoint for testing
     this.testPayload.endpoint = '/api/manage/userInfo';
     this.testPayload.method = 'GET';
-    
-    // Debug: Check Claims Management endpoints
-    const claimsEndpoints = this.endpoints.filter(e => e.category === 'Claims Management');
-    console.log('Claims Management endpoints found:', claimsEndpoints.length);
-    console.log('Available categories:', this.getUniqueCategories());
   }
 
   getTotalEndpointsCount(): number {
