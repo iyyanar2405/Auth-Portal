@@ -1,0 +1,6 @@
+@if (options().length) {
+  <shared-button-toggle
+    [options]="options()"
+    (changeEvent)="onChange($event)">
+  </shared-button-toggle>
+}

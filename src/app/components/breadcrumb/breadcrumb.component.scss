@@ -1,0 +1,51 @@
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+:host {
+  max-height: utility.get-rem(40);
+  background-color: colors.get-color('SkyBlue90');
+  @include mixins.gutter-for(top, right, left);
+  @include mixins.gutter-for(0.25, top);
+
+  @include mixins.respond-to(phone) {
+    max-height: utility.get-rem(55);
+  }
+}
+
+p-breadcrumb.p-element {
+  display: flex;
+  padding: utility.get-rem(12) 0;
+  padding-bottom: utility.get-rem(4);
+}
+
+p-breadcrumb.p-element::ng-deep {
+  .p-breadcrumb {
+    border: 0;
+    background-color: transparent;
+  }
+
+  .p-breadcrumb-list {
+    gap: utility.get-rem(8);
+  }
+
+  .p-menuitem-separator {
+    margin: 0;
+  }
+
+  .p-menuitem-link {
+    @extend %#{typography.$text-m-pattern};
+    height: utility.get-rem(20);
+    color: colors.get-color('Sandstone30');
+
+    @include mixins.respond-to(phone) {
+      height: auto;
+    }
+  }
+
+  .p-menuitem-icon {
+    font-size: utility.get-rem(14);
+    color: colors.get-color('Sandstone30');
+  }
+}

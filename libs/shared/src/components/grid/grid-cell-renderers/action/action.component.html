@@ -1,0 +1,40 @@
+<ng-container *transloco="let t">
+  <div class="actions-container">
+    @for (action of actions; track action) {
+      @if (action.actionType === GridActionType.Download) {
+        <i
+          class="pi action-icon"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="t('download')"
+          [ngClass]="action.iconClass"
+          (click)="onDownloadClick(action)"
+          (keydown.enter)="onDownloadClick(action)"
+          (keydown.space)="onDownloadClick(action)">
+        </i>
+      }
+      @if (action.actionType === GridActionType.Delete) {
+        <i
+          class="pi action-icon action-icon--red"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="t('delete')"
+          [ngClass]="action.iconClass"
+          (click)="onDeleteClick(action)"
+          (keydown.enter)="onDeleteClick(action)"
+          (keydown.space)="onDeleteClick(action)">
+        </i>
+      }
+      @if (action.actionType === GridActionType.Redirect) {
+        <p-button class="pi pi-angle-right" label="t('redirect')"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="t('redirect')"
+        [ngClass]="action.iconClass"
+        (click)="onRedirectClick(action)"
+        (keydown.enter)="onRedirectClick(action)"
+        (keydown.space)="onRedirectClick(action)"/>
+      }
+    }
+  </div>
+</ng-container>

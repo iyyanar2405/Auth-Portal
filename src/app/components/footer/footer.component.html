@@ -1,0 +1,39 @@
+<ng-container *transloco="let t">
+  <div class="footer-container">
+    <div>
+      @for (link of footerLeftLinks; track link.url) {
+        <a
+          role="link"
+          tabindex="0"
+          target="_blank"
+          [ariaLabel]="link.label"
+          [href]="link.url"
+          >{{ t(link.label) }}</a
+        >
+      }
+    </div>
+    <div>
+      @for (link of footerRightLinks; track link.url) {
+        @if (link.icon) {
+          <a
+            role="link"
+            tabindex="0"
+            target="_blank"
+            [attr.aria-label]="t(link.label)"
+            [href]="link.url">
+            <i [class]="link.icon"></i>
+          </a>
+        } @else {
+          <a
+            role="link"
+            tabindex="0"
+            target="_blank"
+            [ariaLabel]="link.label"
+            [href]="link.url"
+            >{{ t(link.label) }}</a
+          >
+        }
+      }
+    </div>
+  </div>
+</ng-container>

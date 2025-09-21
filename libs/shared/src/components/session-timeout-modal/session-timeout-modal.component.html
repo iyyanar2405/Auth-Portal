@@ -1,0 +1,19 @@
+<ng-container *transloco="let t">
+  <div class="container">
+    <div class="title">{{ t('sessionTimeoutModal.title') }}</div>
+    <div class="text-container">
+      <p class="description">
+        {{ t('sessionTimeoutModal.description') }}
+        <br />
+        {{ t('sessionTimeoutModal.secondDescription') }}
+      </p>
+    </div>
+    <div class="actions">
+      <shared-button
+        [label]="t('sessionTimeoutModal.goToLoginButton')"
+        [type]="sharedButtonType.Secondary"
+        (clickEvent)="onLoginClick()">
+      </shared-button>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,21 @@
+<ng-container *transloco="let t">
+  <div class="container">
+    <div class="header">
+      <img
+        alt="DNV Logo"
+        src="../../../assets/logos/dnv-logo-color.svg"
+      />
+    </div>
+
+    <div class="content">
+      <div class="card-wrapper">
+        <div class="card">
+          <shared-error-card
+            [description]="errorMessage()"
+            [title]="errorTitle()"
+          ></shared-error-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

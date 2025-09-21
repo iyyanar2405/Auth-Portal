@@ -1,0 +1,42 @@
+ <ng-container *transloco="let t">
+ @if(downloadCount > 0) {
+        <customer-portal-navbar-button
+          iconPosition="right"
+          [badgeCounter]="badgeCounter"
+          [icon]="downloadIcon"
+          [isDisabled]="false"
+          [isDownload]="true"
+          [label]="t('exportDocument.downloads')"
+          (clickEvent)="onToggleDownloadOverlay(downloadOverlay, $event)">
+        </customer-portal-navbar-button>
+      }
+
+      <p-overlayPanel #downloadOverlay styleClass="is-caret-hidden">
+        <ng-template pTemplate="content">
+          <div class="overlay-container" tabindex="0">
+            <div class="overlay-grouping">
+              @for (task of downloadTasks.slice().reverse(); track task) {
+                <div class="download-queue-item">
+                  <span class="download-queue-title">
+                    {{ task.name }}
+                    <span class="download-queue-filename"
+                      >({{ task.fileName }})</span
+                    >
+                  </span>
+                  <span
+                    class="download-queue-status"
+                    [ngClass]="{
+                      'download-status-completed': task.status === 'completed',
+                      'download-status-failed': task.status === 'failed',
+                      'download-status-downloading':
+                        task.status === 'downloading',
+                    }">
+                    {{ task.status | titlecase }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        </ng-template>
+      </p-overlayPanel>
+</ng-container>

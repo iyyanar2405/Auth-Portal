@@ -1,0 +1,19 @@
+@use 'variables';
+@use 'pattern/utility';
+
+.custom-toast {
+  &__icon {
+    width: utility.get-rem(24);
+    height: utility.get-rem(24);
+    font-size: utility.get-rem(24);
+  }
+
+  &__text {
+    font-size: utility.get-rem(14);
+    font-weight: 700;
+  }
+
+  &__detail {
+    word-break: break-word;
+  }
+}

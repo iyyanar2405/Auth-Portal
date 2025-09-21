@@ -1,0 +1,17 @@
+<div
+  class="chart-legend"
+  tabindex="0"
+  [id]="legendId"
+  [style.display]="hasData && useCustomLegend ? 'block' : 'none'"></div>
+
+<ng-content select="[header]"></ng-content>
+
+<canvas
+  #chartCanvas
+  tabindex="0"
+  [style.display]="hasData ? 'block' : 'none'"></canvas>
+
+@if (!hasData) {
+  <shared-empty-chart [hasBorderIfNoData]="hasBorderIfNoData" [type]="type">
+  </shared-empty-chart>
+}

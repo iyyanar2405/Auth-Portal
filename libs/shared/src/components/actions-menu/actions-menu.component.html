@@ -1,0 +1,47 @@
+<ng-container *transloco="let t">
+  <div class="actions-menu-container">
+    <p-menu
+      #menu
+      role="menu"
+      [appendTo]="'body'"
+      [attr.aria-label]="t('eventActionsMenu')"
+      [model]="items"
+      [popup]="true">
+      <ng-template let-item pTemplate="item">
+        <div
+          class="p-menuitem-content"
+          data-pc-section="content"
+          tabindex="0"
+          [ngClass]="{
+            remove: item.label === 'remove',
+          }"
+          (click)="onItemClick(item)"
+          (keydown.enter)="onItemClick(item)"
+          (keydown.space)="onItemClick(item)">
+          <a
+            class="p-ripple p-element p-menuitem-link"
+            data-pc-section="action"
+            inert
+            pRipple
+            tabindex="-1"
+            target="undefined">
+            <span class="p-menuitem-icon pi" [class]="item.icon"></span>
+            <span class="p-menuitem-text ml-2">{{ t(item.i18nKey) }} </span>
+          </a>
+        </div>
+      </ng-template>
+    </p-menu>
+    <p-button
+      aria-controls="menu"
+      aria-haspopup="true"
+      icon="pi pi-ellipsis-h"
+      role="button"
+      [attr.aria-label]="t('openEventActionsMenu')"
+      [link]="true"
+      (onClick)="menu.toggle($event)">
+      <span class="sr-only open-event-actions">{{
+        t('openEventActionsMenu')
+      }}</span>
+    </p-button>
+  </div>
+</ng-container>

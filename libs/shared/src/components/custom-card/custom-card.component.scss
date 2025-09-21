@@ -1,0 +1,90 @@
+@use 'pattern/colors';
+@use 'pattern/mixture';
+@use 'pattern/typography';
+
+@use 'pattern/utility';
+
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-image {
+  height: 160px;
+}
+
+img {
+  grid-area: img;
+  width: 100%;
+  height: 100%;
+  border-top-left-radius: utility.get-rem(8);
+  border-top-right-radius: utility.get-rem(8);
+}
+
+.container {
+  grid-area: container;
+  display: flex;
+  flex-direction: column;
+  gap: utility.get-rem(2);
+  padding: utility.get-rem(16);
+}
+
+h2 {
+  @extend %#{typography.$text-l-pattern};
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: utility.get-rem(8);
+  color: colors.get-color('DarkBlue');
+}
+
+p {
+  @extend %#{typography.$text-m-pattern};
+  width: calc(100% - 1px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: colors.get-color('Sandstone30');
+}
+
+a {
+  color: colors.get-color('DarkBlue');
+}
+
+h6 span:hover {
+  text-decoration: underline;
+}
+
+.pi {
+  font-size: utility.get-rem(14);
+}
+
+p-card.p-element::ng-deep {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+
+  .p-card {
+    @extend %#{mixture.$shadow-default-pattern};
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      box-shadow: 0px 6px 10px -3px rgba(15, 32, 75, 0.2);
+    }
+  }
+
+  .p-card-header {
+    display: grid;
+    gap: 0;
+    grid-template-columns: 100%;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'img'
+      'container';
+  }
+
+  .p-card-body {
+    display: none;
+  }
+}

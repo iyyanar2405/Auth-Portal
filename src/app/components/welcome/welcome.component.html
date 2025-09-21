@@ -1,0 +1,41 @@
+<ng-container *transloco="let t">
+  <div class="container">
+    <div class="header">
+      <img
+        alt="DNV logo"
+        class="logo--lg"
+        src="../../../assets/logos/dnv-logo-color.svg" />
+    </div>
+    <div class="content">
+      <div class="card-wrapper">
+        <div class="card">
+          @if (isUserValidated === true || isUserValidated === undefined) {
+            <div class="card-text-container" tabindex="0">
+              <p class="card-title">
+                {{ t('welcome.title') }}
+                <br />
+                {{ t('welcome.subtitle') }}
+              </p>
+              <p class="card-description">
+                {{ t('welcome.description') }}
+                <br />
+                {{ t('welcome.subdescription') }}
+              </p>
+            </div>
+            <shared-button
+              [autofocus]="true"
+              [label]="t('welcome.getStarted')"
+              [type]="sharedButtonType.Secondary"
+              (clickEvent)="onLoginClick()">
+            </shared-button>
+          } @else {
+            
+            <shared-error-card [description]="t('welcome.accessDeniedDescription')"
+              [title]="t('welcome.accessDeniedTitle')"></shared-error-card>
+            
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

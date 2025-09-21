@@ -1,0 +1,27 @@
+<ng-container *transloco="let t">
+  @if (displayIcon && iconPosition === 'prefix') {
+    <div class="container-icon">
+      <i
+        tabindex="0"
+        tooltipPosition="top"
+        [ariaLabel]="tooltipMessage"
+         class="{{ iconClass }}"
+        [pTooltip]="tooltipMessage">
+      </i>
+    </div>
+  }
+
+  <span>{{ text }}</span>
+  @if (displayIcon && iconPosition === 'suffix') {
+    <div class="container-icon">
+      <i
+        tabindex="0"
+        tooltipPosition="top"
+        [ariaLabel]="t(tooltipMessage)"
+        class="{{ iconClass }}"
+        [pTooltip]="t(tooltipMessage)">
+      </i>
+      <span>{{ t(tooltipMessage) }}</span>
+    </div>
+  }
+</ng-container>

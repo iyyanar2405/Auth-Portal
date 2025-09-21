@@ -1,0 +1,90 @@
+@use '../../../styles/pattern/variables';
+@use '../../../styles/pattern/utility';
+@use '../../../styles/pattern/typography';
+@use '../../../styles/pattern/colors';
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  height: utility.get-rem(69);
+  width: 100%;
+  padding: utility.get-rem(18) utility.get-rem(20);
+  background-color: colors.get-color('UiWhite');
+  border-bottom: 1px solid colors.get-color('UiGray1');
+}
+
+.content {
+  background-image: url('/assets/images/welcome.png');
+  top: utility.get-rem(69);
+  width: 100%;
+  height: calc(100% - utility.get-rem(69));
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: colors.get-color('DarkBlue');
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card {
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+  gap: utility.get-rem(32);
+  padding: utility.get-rem(36) utility.get-rem(32);
+  max-width: utility.get-rem(520);
+  border-radius: utility.get-rem(10);
+  background: colors.get-color('UiWhite');
+}
+
+.card-text-container {
+  font-family: 'Nunito Sans';
+  display: flex;
+  flex-direction: column;
+  gap: utility.get-rem(16);
+  
+  .card-title {
+    font-family: 'DNVDisplayRegular';
+    color: colors.get-color('DarkBlue');
+    font-size: utility.get-rem(36);
+    line-height: utility.get-rem(40);
+    text-transform: uppercase;
+  }
+  
+  .card-description {
+    font-size: utility.get-rem(14);
+    line-height: utility.get-rem(21);
+  }
+}
+
+.logout-actions {
+  display: flex;
+  gap: utility.get-rem(12);
+}
+
+@media screen and (max-width: variables.$breakpoint-md) {
+  .content {
+    padding: 0 utility.get-rem(24);
+  }
+  
+  .card {
+    padding: utility.get-rem(32) utility.get-rem(24);
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-sm) {
+  .content {
+    padding: 0 utility.get-rem(16);
+  }
+  
+  .card {
+    padding: utility.get-rem(28) utility.get-rem(16);
+  }
+}

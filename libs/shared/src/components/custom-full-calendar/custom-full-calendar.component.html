@@ -1,0 +1,18 @@
+<div class="calendar">
+  @if (calendarStatuses) {
+    <div class="calendar__legend">
+      @for (status of calendarStatuses; track status) {
+        <shared-status
+          [statusClassMap]="scheduleStatusMap"
+          [value]="status">
+        </shared-status>
+      }
+    </div>
+  }
+  <full-calendar
+    #fullcalendar
+    cssSelector="td[aria-labelledby]"
+    sharedAriaLabelModifier
+    [options]="calendarOptions()">
+  </full-calendar>
+</div>

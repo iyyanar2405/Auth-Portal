@@ -1,0 +1,49 @@
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/utility';
+@use 'pattern/mixture';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: 0 utility.get-rem(20);
+
+  @include mixins.respond-to(tablet) {
+    background-color: colors.get-color('DarkBlue');
+  }
+
+  @include mixins.respond-to(tablet) {
+    padding-right: utility.get-rem(12);
+    padding-left: utility.get-rem(12);
+  }
+
+  @include mixins.respond-to(phone) {
+    padding-right: utility.get-rem(4);
+    padding-left: utility.get-rem(4);
+  }
+}
+
+nav {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: utility.get-rem(8);
+
+  @include mixins.respond-to(phone) {
+    gap: utility.get-rem(4);
+  }
+}
+
+.mobile-menu {
+  display: none;
+
+  @include mixins.respond-to(tablet) {
+    display: flex;
+  }
+}

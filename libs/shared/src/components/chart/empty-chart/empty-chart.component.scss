@@ -1,0 +1,71 @@
+@use 'pattern/colors';
+@use 'pattern/mixture';
+@use 'pattern/utility';
+
+:host {
+  width: 100%;
+  height: 100%;
+}
+
+.no-data {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: utility.get-rem(200);
+  padding: utility.get-rem(30);
+  resize: both;
+
+  &--with-border {
+    @extend %#{mixture.$shadow-default-pattern};
+  }
+
+  &--bar {
+    margin-left: utility.get-rem(24);
+  }
+
+  &__doughnut-outer {
+    aspect-ratio: 1;
+    height: 100%;
+    border-radius: 50%;
+    background: colors.get-color('Sandstone90');
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__doughnut-inner {
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    background: colors.get-color('UiWhite');
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  p {
+    max-width: 85%;
+    border-radius: utility.get-rem(20);
+    background: colors.get-color('Sandstone95');
+    padding: utility.get-rem(6) utility.get-rem(6);
+    letter-spacing: 0.5px;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: utility.get-rem(15);
+    color: colors.get-color('Sandstone20');
+  }
+
+  svg {
+    height: 100%;
+    width: 100%;
+
+    .no-data__svg-text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  }
+}

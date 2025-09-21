@@ -1,0 +1,28 @@
+<ng-container *transloco="let t">
+  <customer-portal-navbar-button
+    icon="search"
+    [isActive]="isButtonSearchActive()"
+    [isDisabled]="false"
+    [label]="t('search')"
+    (clickEvent)="searchOverlay.toggle($event)"
+  >
+  </customer-portal-navbar-button>
+
+  <p-overlayPanel
+    #searchOverlay
+    styleClass="is-caret-hidden"
+    (onHide)="onToggleButtonSearchActive(false)"
+    (onShow)="onToggleButtonSearchActive(true)"
+  >
+    <div class="container">
+      <p-inputGroup>
+        <input
+          pInputText
+          type="text"
+          [placeholder]="t('navbar.search')"
+          (keyup.enter)="onSearch()"
+        />
+      </p-inputGroup>
+    </div>
+  </p-overlayPanel>
+</ng-container>

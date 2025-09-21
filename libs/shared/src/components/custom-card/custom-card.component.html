@@ -1,0 +1,23 @@
+<ng-container *transloco="let t">
+  <p-card (click)="onCardClick()">
+    <ng-template pTemplate="header">
+      @if (imageUrl) {
+        <div class="app-image">
+          <img [alt]="title" [src]="imageUrl" />
+        </div>
+      }
+      <div class="container">
+        <h2>
+          <span>{{ title }}</span>
+          @if (link) {
+            <a role="link" tabindex="0" [attr.aria-label]="t(title + ' ' + 'opensInNewTab')" >
+              <i class="pi pi-external-link"></i>
+              <span class="sr-only">{{title + ' ' + t('opensInNewTab') }}</span>
+            </a>
+          }
+        </h2>
+        <p>{{ subTitle }}</p>
+      </div>
+    </ng-template>
+  </p-card>
+</ng-container>

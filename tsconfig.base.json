@@ -1,0 +1,16 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": false,
+    "target": "es2022",
+    "module": "preserve",
+    "lib": ["es2020", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@auth-portal/libs": ["libs/src/index.ts"],
+      "@auth-portal/shared": ["shared/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

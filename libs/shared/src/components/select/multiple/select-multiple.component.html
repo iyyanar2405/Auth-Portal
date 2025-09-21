@@ -1,0 +1,40 @@
+<ng-container *transloco="let t">
+  <p-multiSelect
+    tooltipPosition="top"
+    [appendTo]="appendTo()"
+    [ariaLabel]="ariaLabel()"
+    [autoOptionFocus]="false"
+    [disabled]="isDisabled()"
+    [filter]="hasSearch()"
+    [ngModel]="selected()"
+    [options]="options()"
+    [pTooltip]="tooltipContent"
+    [placeholder]="placeholder()"
+    [scrollHeight]="scrollHeight"
+    [showDelay]="tooltipDelay()"
+    [showToggleAll]="false"
+    (onChange)="onChange($event)">
+    <ng-template pTemplate="header">
+      @if (options().length > 1) {
+        <div class="p-multiselect-header-container">
+          <p-triStateCheckbox
+            [checkboxFalseIcon]="'pi pi-minus'"
+            [label]="t('all')"
+            [ngModel]="triState()"
+            (onChange)="onChangeTriState($event)">
+          </p-triStateCheckbox>
+        </div>
+      }
+    </ng-template>
+
+    <ng-template pTemplate="empty">
+      <p>{{ t('noDataAvailable') }}</p>
+    </ng-template>
+
+    <ng-template #tooltipContent>
+      @if (hasTooltip()) {
+        <p>{{ selectedTooltip() }}</p>
+      }
+    </ng-template>
+  </p-multiSelect>
+</ng-container>

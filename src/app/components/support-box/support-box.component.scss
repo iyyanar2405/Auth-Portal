@@ -1,0 +1,14 @@
+@use '../../../styles/pattern/pattern/colors';
+@use '../../../styles/pattern/utility';
+
+:host {
+  height: utility.get-rem(40);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: utility.get-rem(8) utility.get-rem(10);
+}
+
+shared-button {
+  color: colors.get-color('UiWhite');
+}

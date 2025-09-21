@@ -1,0 +1,170 @@
+@use 'pattern/mixins';
+@use 'pattern/utility';
+@use 'pattern/colors';
+@use 'pattern/mixture';
+@use 'pattern/typography';
+
+.card-wrapper {
+  @extend %#{mixture.$shadow-default-pattern};
+  border: 1px solid colors.get-color('Sandstone90');
+  border-radius: utility.get-rem(11);
+  display: grid;
+  gap: calc(
+    var(--dnv-gutter-base-unitless) / var(--dnv-font-base-unitless) * 1rem
+  );
+  margin: calc(
+    var(--dnv-gutter-base-unitless) * 1 * 2 / var(--dnv-font-base-unitless) *
+      1rem
+  );
+  margin-left: 0;
+  margin-right: utility.get-rem(10);
+  grid-template-rows: 1fr;
+}
+
+.card-header-wrapper {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+
+  @include mixins.respond-to(phone) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
+.card-header {
+  background-color: colors.get-color('SkyBlue95');
+  line-height: utility.get-rem(52);
+  text-align: left;
+  padding-left: utility.get-rem(16);
+  border-top-left-radius: utility.get-rem(8);
+
+  .card-heading {
+    @extend %#{typography.$heading-s-pattern};
+    line-height: utility.get-rem(52);
+  }
+}
+.card-header-years {
+  background-color: colors.get-color('SkyBlue95');
+  text-align: center;
+  border-top-right-radius: utility.get-rem(8);
+  justify-items: end;
+  display: grid;
+
+  .card-tab-headers {
+    padding: utility.get-rem(8) utility.get-rem(16) 0 0;
+  }
+
+  @include mixins.respond-to(phone) {
+    justify-items: start;
+
+    .card-tab-headers {
+      padding: 0 0 utility.get-rem(16) utility.get-rem(16);
+    }
+  }
+}
+
+.card-wrapper::ng-deep {
+  .year-button {
+    @extend %#{typography.$button-s-pattern};
+    cursor: pointer;
+    border: 1px solid colors.get-color('SeaBlue');
+    color: colors.get-color('SeaBlue');
+    background-color: colors.get-color('UiWhite');
+    padding-top: utility.get-rem(5.4);
+    padding-bottom: utility.get-rem(5.4);
+
+    &.active,
+    &:hover {
+      color: colors.get-color('UiWhite');
+      background-color: colors.get-color('SeaBlue');
+    }
+  }
+
+  .card-tab-buttons .p-element {
+    display: inline-block;
+  }
+
+  .card-tab-buttons p-button:nth-child(1) .year-button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .card-tab-buttons p-button:nth-child(2) .year-button {
+    border-left: 1px solid colors.get-color('SeaBlue');
+    border-right: 1px solid colors.get-color('SeaBlue');
+    border-radius: 0;
+  }
+
+  .card-tab-buttons p-button:nth-child(3) .year-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .p-progressbar-value-animate {
+    transition: none;
+  }
+
+  .p-progressbar {
+    height: utility.get-rem(8);
+    margin: utility.get-rem(8) 0 utility.get-rem(13) 0;
+  }
+}
+
+.card-tab-buttons .p-button {
+  background: colors.get-color('UiWhite');
+}
+
+.card-content .card-tab-content {
+  display: grid;
+  grid-template-columns: repeat(3, calc((100% - utility.get-rem(36)) / 3));
+  gap: utility.get-rem(8);
+
+  @include mixins.respond-to(phone) {
+    grid-template-columns: 100%;
+  }
+}
+
+.card-custom-content {
+  padding: utility.get-rem(16) utility.get-rem(8);
+  margin-bottom: utility.get-rem(16);
+  margin-left: utility.get-rem(8);
+  background-color: colors.get-color('UiWhite');
+  width: 100%;
+  border-radius: utility.get-rem(8);
+  margin-top: utility.get-rem(10);
+
+  h4 {
+    @extend %#{typography.$heading-s-pattern};
+    color: colors.get-color('SeaBlue');
+  }
+
+  span {
+    color: colors.get-color('UiBlack');
+    font-size: var(--dnv-font-text-l);
+  }
+
+  &:hover {
+    cursor: pointer;
+    background-color: colors.get-color('SkyBlue95');
+  }
+
+  @include mixins.respond-to(phone) {
+    margin: 0;
+  }
+}
+
+.card-content-no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: utility.get-rem(133);
+
+  span.no-data {
+    text-transform: uppercase;
+    padding: utility.get-rem(10) utility.get-rem(20);
+    background: colors.get-color('Sandstone90');
+    border-radius: utility.get-rem(30);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+}

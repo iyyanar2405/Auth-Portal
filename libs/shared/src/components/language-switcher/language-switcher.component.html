@@ -1,0 +1,35 @@
+<ng-container *transloco="let t">
+  <div
+    aria-labelledby="language-switcher-label"
+    class="language-switcher"
+    role="radiogroup">
+    <span class="sr-only" id="language-switcher-label">{{
+      t('languageSwitcher')
+    }}</span>
+    @if (languages.length > 2) {
+      <p-dropdown
+        optionLabel="language"
+        optionValue="language"
+        [options]="languages"
+        [(ngModel)]="selectedLanguage.language"
+        (ngModelChange)="selectLanguage(selectedLanguage.language)">
+      </p-dropdown>
+    } @else {
+      @for (language of languages; track language.language; let i = $index) {
+        <button
+          class="language-switcher__button"
+          role="radio"
+          type="button"
+          [attr.aria-checked]="language.isSelected"
+          [attr.aria-label]="language.language"
+          [class.language-switcher--selected]="language.isSelected"
+          (click)="selectLanguage(language.language)">
+          {{ language.language }}
+        </button>
+        @if (i < languages.length - 1) {
+          <span> | </span>
+        }
+      }
+    }
+  </div>
+</ng-container>

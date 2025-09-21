@@ -1,0 +1,24 @@
+@use 'pattern/colors';
+@use 'pattern/mixins';
+
+@use 'pattern/utility';
+
+p-sidebar.p-element::ng-deep {
+  .p-sidebar {
+    width: utility.get-rem(220);
+    background-color: colors.get-color('DarkBlue');
+
+    @include mixins.respond-to(phone) {
+      width: 100%;
+    }
+  }
+
+  .p-sidebar-header {
+    display: none;
+  }
+
+  .p-sidebar-content {
+    display: flex;
+    padding: 0;
+  }
+}

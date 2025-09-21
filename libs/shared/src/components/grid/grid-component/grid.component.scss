@@ -1,0 +1,512 @@
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+@use 'variables';
+
+.pagination-partially-visible {
+  &::ng-deep {
+    .p-paginator {
+      display: flex;
+      justify-content: flex-end;
+
+      .p-paginator-current,
+      .p-paginator-first,
+      .p-paginator-prev,
+      .p-paginator-next,
+      .p-paginator-last,
+      .p-paginator-pages {
+        display: none;
+      }
+    }
+  }
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 0;
+  border: none;
+  border-radius: utility.get-rem(10);
+  margin: 0;
+  overflow: auto;
+  background-color: colors.get-color('UiWhite');
+}
+
+.container-actions {
+  display: grid;
+  column-gap: utility.get-rem(calc(var(--dnv-gutter-base-unitless) * 3));
+  grid-template-columns: minmax(min-content, 1fr) auto;
+  grid-template-areas:
+    'action-buttons counter'
+    'filter-list filter-buttons';
+
+  @include mixins.respond-to(phone) {
+    gap: utility.get-rem(var(--dnv-gutter-base-unitless));
+    grid-template-columns: minmax(50%, 1fr);
+    grid-template-areas:
+      '. counter'
+      'action-buttons action-buttons'
+      'filter-list filter-list'
+      'filter-buttons filter-buttons';
+  }
+
+  &.has-row-gap {
+    row-gap: utility.get-rem(calc(var(--dnv-gutter-base-unitless) * 3));
+  }
+}
+
+.action-buttons {
+  grid-area: action-buttons;
+  display: flex;
+  align-items: center;
+  gap: utility.get-rem(12);
+}
+
+.counter {
+  grid-area: counter;
+  position: absolute;
+  right: 0;
+  .grouping-button {
+    border-color: transparent;
+  }
+}
+
+.filter-list {
+  grid-area: filter-list;
+}
+
+.filter-buttons {
+  grid-area: filter-buttons;
+  display: flex;
+  gap: utility.get-rem(var(--dnv-gutter-base-unitless));
+
+  .grouping-button {
+    border-color: transparent;
+  }
+}
+
+.grouping-button {
+  @extend %#{typography.$button-l-pattern};
+  height: utility.get-rem(40);
+  display: flex;
+  gap: utility.get-rem(8);
+  padding: utility.get-rem(8) utility.get-rem(16);
+  border: 1px solid colors.get-color('SeaBlue');
+  background-color: colors.get-color('UiWhite');
+  color: colors.get-color('SeaBlue');
+
+  &::ng-deep {
+    .p-button-icon {
+      font-size: utility.get-rem(14);
+      margin: 0;
+    }
+  }
+}
+
+:host ::ng-deep {
+  .grid-message {
+    height: utility.get-rem(500);
+    &:hover {
+      background-color: #fff;
+    }
+
+    > td {
+      text-align: center;
+      font-size: utility.get-rem(22);
+      font-weight: 700;
+    }
+  }
+  .p-paginator {
+    border-bottom-left-radius: utility.get-rem(10);
+    border-bottom-right-radius: utility.get-rem(10);
+    border-width: 0;
+    .p-paginator-current {
+      margin-left: 0;
+    }
+  }
+
+  .p-progressbar {
+    height: utility.get-rem(5);
+    background-color: #d8dadc;
+
+    .p-progressbar-value {
+      background-color: #607d8b;
+    }
+  }
+
+  .table-header {
+    &__th {
+      font-size: utility.get-rem(12);
+      display: flex;
+      align-items: center;
+
+      > span {
+        margin-left: utility.get-rem(7);
+        font-weight: 700;
+      }
+    }
+
+    &__buttons-container {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .p-calendar .p-datepicker {
+    min-width: utility.get-rem(250);
+
+    td {
+      font-weight: 400;
+    }
+  }
+
+  .p-datatable {
+    &.p-datatable-scrollable {
+      gap: utility.get-rem(calc(var(--dnv-gutter-base-unitless) * 3));
+    }
+
+    .p-datatable-header {
+      text-align: left;
+      font-size: utility.get-rem(14);
+      border-top-left-radius: variables.$default-border-radius;
+      border-top-right-radius: variables.$default-border-radius;
+      padding: 0;
+      .table-header {
+        display: flex;
+        flex-direction: column;
+
+        .p-button-outlined {
+          @extend %#{typography.$button-l-pattern};
+          height: utility.get-rem(40);
+          display: flex;
+          padding: utility.get-rem(8) utility.get-rem(16);
+          color: colors.get-color('SeaBlue');
+          border-color: colors.get-color('SeaBlue');
+        }
+
+        .p-button-invisible {
+          visibility: hidden;
+        }
+
+        .stack-order-high {
+          z-index: 10;
+          border: none;
+          text-align: right;
+          padding: 0;
+          color: variables.$primary-dnv-medium-blue;
+          background-color: transparent;
+          font-size: utility.get-rem(16);
+        }
+
+        .filters-position {
+          align-items: center;
+        }
+
+        &__icon-times {
+          width: utility.get-rem(14);
+          height: utility.get-rem(14);
+        }
+
+        &__buttons-left {
+          display: flex;
+          gap: utility.get-rem(12);
+        }
+        &__buttons-right {
+          display: flex;
+          min-width: max-content;
+          button:last-child {
+            margin-left: utility.get-rem(24);
+          }
+        }
+      }
+    }
+
+    .p-datatable-thead {
+      .p-icon-wrapper {
+        margin-top: utility.get-rem(4);
+      }
+
+      .select-tristate {
+        padding-left: utility.get-rem(17.5);
+      }
+    }
+
+    &.p-datatable-lg {
+      .p-datatable-tbody > tr > td {
+        padding: utility.get-rem(22.5) utility.get-rem(17.5);
+      }
+    }
+
+    .p-datatable-tbody > tr {
+      &.disabled-row {
+        color: colors.get-color('Sandstone40');
+
+        ::ng-deep shared-text-with-icon i {
+          color: colors.get-color('Sandstone40');
+        }
+      }
+
+      & > td {
+        cursor: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: utility.get-rem(16);
+        line-height: utility.get-rem(32);
+
+        div {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &.full-text {
+            white-space: break-spaces;
+          }
+        }
+
+        &.tag {
+          padding: utility.get-rem(16);
+        }
+
+        &.p-selectable-row {
+          line-height: unset;
+
+          &--has-child {
+            padding: 0;
+
+            .parent-checkbox,
+            .child-checkbox {
+              height: utility.get-rem(65);
+              padding: utility.get-rem(16);
+              align-content: center;
+            }
+          }
+        }
+      }
+    }
+
+    .p-dropdown-label:not(.p-placeholder) {
+      text-transform: uppercase;
+    }
+
+    .p-sortable-column .p-sortable-column-icon {
+      margin-left: 0;
+    }
+
+    .p-sortable-column.p-highlight {
+      color: variables.$basic-tones-dnv-dark;
+    }
+
+    .p-frozen-column {
+      &.p-element {
+        box-shadow: 4px 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      &.table-header-dimension-event-actions,
+      &.table-header-dimension-actions,
+      &.action-column {
+        width: 0;
+        box-shadow: -4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+        &.sm {
+          box-shadow: none;
+        }
+      }
+      &.action-column + .action-column {
+        box-shadow: none;
+      }
+      &.table-header-dimension-event-actions--sm.action-column {
+        min-width: 4rem;
+        box-shadow: none;
+      }
+    }
+
+    .p-datatable-thead {
+      z-index: 1;
+    }
+  }
+
+  .p-w-100 {
+    width: 100%;
+  }
+
+  /* Responsive */
+  .p-datatable-customers .p-datatable-tbody > tr > td .p-column-title {
+    display: none;
+  }
+
+  .p-paginator-right-content {
+    margin-left: 0;
+  }
+
+  .p-paginator {
+    padding: 0;
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-lg) {
+  :host ::ng-deep {
+    .p-datatable {
+      &.p-datatable-customers {
+        .p-datatable-thead > tr > th,
+        .p-datatable-tfoot > tr > td {
+          display: none !important;
+        }
+
+        .p-datatable-tbody > tr {
+          border-bottom: 1px solid var(--layer-2);
+
+          > td {
+            text-align: left;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            border: 0 none;
+
+            .p-column-title {
+              min-width: 30%;
+              display: inline-block;
+              font-weight: bold;
+            }
+
+            p-progressbar {
+              width: 100%;
+            }
+
+            &:last-child {
+              border-bottom: 1px solid var(--surface-d);
+            }
+          }
+        }
+      }
+    }
+
+    .p-paginator {
+      .p-paginator-current {
+        display: none;
+      }
+
+      .p-paginator-first {
+        margin: 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-md) {
+  :host ::ng-deep {
+    .p-paginator {
+      .p-paginator-current {
+        display: none;
+      }
+
+      .p-paginator-right {
+        margin-top: utility.get-rem(12);
+      }
+    }
+
+    .p-paginator-right-content {
+      margin-left: auto;
+    }
+
+    .p-datatable {
+      .p-datatable-tbody > tr > td {
+        line-height: utility.get-rem(24);
+      }
+    }
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-sm) {
+  :host ::ng-deep {
+    .p-paginator {
+      .p-paginator-first {
+        margin-left: auto;
+      }
+    }
+
+    .p-datatable {
+      .p-datatable-header {
+        .table-header {
+          .filters-position {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
+
+      .p-datatable-tbody > tr > td {
+        line-height: utility.get-rem(20);
+      }
+    }
+  }
+}
+
+#content-table {
+  height: 100%;
+
+  &::ng-deep {
+    .p-datatable-thead {
+      > tr.header-row {
+        > th.table-header-dimension {
+          min-width: 8rem;
+        }
+        > th.table-header-dimension-actions {
+          min-width: 5rem;
+        }
+        > th.table-header-dimension-event-actions {
+          min-width: 13rem;
+
+          &--sm {
+            min-width: 4rem;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.row-child {
+  padding: 0 !important;
+  .child-cell {
+    width: 100%;
+    &.change-color {
+      color: variables.$forest-green-light;
+    }
+    &.dummy-cell {
+      height: 65px;
+    }
+    .child-status-icon {
+      width: 11px;
+      height: 11px;
+      display: inline-block;
+      border-left: 1px solid colors.get-color('Sandstone70');
+      border-bottom: 1px solid colors.get-color('Sandstone70');
+    }
+    .child-status-text {
+      font-size: utility.get-rem(11);
+      font-weight: 700;
+      text-transform: uppercase;
+      padding-left: 5px;
+    }
+  }
+
+  .child-cell,
+  .empty-cell,
+  .dummy-cell,
+  .parent-cell {
+    padding: utility.get-rem(16);
+    align-content: center;
+  }
+  .empty-cell,
+  .parent-cell {
+    height: 65px;
+  }
+}
+.selected-count-button{
+  display: flex;
+}

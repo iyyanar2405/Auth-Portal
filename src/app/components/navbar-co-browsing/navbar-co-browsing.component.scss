@@ -1,0 +1,44 @@
+@use 'pattern/colors' as colors;
+@use 'pattern/mixins' as mixins;
+@use 'pattern/typography' as typography;
+@use 'pattern/utility' as utility;
+
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.banner {
+    height: utility.get-rem(55);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: utility.get-rem(40);
+    background-color: colors.get-color('5kyBlue10');
+    @include mixins.gutter-for(top, right, bottom, left);
+
+    @include mixins.respond-to(phone) {
+        height: auto;
+        gap: utility.get-rem(10);
+    }
+}
+
+p {
+    @extend %#{typography.$text-l-pattern};
+    color: colors.get-color('UiWhite');
+
+    @include mixins.respond-to(phone) {
+        max-width: 60%;
+    }
+}
+
+shared-button::ng-deep {
+    p-button.p-element {
+        .p-button-outlined {
+            border-color: colors.get-color('UiWhite');
+            color: colors.get-color('UiWhite');
+            background-color: transparent;
+        }
+    }
+}

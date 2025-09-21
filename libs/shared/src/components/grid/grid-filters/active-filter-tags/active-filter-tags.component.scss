@@ -1,0 +1,12 @@
+@use 'variables';
+@use 'pattern/utility';
+
+.active-filter-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  &--empty {
+    margin-top: 0;
+  }
+}

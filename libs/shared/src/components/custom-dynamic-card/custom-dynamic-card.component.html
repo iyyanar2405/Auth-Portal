@@ -1,0 +1,73 @@
+<ng-container *transloco="let t">
+  <div class="card-wrapper">
+    <div class="card-header-wrapper">
+      <div class="card-header">
+        <h4 class="card-heading" tabindex="0">{{ card.cardData.service }}</h4>
+      </div>
+      <div class="card-header-years">
+        <div class="card-tab-headers">
+          <div class="buttons card-tab-buttons">
+            @for (
+              yearlyData of card.cardData.yearlyData;
+              track yearlyData.year.label
+            ) {
+              <p-button
+                [attr.aria-label]="
+                  getYearLabel(card.cardData.service, yearlyData.year.label)
+                "
+                [label]="yearlyData.year.label"
+                [styleClass]="
+                  activeTabIndex === yearlyData.year.index
+                    ? 'year-button active'
+                    : 'year-button'
+                "
+                (click)="changeActiveTabIndex(yearlyData.year.index)">
+              </p-button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    @if (shouldDisplayNoData) {
+      <div class="card-content-no-data">
+        <span class="no-data">{{ t('overview.cardTexts.noValue') }}</span>
+      </div>
+    } @else {
+      <div class="card-content">
+        <div class="card-tab-content">
+          @for (
+            details of card.cardData.yearlyData[activeTabIndex].details;
+            track details.entity
+          ) {
+            <div
+              class="card-custom-content"
+              tabindex="0"
+              (click)="onCardClick(details)"
+              (keydown.enter)="onCardClick(details)"
+              (keydown.space)="onCardClick(details)">
+              <h4 role="heading">
+                {{ details.entity }}
+                <i aria-hidden="true" class="pi pi-angle-right"></i>
+              </h4>
+              <p-progressBar
+                role="progressbar"
+                [attr.aria-label]="details.entity + ' progressbar'"
+                [attr.aria-valuemax]="100"
+                [attr.aria-valuemin]="0"
+                [attr.aria-valuenow]="details.stats.percentage"
+                [value]="details.stats.percentage">
+                <ng-template let-value pTemplate="content"> </ng-template>
+              </p-progressBar>
+
+              <span
+                ><b>{{ details.stats.currentValue }}</b> /
+                {{ details.stats.maxValue }}
+                {{ t(details.entityTranslationKey) }}</span
+              >
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</ng-container>

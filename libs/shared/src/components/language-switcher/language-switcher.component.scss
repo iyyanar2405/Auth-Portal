@@ -1,0 +1,30 @@
+@use 'variables';
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+:host {
+  display: flex;
+  align-items: center;
+}
+
+.language-switcher {
+  &__button {
+    @extend %#{typography.$text-l-pattern};
+    padding: 0;
+    border: none;
+    background: none;
+    color: #4F4D4A;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &--selected {
+    color: colors.get-color('SeaBlue');
+  }
+}

@@ -1,0 +1,377 @@
+@use 'sass:color';
+
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+@use 'variables';
+
+full-calendar {
+  height: 100%;
+  display: flex;
+  overflow: auto;
+
+  @include mixins.respond-to(phone) {
+    padding-top: utility.get-rem(5);
+  }
+}
+
+.calendar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  ::ng-deep {
+    .calendar__legend {
+      display: flex;
+      align-items: center;
+      gap: utility.get-rem(24);
+      margin-bottom: utility.get-rem(24);
+      flex-wrap: wrap;
+    }
+
+    .fc-view-harness.fc-view-harness-passive {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 1px;
+      overflow-y: auto;
+    }
+
+    .fc-day-disabled {
+      background-color: color.scale(colors.get-color('Sandstone95'), $lightness: 40%);
+    }
+
+    .pi {
+      font-family: 'primeicons' !important;
+    }
+
+    .fc-toolbar-title {
+      @extend %#{typography.$heading-l-pattern};
+      color: colors.get-color('SeaBlue');
+      align-self: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .fc .fc-header-toolbar {
+      height: 40px;
+      align-items: stretch;
+      margin-bottom: utility.get-rem(24);
+      position: relative;
+
+      @include mixins.respond-to(phone) {
+        height: auto;
+      }
+    }
+
+    .fc-today-button {
+      margin: 0;
+    }
+
+    .fc-toolbar-chunk {
+      display: flex;
+      gap: 12px;
+    }
+
+    .fc .fc-button-primary {
+      background-color: variables.$basic-tones-dnv-white;
+      border-color: variables.$primary-dnv-medium-blue;
+      color: variables.$primary-dnv-medium-blue;
+    }
+
+    .fc .fc-button {
+      @extend %#{typography.$button-l-pattern};
+      border-radius: utility.get-rem(10);
+      padding: utility.get-rem(8) utility.get-rem(16);
+      text-transform: capitalize;
+      color: colors.get-color('SeaBlue');
+    }
+
+    .fc-direction-ltr .fc-button-group > .fc-button:not(:last-child) {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    .fc-direction-ltr .fc-button-group > .fc-button:not(:first-child) {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+      margin-left: -1px;
+    }
+
+    .fc .fc-button-group > .fc-button.fc-button-active {
+      color: variables.$basic-tones-dnv-white;
+      background-color: variables.$primary-dnv-medium-blue;
+      box-shadow: none;
+    }
+
+    .fc-col-header-cell {
+      background-color: variables.$concrete;
+      color: variables.$primary-dnv-dark-blue;
+      border: unset;
+      padding: utility.get-rem(16);
+      text-transform: uppercase;
+      font-size: utility.get-rem(12);
+    }
+
+    .fc .fc-scroller {
+      overflow: hidden !important;
+    }
+
+    .fc .fc-scrollgrid-section-header {
+      background-color: #f3f2f2;
+      border-top-right-radius: 10px;
+    }
+
+    .fc .fc-scrollgrid {
+      border: unset;
+      box-shadow: 0 0 3px 0 variables.$stone-gray-alt;
+    }
+
+    .fc .fc-daygrid-day-number {
+      font-size: utility.get-rem(12);
+      padding: utility.get-rem(8) utility.get-rem(8) utility.get-rem(6)
+        utility.get-rem(8);
+    }
+
+    .fc .fc-day-other {
+      color: variables.$basic-tones-dnv-medium-dark;
+      background: rgba(243, 242, 242, 0.4);
+    }
+
+    .fc .fc-daygrid-day-frame {
+      height: utility.get-rem(150);
+    }
+
+    .fc-daygrid-body {
+      tr {
+        border-bottom: 1px solid variables.$stone-gray-alt;
+      }
+
+      td.fc-daygrid-day {
+        border-right: 1px solid variables.$stone-gray-alt;
+      }
+    }
+
+    .fc-h-event {
+      padding: utility.get-rem(4) utility.get-rem(12);
+      font-size: utility.get-rem(12);
+      border-radius: utility.get-rem(40);
+      border: none;
+      margin-bottom: 2px;
+      cursor: pointer;
+      
+      &.sunflower-yellow {
+        background-color: colors.get-color('GraphYellow');
+      }
+
+      &.forest-green {
+        background-color: colors.get-color('GraphGreen');
+      }
+
+      &.pewter-gray {
+        background-color: colors.get-color('GraphGrey');
+      }
+
+      &.summer-sky {
+        background-color: colors.get-color('GraphBlue');
+      }
+
+      .fc-event-main {
+        @extend %#{typography.$text-s-pattern};
+        color: colors.get-color('UiBlack');
+      }
+    }
+
+    .fc-event-title-container {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .fc-event-title {
+      text-overflow: ellipsis;
+    }
+
+    .fc-daygrid-more-link.fc-more-link {
+      font-size: utility.get-rem(12);
+      color: colors.get-color('UiBlack');
+      background-color: colors.get-color('SkyBlue90');
+      padding: utility.get-rem(6) utility.get-rem(12);
+      border-radius: utility.get-rem(40);
+      border: unset;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    .fc .fc-daygrid-day.fc-day-today {
+      background-color: variables.$primary-dnv-sky-light-blue;
+    }
+
+    .fc-more-popover {
+      width: utility.get-rem(360);
+    }
+
+    .fc .fc-popover-header {
+      padding: utility.get-rem(16) utility.get-rem(24);
+      background-color: variables.$basic-tones-dnv-white;
+      font-size: utility.get-rem(20);
+      font-weight: 700;
+      color: variables.$primary-dnv-medium-blue;
+      border-bottom: 1px solid variables.$sky-blue;
+    }
+
+    .fc .fc-more-popover .fc-popover-body {
+      padding: utility.get-rem(24);
+      display: flex;
+      flex-direction: column;
+      gap: utility.get-rem(12);
+    }
+
+    .fc .fc-popover-close {
+      opacity: 1;
+      margin-top: -16px;
+    }
+
+    .fc-icon-x::before {
+      content: '\00D7';
+      font-size: utility.get-rem(32);
+    }
+
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+      border: none;
+    }
+
+    .fc-dayGridMonth-view.fc-view.fc-daygrid {
+      border-top: unset;
+      border: unset;
+      border-bottom-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+      box-shadow: 0px 1px 3px 0px color.scale(colors.get-color('DarkBlue'), $alpha: -75%);
+      overflow: hidden;
+    }
+
+    .fc .fc-multimonth-daygrid {
+      border-bottom-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+      box-shadow: 0px 1px 3px 0px color.scale(colors.get-color('DarkBlue'), $alpha: -75%);
+      overflow: hidden;
+
+      tr:last-child {
+        td:first-child {
+          border-bottom-left-radius: 10px;
+        }
+
+        td:last-child {
+          border-bottom-right-radius: 10px;
+        }
+      }
+    }
+
+    .fc-multimonth-header-table {
+      box-shadow: 0 0 3px 0 variables.$stone-gray-alt;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+
+      th:first-child {
+        border-top-left-radius: 10px;
+      }
+
+      th:last-child {
+        border-top-right-radius: 10px;
+      }
+    }
+
+    .fc .fc-multiMonthYear-view {
+      .fc-multimonth-title {
+        color: variables.$primary-dnv-medium-blue;
+        font-size: utility.get-rem(20);
+      }
+
+      &.fc-multimonth {
+        border: none;
+      }
+
+      .fc-multimonth-month {
+        padding: 0;
+        .fc-multimonth-header .fc-multimonth-title {
+          text-transform: capitalize;
+        }
+      }
+
+      .fc-multimonth-month:nth-of-type(odd) {
+        padding: 0 utility.get-rem(12) 0 0;
+      }
+
+      .fc-multimonth-month:nth-of-type(even) {
+        padding: 0 utility.get-rem(4) 0 utility.get-rem(12);
+      }
+
+      .fc-daygrid-day-frame {
+        height: utility.get-rem(95);
+      }
+
+      .fc .fc-daygrid-day-bottom {
+        font-size: utility.get-rem(12);
+        color: variables.$black;
+        background-color: variables.$sky-blue;
+        padding: utility.get-rem(8) utility.get-rem(12);
+        border-radius: utility.get-rem(40);
+      }
+    }
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-xl) {
+  .calendar {
+    padding: utility.get-rem(40) utility.get-rem(24);
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-sm) {
+  .calendar {
+    padding: 0;
+
+    &__legend {
+      gap: utility.get-rem(12);
+      margin: 0 utility.get-rem(16) utility.get-rem(40) utility.get-rem(16);
+      flex-wrap: wrap;
+
+      @include mixins.respond-to(phone) {
+        margin-right: 0;
+        margin-left: 0;
+      }
+    }
+
+    ::ng-deep {
+      .fc-toolbar-title {
+        font-size: utility.get-rem(22);
+        text-align: center;
+        top: utility.get-rem(20);
+        max-width: 30%;
+        margin-left: 0;
+      }
+
+      .fc .fc-toolbar {
+        display: grid;
+        grid-template-columns: min-content auto;
+        grid-row-gap: utility.get-rem(16);
+        justify-content: start;
+        margin-bottom: utility.get-rem(40);
+        padding: 0 utility.get-rem(16);
+
+        @include mixins.respond-to(phone) {
+          padding: 0;
+        }
+      }
+
+      .fc-today-button {
+        position: absolute;
+        right: utility.get-rem(16);
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<p-button
+  type="button"
+  [ariaLabel]="label()"
+  [attr.aria-disabled]="isDisabled()"
+  [attr.role]="'button'"
+  [attr.tabindex]="isDisabled() ? -1 : 0"
+  [autofocus]="autofocus()"
+  [disabled]="isDisabled()"
+  [icon]="iconClass()"
+  [iconPos]="iconPos()"
+  [label]="label()"
+  [outlined]="type() === sharedButtonType.Outline"
+  [severity]="severity()"
+  [styleClass]="size()"
+  [text]="type() === sharedButtonType.TextLink"
+  (onClick)="onClick($event)">
+</p-button>

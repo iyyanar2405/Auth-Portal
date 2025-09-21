@@ -1,0 +1,8 @@
+<div class="status">
+  <i [ngClass]="['status__icon pi pi-circle-fill', className]"></i>
+  <span
+    [sharedTippyTooltip]="value | uppercase"
+    [tooltipTheme]="TooltipTheme.LightMd"
+    >{{ value | uppercase }}</span
+  >
+</div>

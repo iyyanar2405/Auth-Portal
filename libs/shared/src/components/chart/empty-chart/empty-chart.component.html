@@ -1,0 +1,41 @@
+<ng-container *transloco="let t">
+  <div
+    class="no-data"
+    tabindex="0"
+    [ariaLabel]="t('noDataAvailable')"
+    [ngClass]="{
+      'no-data--with-border': hasBorderIfNoData,
+      'no-data--bar': type === chartTypeEnum.Bar,
+    }">
+    @if (type === chartTypeEnum.Doughnut) {
+      <div class="no-data__doughnut-outer">
+        <div class="no-data__doughnut-inner">
+          <p>{{ t('noDataAvailable') }}</p>
+        </div>
+      </div>
+    } @else {
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern
+            height="100"
+            id="grid"
+            patternUnits="userSpaceOnUse"
+            width="220">
+            <path
+              d="M 220 0 L 0 0 0 100"
+              fill="none"
+              stroke="#ddd"
+              stroke-dasharray="5,2"
+              stroke-width="2" />
+          </pattern>
+        </defs>
+        <rect fill="url(#grid)" height="100%" width="100%" />
+        <foreignObject height="100%" width="100%">
+          <div class="no-data__svg-text">
+            <p>{{ t('noDataAvailable') }}</p>
+          </div>
+        </foreignObject>
+      </svg>
+    }
+  </div>
+</ng-container>

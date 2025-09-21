@@ -1,0 +1,53 @@
+<ng-container *transloco="let t">
+  <div
+    cdkDropList
+    class="grid-cols-dropdown"
+    [cdkDropListDisabled]="dropListDisabled"
+    (cdkDropListDropped)="drop($event)">
+    <div class="grid-cols-dropdown__header">
+      <p-triStateCheckbox
+        [checkboxFalseIcon]="'pi pi-minus'"
+        [label]="t('all') | titlecase"
+        [(ngModel)]="selectAll"
+        (onChange)="onChangeSelectAll($event)"></p-triStateCheckbox>
+      @if (showApplyButton) {
+        <button
+          class="p-button-outlined"
+          pButton
+          type="button"
+          (click)="onApplyClick()">
+          {{ t('apply') | titlecase }}
+        </button>
+      }
+      @if (showDefaultButton) {
+        <button
+          class="p-button-outlined"
+          pButton
+          type="button"
+          (click)="onDefaultClick()">
+          {{ t('default') | titlecase }}
+        </button>
+      }
+    </div>
+    @for (col of columns; track col.field) {
+      @if (!col.hideFromColumnManagement) {
+        <div
+          cdkDrag
+          class="drag-box"
+          [cdkDragDisabled]="col.fixed"
+          [ngClass]="{ disabled: col.fixed, active: !col.hidden }">
+          <p-checkbox
+            name="column"
+            [disabled]="col.fixed"
+            label="{{ t(col.displayName) }}"
+            [value]="col.field"
+            [(ngModel)]="selectedColumns"
+            (ngModelChange)="columnsChanged()"></p-checkbox>
+          @if (!col.fixed) {
+            <i class="pi pi-bars"></i>
+          }
+        </div>
+      }
+    }
+  </div>
+</ng-container>

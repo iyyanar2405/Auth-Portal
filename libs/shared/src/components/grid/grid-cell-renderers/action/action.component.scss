@@ -1,0 +1,19 @@
+@use 'pattern/colors';
+@use 'pattern/utility';
+
+.actions-container {
+  display: flex;
+  justify-content: space-between;
+  max-width: utility.get-rem(100);
+  gap: utility.get-rem(24);
+
+  .action-icon {
+    font-size: utility.get-rem(20);
+    color: colors.get-color('SeaBlue');
+    cursor: pointer;
+
+    &--red {
+      color: colors.get-color('EnergyRed');
+    }
+  }
+}

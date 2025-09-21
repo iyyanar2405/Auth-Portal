@@ -1,0 +1,71 @@
+@use 'variables';
+@use 'pattern/utility';
+@use 'pattern/typography';
+@use 'pattern/colors';
+
+::ng-deep {
+  .p-dialog-header {
+    display: none;
+
+    .p-dialog-title {
+      font-family: 'DNVDisplayRegular';
+      color: colors.get-color('DarkBlue');
+      font-size: utility.get-rem(36);
+      line-height: utility.get-rem(40);
+      text-transform: uppercase;
+      font-weight: normal;
+    }
+  }
+
+  .p-dialog-content {
+    padding: utility.get-rem(32);
+    border-radius: utility.get-rem(10);
+    min-width: utility.get-rem(520);
+    margin: 0 utility.get-rem(10);
+  }
+
+  @media screen and (max-width: variables.$breakpoint-lg) {
+    .p-dialog-content {
+      min-width: 50vw;
+    }
+  }
+
+  @media screen and (max-width: variables.$breakpoint-md) {
+    .p-dialog-content {
+      min-width: 65vw;
+    }
+  }
+
+  @media screen and (max-width: variables.$breakpoint-sm) {
+    .p-dialog-content {
+      min-width: 80vw;
+    }
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: utility.get-rem(20);
+
+  .title {
+    font-family: 'DNVDisplayRegular';
+    color: colors.get-color('DarkBlue');
+    font-size: utility.get-rem(36);
+    line-height: utility.get-rem(40);
+    text-transform: uppercase;
+    font-weight: normal;
+  }
+
+  .text-container {
+    font-family: 'Nunito Sans';
+    display: flex;
+    flex-direction: column;
+    gap: utility.get-rem(16);
+
+    .description {
+      font-size: utility.get-rem(14);
+      line-height: utility.get-rem(21);
+    }
+  }
+}

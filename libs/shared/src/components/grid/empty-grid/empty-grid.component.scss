@@ -1,0 +1,25 @@
+@use 'pattern/colors';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: utility.get-rem(20);
+  margin: auto;
+  width: utility.get-rem(370);
+
+  &__title {
+    @extend %#{typography.$heading-s-pattern};
+    color: colors.get-color('DarkBlue');
+    font-weight: 700;
+  }
+
+  &__description {
+    @extend %#{typography.$label-l-pattern};
+    color: colors.get-color('UiBlack');
+    font-weight: 400;
+    white-space: pre-line;
+  }
+}

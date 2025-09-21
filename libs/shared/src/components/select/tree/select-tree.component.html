@@ -1,0 +1,55 @@
+<ng-container *transloco="let t">
+  <p-treeSelect
+    #treeSelect
+    selectionMode="checkbox"
+    tooltipPosition="top"
+    [appendTo]="appendTo()"
+    [ariaLabel]="ariaLabel()"
+    [disabled]="isDisabled()"
+    [filter]="hasSearch()"
+    [options]="options()"
+    [pTooltip]="tooltipContent"
+    [placeholder]="placeholder()"
+    [scrollHeight]="scrollHeight"
+    [showDelay]="tooltipDelay()"
+    [virtualScroll]="true"
+    [virtualScrollItemSize]="50"
+    [virtualScrollOptions]="{scrollHeight: scrollHeight}" [(ngModel)]="selected"
+    (onNodeSelect)="onChange($event)" 
+    (onNodeUnselect)="onChange($event)">
+    <ng-template let-value pTemplate="value">
+      @if (value?.length) {
+        @if (value.length < selectOverflowLimit) {
+          <span>{{ selectedTooltip }}</span>
+        } @else {
+          <span>{{
+            t('select.multiSelect.overflowLabel', { count: value.length })
+          }}</span>
+        }
+      } @else {
+        <span>{{ placeholder() }}</span>
+      }
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      @if (options().length > 1) {
+        <div class="p-multiselect-header-container">
+          <p-triStateCheckbox
+            [checkboxFalseIcon]="'pi pi-minus'"
+            [label]="t('all')"
+            [ngModel]="triState()"
+            (onChange)="onChangeTriState($event)">
+          </p-triStateCheckbox>
+        </div>
+      }
+    </ng-template>
+
+    <ng-template pTemplate="empty">
+      <p>{{ t('noDataAvailable') }}</p>
+    </ng-template>
+
+    <ng-template #tooltipContent>
+      <p>{{ selectedTooltip }}</p>
+    </ng-template>
+  </p-treeSelect>
+</ng-container>

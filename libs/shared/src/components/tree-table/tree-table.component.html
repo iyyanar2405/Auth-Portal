@@ -1,0 +1,117 @@
+<ng-container *transloco="let t">
+  <div class="tree-table-container">
+    @if (data && data.length) {
+      <p-treeTable frozenWidth="220px"
+        [columns]="cols"
+        [frozenColumns]="frozenCols"
+        [scrollable]="true"
+        [value]="data">
+        <ng-template let-columns pTemplate="header">
+          <tr>
+            @for (col of columns; track col.field) {
+              <th
+                [style.width]="col.width || 'inherit'"
+                [title]="col.isTranslatable ? t(col.header) : col.header">
+                {{ col.isTranslatable ? t(col.header) : col.header }}
+              </th>
+            }
+          </tr>
+        </ng-template>
+
+        <ng-template
+          let-columns="columns"
+          let-rowData="rowData"
+          let-rowNode
+          pTemplate="body">
+          <tr [ttRow]="rowNode">
+            @for (col of columns; let i = $index; track col.field) {
+              <td [style.width]="col.width || 'inherit'">
+                @if (i === 0) {
+                  <p-treeTableToggler
+                    [ngClass]="getRowClasses(rowNode)"
+                    [rowNode]="rowNode">
+                  </p-treeTableToggler>
+                }
+                @if (hideZeroValues && rowData[col.field] === 0) {
+                  &nbsp;
+                } @else {
+                  @if (!isBoolean(rowData[col.field])) {
+                    <span
+                      tabindex="0"
+                      [class]="getGradientClass(rowData[col.field], col.field)"
+                      [ngClass]="getCellClasses(col, rowNode)"
+                      (click)="
+                        isCellClickable &&
+                          onCellClick(rowData, col.field, rowNode)
+                      "
+                      (keydown.enter)="
+                        isCellClickable &&
+                          onCellClick(rowData, col.field, rowNode)
+                      ">
+                      {{ rowData[col.field] }}
+                    </span>
+                  } @else {
+                    @if (rowData[col.field] === true) {
+                      <i class="pi pi-check-circle"></i>
+                    } @else {
+                      &nbsp;
+                    }
+                  }
+                }
+              </td>
+            }
+          </tr>
+        </ng-template>
+
+        <ng-template
+          let-columns="columns"
+          let-rowData="rowData"
+          let-rowNode
+          pTemplate="frozenbody">
+          <tr [ttRow]="rowNode">
+            @for (col of columns; let i = $index; track col.field) {
+              <td [style.width]="col.width || 'inherit'">
+                @if (i === 0) {
+                  <p-treeTableToggler
+                    [ngClass]="getRowClasses(rowNode)"
+                    [rowNode]="rowNode">
+                  </p-treeTableToggler>
+                }
+                @if (hideZeroValues && rowData[col.field] === 0) {
+                  &nbsp;
+                } @else {
+                  @if (!isBoolean(rowData[col.field])) {
+                    <span
+                      tabindex="0"
+                      [class]="getGradientClass(rowData[col.field], col.field)"
+                      [ngClass]="getCellClasses(col, rowNode)"
+                      (click)="
+                        isCellClickable &&
+                          onCellClick(rowData, col.field, rowNode)
+                      "
+                      (keydown.enter)="
+                        isCellClickable &&
+                          onCellClick(rowData, col.field, rowNode)
+                      ">
+                      {{ rowData[col.field] }}
+                    </span>
+                  } @else {
+                    @if (rowData[col.field] === true) {
+                      <i class="pi pi-check-circle"></i>
+                    } @else {
+                      &nbsp;
+                    }
+                  }
+                }
+              </td>
+            }
+          </tr>
+        </ng-template>
+      </p-treeTable>
+    } @else {
+      <h3 class="grid-message">
+        {{ t('certificatesBySite.noDataNotification') }}
+      </h3>
+    }
+  </div>
+</ng-container>

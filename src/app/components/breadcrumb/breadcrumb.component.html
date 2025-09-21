@@ -1,0 +1,23 @@
+<ng-container *transloco="let t">
+  @if (breadcrumbs().length) {
+    <p-breadcrumb
+      role="navigation"
+      [attr.aria-label]="t('ariaLabel.breadcrumb')"
+      [home]="home"
+      [homeAriaLabel]="t('home')"
+      [model]="breadcrumbs()">
+      <ng-template let-item let-last="last" pTemplate="item">
+        <a
+          class="p-menuitem-link"
+          [attr.aria-current]="last ? 'page' : null"
+          [routerLink]="item.routerLink">
+          @if (item.i18nKey) {
+            <span>{{ t(item.i18nKey) }}</span>
+          } @else {
+            <span>{{ item.label }}</span>
+          }
+        </a>
+      </ng-template>
+    </p-breadcrumb>
+  }
+</ng-container>

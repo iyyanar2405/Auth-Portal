@@ -1,0 +1,48 @@
+@use 'pattern/colors';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+@use 'variables';
+
+.event-action {
+  display: flex;
+  justify-content: end;
+  gap: utility.get-rem(16);
+
+  .p-button {
+    @extend %#{typography.$button-s-pattern};
+    display: flex;
+    gap: 8px;
+    padding: {
+      top: utility.get-rem(8);
+      right: utility.get-rem(12);
+      bottom: utility.get-rem(8);
+      left: utility.get-rem(12);
+    }
+    background-color: colors.get-color('SeaBlue');
+    z-index: 1;
+
+    &::ng-deep {
+      .p-button-icon {
+        margin: 0;
+      }
+    }
+  }
+
+  &__actions-menu {
+    height: utility.get-rem(32);
+  }
+
+  &__confirmed-label {
+    padding-right: utility.get-rem(10);
+    i {
+      color: colors.get-color('SuccessGreen50');
+      padding-right: utility.get-rem(5);
+      font-size: utility.get-rem(10);
+    }
+
+    span {
+      font-size: utility.get-rem(12);
+    }
+  }
+}

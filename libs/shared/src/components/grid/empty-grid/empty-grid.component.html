@@ -1,0 +1,50 @@
+<ng-container *transloco="let t">
+  @if (isDocumentsGrid) {
+    <div class="empty-state empty-state--documents">
+      <img
+        class="empty-state__image"
+        src="./assets/images/no-documents.png"
+        alt="{{ t('grid.noDocuments') }}" />
+      <div class="empty-state__content">
+        <p class="empty-state__title">{{ t('grid.noDocuments') }}</p>
+        <p class="empty-state__description">
+          {{ t('grid.noDocumentsDetailedMessage') }}
+        </p>
+      </div>
+      <div class="empty-state__actions">
+        <shared-button
+          [icon]="'plus'"
+          [label]="t('grid.addDocuments')"
+          [type]="sharedButtonType.Secondary"
+          (clickEvent)="onAddDocuments()">
+        </shared-button>
+      </div>
+    </div>
+  } @else if (isGridEmpty && hasActiveFilters) {
+    <div class="empty-state empty-state--no-data-matches-filters">
+      <img
+        class="empty-state__image"
+        src="./assets/images/no-data-filters.png"
+        alt="{{ t('grid.noDataMatchesFilter') }}" />
+      <div class="empty-state__content">
+        <p class="empty-state__title">{{ t('grid.noDataMatchesFilter') }}</p>
+        <p class="empty-state__description">
+          {{ t('grid.noDataMatchesFilterDetailedMessage') }}
+        </p>
+      </div>
+    </div>
+  } @else if (isGridEmpty) {
+    <div class="empty-state empty-state--no-data">
+      <img
+        class="empty-state__image"
+        src="./assets/images/no-data.png"
+        alt="{{ t('grid.noData') }}" />
+      <div class="empty-state__content">
+        <p class="empty-state__title">{{ t('grid.noData') }}</p>
+        <p class="empty-state__description">
+          {{ t('grid.noDataDetailedMessage') }}
+        </p>
+      </div>
+    </div>
+  }
+</ng-container>

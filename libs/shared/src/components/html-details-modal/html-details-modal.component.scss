@@ -1,0 +1,9 @@
+@use 'pattern/utility';
+
+:host {
+  font-size: utility.get-rem(16);
+}
+
+.message {
+  white-space: pre-line;
+}

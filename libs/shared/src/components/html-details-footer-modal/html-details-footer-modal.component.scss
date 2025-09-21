@@ -1,0 +1,16 @@
+@use 'pattern/colors';
+
+:host {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+shared-button:last-child::ng-deep {
+  p-button.p-element {
+    .p-button {
+      background-color: colors.get-color('SeaBlue');
+    }
+  }
+}

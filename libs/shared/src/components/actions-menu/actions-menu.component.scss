@@ -1,0 +1,34 @@
+@use 'pattern/colors';
+
+@use 'pattern/utility';
+
+.actions-menu-container {
+  p-button.p-element::ng-deep {
+    .p-button-icon {
+      font-size: utility.get-rem(14);
+      color: colors.get-color('SeaBlue');
+      cursor: pointer;
+      z-index: 1;
+    }
+    &:focus {
+      border: 2px solid colors.get-color('SkyBlue80');
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  .open-event-actions {
+    color: colors.get-color('UiBlack');
+  }
+}
+
+.p-menuitem-content {
+  border-bottom: 1px solid colors.get-color('SkyBlue80');
+
+  &.remove {
+    border: none;
+    a span {
+      color: colors.get-color('EnergyRed');
+    }
+  }
+}

@@ -1,0 +1,40 @@
+@use 'pattern/colors';
+@use 'pattern/typography';
+
+@use 'pattern/utility';
+
+:host {
+  display: flex;
+  align-items: center;
+  gap: utility.get-rem(calc(var(--dnv-gutter-base-unitless) * 1));
+}
+
+i {
+  font-size: utility.get-rem(20);
+  color: colors.get-color('SeaBlue');
+}
+
+span {
+  @extend %#{typography.$text-m-pattern};
+}
+
+.container-icon {
+  width: utility.get-rem(20);
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep {
+  // TODO revisit this, as it's not ideal
+  .p-tooltip {
+    .p-tooltip-text {
+      word-break: normal;
+      background-color: colors.get-color('UiWhite');
+      color: colors.get-color('UiBlack');
+    }
+
+    .p-tooltip-arrow {
+      border-right-color: colors.get-color('UiWhite');
+    }
+  }
+}

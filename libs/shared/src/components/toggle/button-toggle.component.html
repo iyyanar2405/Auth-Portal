@@ -1,0 +1,22 @@
+<ng-container *transloco="let t">
+  <p-selectButton
+    cssSelector=".p-button[aria-labelledby]"
+    optionValue="value"
+    sharedAriaLabelModifier
+    [allowEmpty]="false"
+    [ngModel]="selected()"
+    [options]="options()"
+    (onChange)="onChange($event)">
+    <ng-template let-item pTemplate="item">
+      @if (item.icon) {
+        <i class="pi pi-{{ item.icon }}"></i>
+      }
+
+      @if (item.i18nKey) {
+        <span>{{ t(item.i18nKey) }}</span>
+      } @else {
+        <span>{{ item.label }}</span>
+      }
+    </ng-template>
+  </p-selectButton>
+</ng-container>

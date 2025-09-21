@@ -1,0 +1,80 @@
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/utility';
+@use 'pattern/mixture';
+
+.overlay-container {
+  @extend %#{mixture.$shadow-modal-pattern};
+  width: utility.get-rem(252);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: utility.get-rem(12) utility.get-rem(8);
+
+  @include mixins.respond-to(tablet) {
+    background-color: colors.get-color('DarkBlue');
+  }
+
+  @include mixins.respond-to(phone) {
+    width: auto;
+  }
+}
+
+.overlay-grouping {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: utility.get-rem(2);
+   max-height: 350px;
+    overflow-y: auto;
+}
+
+.download-queue-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.download-queue-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: colors.get-color('SkyBlue10'); 
+  margin-bottom: 2px;
+}
+
+.download-queue-filename {
+  font-size: 13px;
+  color: colors.get-color('Sandstone60');
+}
+
+.download-queue-status {
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 2px;
+  display: inline-block;
+}
+
+.download-status-completed {
+  color: colors.get-color('SuccessGreen50');
+}
+.download-status-failed {
+  color: colors.get-color('ErrorRed50'); 
+}
+.download-status-downloading {
+  color: colors.get-color('InfoBlue50');
+}
+
+.download-queue-empty {
+  text-align: center;
+  color: colors.get-color('Sandstone60');
+  padding: 24px 0;
+}

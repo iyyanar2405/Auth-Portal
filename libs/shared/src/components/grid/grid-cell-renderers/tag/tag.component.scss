@@ -1,0 +1,18 @@
+@use 'variables';
+@use 'pattern/utility';
+@use 'mixins';
+
+p-tag::ng-deep {
+  &.p-tag {
+    background-color: variables.$ash-grey;
+    border: unset;
+    color: variables.$basic-tones-dnv-medium-dark;
+    padding: utility.get-rem(6) utility.get-rem(12);
+
+    .p-tag-value:first-child {
+      line-height: normal;
+    }
+
+    @include mixins.states-colors();
+  }
+}

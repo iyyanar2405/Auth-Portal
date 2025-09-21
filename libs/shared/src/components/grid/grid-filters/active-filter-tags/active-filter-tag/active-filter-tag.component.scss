@@ -1,0 +1,66 @@
+@use 'pattern/colors';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+@use 'variables';
+
+.active-filter-tag {
+  &__container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: {
+      top: utility.get-rem(6);
+      right: utility.get-rem(12);
+      bottom: utility.get-rem(6);
+      left: utility.get-rem(12);
+    }
+    border-radius: 20px;
+    background-color: colors.get-color('Sandstone95');
+  }
+
+  &__label {
+    @extend %#{typography.$label-s-pattern};
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    max-width: utility.get-rem(320);
+    cursor: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: colors.get-color('DarkBlue');
+
+    &::after {
+      content: '';
+      display: inline-block;
+    }
+  }
+
+  &__bookmark-icon {
+    color: variables.$primary-dnv-medium-blue !important;
+  }
+
+  &__bookmark-icon,
+  &__icon {
+    font-size: utility.get-rem(14);
+    color: colors.get-color('DarkBlue');
+    cursor: pointer;
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-lg) {
+  .active-filter-tag {
+    &__label {
+      max-width: utility.get-rem(256);
+    }
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-md) {
+  .active-filter-tag {
+    &__label {
+      max-width: utility.get-rem(160);
+    }
+  }
+}

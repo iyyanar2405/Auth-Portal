@@ -1,0 +1,15 @@
+<ng-container *transloco="let t">
+  <shared-button
+    [icon]="'question-circle'"
+    [iconPos]="'left'"
+    [label]="t('help')"
+    [type]="sharedButtonType.Outline"
+     (clickEvent)="onHelpClick()">
+  </shared-button>
+
+  <shared-button
+    [label]="t('viewDetails')"
+    [type]="sharedButtonType.Primary"
+    (clickEvent)="closeDialog(true)">
+  </shared-button>
+</ng-container>

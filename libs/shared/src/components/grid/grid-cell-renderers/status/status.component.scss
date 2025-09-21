@@ -1,0 +1,20 @@
+@use 'variables';
+@use 'pattern/utility';
+@use 'mixins';
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: utility.get-rem(11);
+
+  &__icon {
+    @include mixins.states-colors();
+  }
+
+  & > span {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

@@ -1,0 +1,693 @@
+<ng-container *transloco="let t">
+  <div id="content-table">
+    <p-table
+      #dt
+      columnResizeMode="expand"
+      role="table"
+      scrollHeight="flex"
+      styleClass="p-datatable-striped"
+      [attr.aria-label]="t('dataTable')"
+      [autoLayout]="true"
+      [columns]="visibleCols"
+      [currentPageReportTemplate]="t('paginationMessage')"
+      [customSort]="true"
+      [dataKey]="dataKey()"
+      [filterDelay]="filterDelay()"
+      [lazy]="true"
+      [lazyLoadOnInit]="true"
+      [loading]="loading()"
+      [ngClass]="{
+        'pagination-partially-visible': isPaginationPartiallyVisible(),
+      }"
+      [paginator]="isPaginationVisible()"
+      [resizableColumns]="true"
+      [rowHover]="rowHover()"
+      [rows]="rows()"
+      [scrollable]="scrollable()"
+      [showCurrentPageReport]="showCurrentPageReport()"
+      [sortMode]="sortMode()"
+      [styleClass]="rowSize()"
+      [totalRecords]="totalRecords()"
+      [value]="_dataInternal()"
+      (onLazyLoad)="sortable() && onLazyLoadChanged($event)"
+      (sortFunction)="customSort($event)">
+      <ng-template pTemplate="caption">
+        <div
+          class="container-actions"
+          [ngClass]="{
+            'has-row-gap': displaySaveFilterButton || displayClearButton(),
+          }">
+          <div class="action-buttons">
+            @if (displayExportButton() && localDisplayExportButton) {
+              <button
+                class="p-button-outlined grouping-button"
+                icon="pi pi-download"
+                pButton
+                sharedDebounceClick
+                type="button"
+                [attr.aria-label]="t('exportToExcel')"
+                [disabled]="isGridEmpty()"
+                [label]="t('export') | titlecase"
+                (debounceClick)="exportExcel.emit()"></button>
+            }
+
+            @if (displayColsReorderButton() && localDisplayColsReorderButton) {
+              <button
+                #trigger="cdkOverlayOrigin"
+                cdkOverlayOrigin
+                class="p-button-outlined grouping-button"
+                icon="pi pi-table"
+                pButton
+                type="button"
+                [attr.aria-label]="t('modifyColumnsSettings')"
+                [label]="t('columns') | titlecase"
+                (click)="isColsOverlayOpen = !isColsOverlayOpen"></button>
+
+              <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayBackdropClass]="
+                  'cdk-overlay-transparent-backdrop'
+                "
+                [cdkConnectedOverlayHasBackdrop]="true"
+                [cdkConnectedOverlayOffsetY]="6"
+                [cdkConnectedOverlayOpen]="isColsOverlayOpen"
+                [cdkConnectedOverlayOrigin]="trigger"
+                (backdropClick)="isColsOverlayOpen = !isColsOverlayOpen">
+                <shared-grid-columns
+                  [columns]="userSortedCols"
+                  [showDefaultButton]="showDefaultColumnsButton"
+                  (applied)="onGridColumnsApplyClicked($event)"
+                  (defaulted)="onGridColumnDefaultClicked()">
+                </shared-grid-columns>
+              </ng-template>
+            }
+
+            <ng-container
+              *ngTemplateOutlet="buttonsCustomTemplate"></ng-container>
+               @if (selectable() && showSelectedCount) {
+                <div class="counter">
+                  <button
+                    class="p-button-outlined grouping-button"
+                    icon="pi pi-times table-header__icon-times"
+                    pButton
+                    type="button"
+                    [attr.aria-label]="
+                      t('gridEvent.remove') +
+                      ' ' +
+                      t('selected') +
+                      ' ' +
+                      selectedCount
+                    "
+                    [label]="selectedCount + ' ' + t('selected')"
+                    (click)="onClearSelection(undefined)"></button>
+                </div>
+              }
+          </div>
+          @if (displayFilterSummary()) {
+            <div class="filter-list">
+              @if (filteringConfig$() | async; as filteringConfig) {
+                <shared-active-filter-tags
+                  [columns]="columns()"
+                  [filteringConfig]="filteringConfig"
+                  [savedFilters]="preferenceToSave.filters"
+                  [shouldPersist]="shouldPersist()"
+                  (deleteSavedFilter)="onDeleteIndividualFilter($event)"
+                  (removeFilter)="onRemoveFilterTags($event)"
+                  (saveFilter)="onSaveIndividualFilter($event)">
+                </shared-active-filter-tags>
+              }
+            </div>
+          }
+
+          @if (displaySaveFilterButton || displayClearButton()) {
+            <div class="filter-buttons">
+              @if (displaySaveFilterButton) {
+                <button
+                  class="p-button-outlined grouping-button"
+                  icon="pi pi-bookmark"
+                  pButton
+                  type="button"
+                  [attr.aria-label]="t('saveFilters')"
+                  [label]="t('saveFilters')"
+                  (click)="onSaveFiltersClick()"></button>
+              }
+              @if (displayClearButton()) {
+                <button
+                  class="p-button-outlined grouping-button"
+                  icon="pi pi-filter-slash"
+                  pButton
+                  type="button"
+                  [attr.aria-label]="t('clearFilters')"
+                  [label]="t('clearFilters')"
+                  (click)="clearFilters()"></button>
+              }
+            </div>
+          }
+        </div>
+      </ng-template>
+
+      <ng-template let-columns pTemplate="header">
+        <tr class="header-row" role="row">
+          @if (selectable()) {
+            <th
+              class="select-tristate"
+              pFrozenColumn
+              role="columnheader"
+              style="width: 4rem"
+              [frozen]="selectableSticky()">
+              <p-triStateCheckbox
+                [ariaLabel]="t('selectRowsColumn')"
+                [checkboxFalseIcon]="'pi pi-minus'"
+                [(ngModel)]="selectAll"
+                (onChange)="onChangeSelectAll($event)"></p-triStateCheckbox>
+              <span class="sr-only">{{ t('selectRowsColumn') }}</span>
+            </th>
+          }
+          @for (col of columns; track col.field) {
+            @switch (col.type) {
+              @case (ColumnType.TextSearchFilter) {
+                <th
+                  class="table-header-dimension"
+                  pFrozenColumn
+                  pResizableColumn
+                  role="columnheader"
+                  scope="col"
+                  [frozen]="col.sticky"
+                  [pSortableColumn]="col.field"
+                  [style.width]="col.width || 'inherit'">
+                  <div class="table-header__th">
+                    <p-sortIcon
+                      aria-label="sort"
+                      role="img"
+                      [field]="col.field"></p-sortIcon>
+                    <span>{{ t(col.displayName) | uppercase }}</span>
+                    <p-columnFilter
+                      display="menu"
+                      matchMode="startsWith"
+                      [field]="col.field"
+                      [showAddButton]="false"
+                      [showApplyButton]="false"
+                      [showClearButton]="false"
+                      [showMatchModes]="false"
+                      [showOperator]="false">
+                      <ng-template
+                        let-filter="filterCallback"
+                        let-value
+                        pTemplate="filter">
+                        <shared-input-filter
+                          [field]="col.field"
+                          [filter]="filter"
+                          [filteringConfig$]="
+                            filteringConfig$()
+                          "></shared-input-filter>
+                      </ng-template>
+                    </p-columnFilter>
+                  </div>
+                </th>
+              }
+              @case (ColumnType.SearchCheckboxFilter) {
+                <th
+                  class="table-header-dimension"
+                  pFrozenColumn
+                  pResizableColumn
+                  role="columnheader"
+                  scope="col"
+                  [frozen]="col.sticky"
+                  [pSortableColumn]="col.field"
+                  [style.width]="col.width || 'inherit'">
+                  <div class="table-header__th">
+                    <p-sortIcon
+                      aria-label="sort"
+                      role="img"
+                      [field]="col.field"></p-sortIcon>
+                    <span>{{ t(col.displayName) | uppercase }}</span>
+                    <p-columnFilter
+                      display="menu"
+                      matchMode="in"
+                      [field]="col.field"
+                      [showAddButton]="false"
+                      [showApplyButton]="false"
+                      [showClearButton]="false"
+                      [showMatchModes]="false"
+                      [showOperator]="false">
+                      <ng-template
+                        let-filter="filterCallback"
+                        let-value
+                        pTemplate="filter">
+                        <shared-checkbox-filter
+                          [field]="col.field"
+                          [filter]="filter"
+                          [filterFlag]="true"
+                          [filteringConfig$]="filteringConfig$()"
+                          [options]="filterOptions()[col.field]">
+                        </shared-checkbox-filter>
+                      </ng-template>
+                    </p-columnFilter>
+                  </div>
+                </th>
+              }
+              @case (ColumnType.CheckboxFilter) {
+                <th
+                  class="table-header-dimension"
+                  pFrozenColumn
+                  pResizableColumn
+                  role="columnheader"
+                  scope="col"
+                  [frozen]="col.sticky"
+                  [pSortableColumn]="col.field"
+                  [style.width]="col.width || 'inherit'">
+                  <div class="table-header__th">
+                    <p-sortIcon
+                      aria-label="sort"
+                      role="img"
+                      [field]="col.field"></p-sortIcon>
+                    <span>{{ t(col.displayName) | uppercase }}</span>
+                    <p-columnFilter
+                      display="menu"
+                      matchMode="in"
+                      [field]="col.field"
+                      [showAddButton]="false"
+                      [showApplyButton]="false"
+                      [showClearButton]="false"
+                      [showMatchModes]="false"
+                      [showOperator]="false">
+                      <ng-template
+                        let-filter="filterCallback"
+                        let-value
+                        pTemplate="filter">
+                        <shared-checkbox-filter
+                          [field]="col.field"
+                          [filter]="filter"
+                          [filterFlag]="false"
+                          [filteringConfig$]="filteringConfig$()"
+                          [options]="filterOptions()[col.field]">
+                        </shared-checkbox-filter>
+                      </ng-template>
+                    </p-columnFilter>
+                  </div>
+                </th>
+              }
+              @case (ColumnType.DateFilter) {
+                <th
+                  class="table-header-dimension"
+                  pFrozenColumn
+                  pResizableColumn
+                  role="columnheader"
+                  scope="col"
+                  [frozen]="col.sticky"
+                  [pSortableColumn]="col.field"
+                  [style.width]="col.width || 'inherit'">
+                  <div class="table-header__th">
+                    <p-sortIcon
+                      aria-label="sort"
+                      role="img"
+                      [field]="col.field"></p-sortIcon>
+                    <span>{{ t(col.displayName) | uppercase }}</span>
+                    <p-columnFilter
+                      display="menu"
+                      type="date"
+                      [field]="col.field"
+                      [matchMode]="getMatchMode(col.field)"
+                      [showAddButton]="false"
+                      [showApplyButton]="false"
+                      [showClearButton]="false"
+                      [showMatchModes]="false"
+                      [showOperator]="false">
+                      <ng-template
+                        let-filter="filterCallback"
+                        let-value
+                        pTemplate="filter">
+                        <shared-date-filter
+                          [field]="col.field"
+                          [filter]="filter"
+                          [filteringConfig$]="filteringConfig$()"
+                          [options]="filterOptions()[col.field]"
+                          [selectionMode]="'range'">
+                        </shared-date-filter>
+                      </ng-template>
+                    </p-columnFilter>
+                  </div>
+                </th>
+              }
+              @case (ColumnType.Actions) {
+                @if (!isGridEmpty()) {
+                  <th
+                    alignFrozen="right"
+                    class="table-header-dimension-actions"
+                    pFrozenColumn
+                    role="columnheader"
+                    scope="col"
+                    [attr.aria-label]="t('actionsColumn')"
+                    [frozen]="col.sticky">
+                    <span class="sr-only">{{ t('actionsColumn') }}</span>
+                  </th>
+                }
+              }
+              @case (ColumnType.EventActions) {
+                @if (!isGridEmpty()) {
+                  <th
+                    alignFrozen="right"
+                    class="table-header-dimension-event-actions"
+                    pFrozenColumn
+                    role="columnheader"
+                    scope="col"
+                    [frozen]="col.sticky"
+                    [ngClass]="col.customClass"
+                    [pSortableColumn]="col.field">
+                    <div class="table-header__th">
+                      <span class="sr-only">{{ t('eventActionsColumn') }}</span>
+                    </div>
+                  </th>
+                }
+              }
+              @case (ColumnType.Text) {
+                <th
+                  class="table-header-dimension"
+                  pFrozenColumn
+                  pResizableColumn
+                  role="columnheader"
+                  scope="col"
+                  [frozen]="col.sticky"
+                  [pSortableColumn]="col.field"
+                  [style.width]="col.width || 'inherit'">
+                  <div class="table-header__th">
+                    <span>{{ t(col.displayName) | uppercase }}</span>
+                  </div>
+                </th>
+              }
+            }
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template let-rowData let-columns pTemplate="body">
+        <tr
+          [pSelectableRow]="rowData"
+          [pSelectableRowIndex]="rowData.id"
+          [ngClass]="{ 'row-selected': rowData.isSelected }"
+          role="row">
+          @if (selectable()) {
+            <td
+              class="select-checkbox"
+              pFrozenColumn
+              role="cell"
+              [frozen]="selectableSticky()">
+              <p-checkbox
+                [binary]="true"
+                [ariaLabel]="t('selectRow')"
+                [(ngModel)]="rowData.isSelected"
+                (onChange)="onSelectRow(rowData)"></p-checkbox>
+            </td>
+          }
+          @for (col of columns; track col.field) {
+            @switch (col.cellType) {
+              @case (CellType.Link) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="{ 'row-child': rowData.hasChild }"
+                  [routerLink]="[
+                    '/',
+                    route(),
+                    rowData[queryParamProperty()] || rowData.id,
+                  ]"
+                  [style.max-width]="gridSizeConfig.minTdDefaultWidth">
+                  <span class="p-column-title">{{ col.displayName }}</span>
+                  <div
+                    class="link-cell"
+                    [sharedTippyTooltip]="rowData[col.field]"
+                    [tooltipTheme]="TooltipTheme.LightMd">
+                    {{ rowData[col.field] }}
+                  </div>
+                  @if (rowData.hasChild) {
+                    @for (
+                      child of rowData.children;
+                      track child[childIdentifier()]
+                    ) {
+                      <div
+                        class="child-cell link-cell"
+                        [sharedTippyTooltip]="child[col.field]"
+                        [tooltipTheme]="TooltipTheme.LightMd"
+                        [routerLink]="[
+                          '/',
+                          route(),
+                          child[queryParamProperty()] || child.id,
+                        ]">
+                        {{ child[col.field] }}
+                      </div>
+                    }
+                  }
+                </td>
+              }
+              @case (CellType.Actions) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [alignFrozen]="'right'"
+                  [ngClass]="col.customClass"
+                  [style.max-width]="gridSizeConfig.actionsTdWidth">
+                  <span class="sr-only">{{ t('actionsColumn') }}</span>
+                  <shared-action
+                    [actions]="rowData.actions"
+                    [enableFileDownloadWithRowData]="enableFileDownloadWithRowData()"
+                    [fileProperty]="col.field"
+                    [rowData]="rowData"
+                    (triggerFileAction)="triggerFileAction.emit($event)"
+                    (triggerRedirectAction)="triggerRedirectAction.emit($event)"></shared-action>
+                </td>
+              }
+              @case (CellType.EventActions) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [alignFrozen]="'right'"
+                  [ngClass]="col.customClass"
+                  [style.max-width]="gridSizeConfig.eventActionsTdWidth">
+                  <span class="sr-only">{{ t('eventActionsColumn') }}</span>
+                  <shared-event-action
+                    [actions]="rowData.actions"
+                    (triggerEventAction)="triggerEventAction.emit($event)"></shared-event-action>
+                </td>
+              }
+              @case (CellType.Status) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="{ 'row-child': rowData.hasChild }"
+                  [style.max-width]="gridSizeConfig.minStatusTdDefaultWidth">
+                  <span class="p-column-title">{{ col.displayName }}</span>
+                  <div
+                    [ngClass]="{
+                      'parent-cell': rowData[col.field],
+                      'empty-cell': !rowData[col.field],
+                    }">
+                    <shared-status
+                      [statusClassMap]="statusStatesMap()"
+                      [value]="rowData[col.field]"></shared-status>
+                  </div>
+                  @if (rowData.hasChild) {
+                    @for (
+                      child of rowData.children;
+                      track child[childIdentifier()]
+                    ) {
+                      <div class="child-cell dummy-cell" [sharedTippyTooltip]="child[col.field]" [tooltipTheme]="TooltipTheme.LightMd">
+                        <span class="child-status-icon"></span>
+                        <span class="child-status-text">{{ child[col.field] }}</span>
+                      </div>
+                    }
+                  }
+                </td>
+              }
+              @case (CellType.Date) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="{ 'row-child': rowData.hasChild }"
+                  [style.max-width]="gridSizeConfig.minTdDateWidth">
+                  <span class="p-column-title">{{ col.displayName }}</span>
+                  <div
+                    [ngClass]="{
+                      'parent-cell': rowData[col.field],
+                      'empty-cell': !rowData[col.field],
+                    }"
+                    [sharedTippyTooltip]="rowData[col.field]"
+                    [tooltipTheme]="TooltipTheme.LightMd">
+                    {{ rowData[col.field] | customDate }}
+                  </div>
+                  @if (rowData.hasChild) {
+                    @for (
+                      child of rowData.children;
+                      track child[childIdentifier()]
+                    ) {
+                      <div class="child-cell dummy-cell">
+                        {{ child[col.field] }}
+                      </div>
+                    }
+                  }
+                </td>
+              }
+              @case (CellType.Tag) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="{ 'row-child': rowData.hasChild }"
+                  [style.max-width]="gridSizeConfig.minTdDefaultWidth">
+                  <span class="p-column-title">{{ col.displayName }}</span>
+                  <shared-tag
+                    [tagClassesMap]="tagStatesMap()"
+                    [tagValue]="rowData[col.field]"></shared-tag>
+                  @if (rowData.hasChild) {
+                    @for (
+                      child of rowData.children;
+                      track child[childIdentifier()]
+                    ) {
+                      <div class="child-cell dummy-cell">
+                        <shared-tag
+                          [tagClassesMap]="tagStatesMap()"
+                          [tagValue]="child[col.field]"></shared-tag>
+                      </div>
+                    }
+                  }
+                </td>
+              }
+              @case (CellType.IconText) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="{ 'row-child': rowData.hasChild }"
+                  [style.max-width]="gridSizeConfig.minTdDefaultWidth">
+                  <span class="p-column-title">{{ col.displayName }}</span>
+                  <shared-text-with-icon
+                    [icon]="rowData.icon"
+                    [text]="rowData[col.field]"></shared-text-with-icon>
+                  @if (rowData.hasChild) {
+                    @for (
+                      child of rowData.children;
+                      track child[childIdentifier()]
+                    ) {
+                      <div class="child-cell dummy-cell">
+                        <shared-text-with-icon
+                          [icon]="child.icon"
+                          [text]="child[col.field]"></shared-text-with-icon>
+                      </div>
+                    }
+                  }
+                </td>
+              }
+              @case (CellType.Custom) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="col.customClass">
+                  <ng-container
+                    *ngTemplateOutlet="
+                      tdCustomTemplate;
+                      context: {
+                        cellValue: rowData[col.field],
+                        rowData: rowData
+                      }
+                    "></ng-container>
+                </td>
+              }
+              @case (CellType.Dummy) {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="{ 'row-child': rowData.hasChild }"
+                  [style.max-width]="gridSizeConfig.minTdDefaultWidth">
+                  <span class="p-column-title">{{ col.displayName }}</span>
+                  <div
+                    class="parent-cell dummy-cell"
+                    [ngClass]="col.customClass"
+                    [sharedTippyTooltip]="rowData[col.field]"
+                    [tooltipTheme]="TooltipTheme.LightMd">
+                    {{ rowData[col.field] }}
+                  </div>
+                  @if (rowData.hasChild) {
+                    @for (
+                      child of rowData.children;
+                      track child[childIdentifier()]
+                    ) {
+                      <div
+                        class="child-cell dummy-cell"
+                        [ngClass]="col.customClass"
+                        [sharedTippyTooltip]="child[col.field]"
+                        [tooltipTheme]="TooltipTheme.LightMd">
+                        {{ child[col.field] }}
+                      </div>
+                    }
+                  }
+                </td>
+              }
+              @default {
+                <td
+                  pFrozenColumn
+                  role="cell"
+                  [frozen]="col.sticky"
+                  [ngClass]="{ 'row-child': rowData.hasChild }"
+                  [style.max-width]="gridSizeConfig.minTdDefaultWidth">
+                  <span class="p-column-title">{{ col.displayName }}</span>
+                  <div
+                    [ngClass]="{
+                      'parent-cell': rowData[col.field],
+                      'empty-cell': !rowData[col.field],
+                    }"
+                    [sharedTippyTooltip]="rowData[col.field]"
+                    [tippyAllowHTML]="true"
+                    [tooltipTheme]="TooltipTheme.LightMd">
+                    {{ rowData[col.field] }}
+                  </div>
+                  @if (rowData.hasChild) {
+                    @for (
+                      child of rowData.children;
+                      track child[childIdentifier()]
+                    ) {
+                      <div
+                        class="child-cell dummy-cell"
+                        [ngClass]="col.customClass"
+                        [sharedTippyTooltip]="child[col.field]"
+                        [tooltipTheme]="TooltipTheme.LightMd">
+                        {{ child[col.field] }}
+                      </div>
+                    }
+                  }
+                </td>
+              }
+            }
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr class="grid-message" role="row">
+          <td role="cell" [attr.colspan]="colsNo">
+            <shared-empty-grid
+              [hasActiveFilters]="hasActiveFilters()"
+              [isDocumentsGrid]="isDocumentsGrid()"
+              [isGridEmpty]="isGridEmpty()"
+              (addDocuments)="onAddDocuments()">
+            </shared-empty-grid>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="paginatorright">
+        <span>{{ t('itemsPerPage') }}:</span>
+        <p-dropdown
+          appendTo="body"
+          ariaLabel="Change rows count"
+          [options]="rowsPerPageOptions()"
+          [(ngModel)]="rows"
+          (ngModelChange)="onChangeRows($event)"
+          (onChange)="onSelectPaginationRows()" />
+      </ng-template>
+    </p-table>
+  </div>
+</ng-container>

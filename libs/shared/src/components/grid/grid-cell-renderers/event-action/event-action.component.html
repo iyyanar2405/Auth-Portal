@@ -1,0 +1,27 @@
+<div *transloco="let t" class="event-action">
+  @if (displayConfirmButton) {
+    <div class="event-action__confirm-button">
+      <button
+        class="p-button-primary"
+        icon="pi pi-check"
+        pButton
+        type="button"
+        [attr.aria-label]="t('confirm')"
+        [label]="t('confirm')"
+        (click)="onConfirmClick()"></button>
+    </div>
+  }
+  @if (displayConfirmedLabel) {
+    <div class="event-action__confirmed-label">
+      <i class="pi pi-check"></i>
+      <span>{{ t('gridEvent.confirmed') }}</span>
+    </div>
+  }
+  @if (eventActions.length) {
+    <div class="event-action__actions-menu">
+      <shared-actions-menu
+        [items]="eventActions"
+        (selectedItem)="onActionClick($event)"></shared-actions-menu>
+    </div>
+  }
+</div>

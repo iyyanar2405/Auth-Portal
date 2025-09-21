@@ -1,0 +1,11 @@
+<p-toast aria-live="assertive" styleClass="custom-toast">
+  <ng-template let-message pTemplate="message">
+    <i [ngClass]="[message.icon, 'pi', 'custom-toast__icon']"></i>
+    <h6 class="custom-toast__text">
+      {{ message.summary }}
+    </h6>
+    @if (message.detail) {
+      <p class="custom-toast__detail">{{ message.detail }}</p>
+    }
+  </ng-template>
+</p-toast>

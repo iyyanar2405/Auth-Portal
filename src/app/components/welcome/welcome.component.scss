@@ -1,0 +1,126 @@
+@use 'variables';
+@use 'pattern/utility';
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  height: utility.get-rem(69);
+  width: 100vw;
+  padding-top: utility.get-rem(18);
+  padding-right: calc(100vw - 20px - 77px);
+  padding-bottom: utility.get-rem(18);
+  padding-left: utility.get-rem(20);
+  background-color: variables.$basic-tones-dnv-white;
+  border-bottom: 1px solid variables.$basic-tones-dnv-light;
+}
+
+.content {
+  background-image: url('/assets/images/welcome.png');
+  position: absolute;
+  top: utility.get-rem(69);
+  width: 100vw;
+  height: calc(100vh - utility.get-rem(69));
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #0f204b;
+
+  display: flex;
+  padding: 0 utility.get-rem(32);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: utility.get-rem(24);
+
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.card-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: utility.get-rem(32);
+  align-self: stretch;
+  justify-content: center;
+
+  .card {
+    display: flex;
+    padding: utility.get-rem(36) utility.get-rem(32) utility.get-rem(28)
+      utility.get-rem(32);
+    max-width: utility.get-rem(720);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: utility.get-rem(24);
+    align-self: stretch;
+
+    border-radius: utility.get-rem(10);
+    background: rgba(255, 255, 255, 0.95);
+
+    .card-text-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: utility.get-rem(16);
+
+      &.access-denied {
+        max-width: utility.get-rem(490);
+        align-items: flex-start;
+
+        .card-title,
+        .card-description {
+          text-align: left;
+        }
+      }
+
+      .card-title {
+        color: variables.$primary-dnv-dark-blue;
+        text-align: center;
+
+        font-family: 'DNVDisplayRegular';
+        font-size: utility.get-rem(36);
+        font-style: normal;
+        font-weight: 400;
+        line-height: utility.get-rem(40);
+        text-transform: uppercase;
+      }
+      .card-description {
+        color: variables.$black;
+        text-align: center;
+        font-family: 'Nunito Sans';
+        font-size: utility.get-rem(14);
+        font-style: normal;
+        font-weight: 400;
+        line-height: utility.get-rem(21);
+      }
+    }
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-md) {
+  .content {
+    padding: 0 utility.get-rem(24);
+    .card {
+      padding: utility.get-rem(32) utility.get-rem(24) utility.get-rem(24)
+        utility.get-rem(24);
+    }
+  }
+}
+
+@media screen and (max-width: variables.$breakpoint-sm) {
+  .content {
+    padding: 0 utility.get-rem(16);
+    .card {
+      padding: utility.get-rem(28) utility.get-rem(16) utility.get-rem(20)
+        utility.get-rem(16);
+    }
+  }
+}

@@ -1,0 +1,47 @@
+<div *transloco="let t" aria-live="polite" class="messages-container">
+  @for (msg of messages; track messageTrackBy; let i = $index) {
+    <p-messages styleClass="msg.severity" [severity]="msg.severity">
+      <ng-template pTemplate>
+        <div class="message-container">
+          <div class="flex-item">
+            <i
+              aria-hidden="true"
+              class="pi pr-2 bold-text"
+              [ngClass]="{
+                'pi-check-circle': msg.severity === MessageSeverity.Success,
+                'pi-info-circle': msg.severity === MessageSeverity.Info,
+                'pi-exclamation-triangle': msg.severity === MessageSeverity.Alert,
+                'pi-exclamation-circle':
+                  msg.severity === MessageSeverity.Error || msg.severity === MessageSeverity.Warn
+              }"></i>
+            <div class="message-text flex-item">
+              <span class="pr-1 bold-text">{{ msg.summary }}</span>
+              <span>{{ msg.detail }}</span>
+            </div>
+          </div>
+          <div class="message-actions flex-item">
+            @if (msg.label) {
+              <p-button class="pr-2" [label]="msg.label" />
+            }
+            @if(hasProjectedButton) {
+              <div class="flex-item projected-button">
+                <ng-content></ng-content>
+              </div>
+            }
+            @if(msg.showCloseButton) {
+              <i
+                class="pi pi-times close-button"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="t('closeNotification')"
+                (click)="onCloseNotification(i)"
+                (keydown.enter)="onCloseNotification(i)"
+                (keydown.space)="onCloseNotification(i)">
+              </i>
+            }
+          </div>
+        </div>
+      </ng-template>
+    </p-messages>
+  }
+</div>

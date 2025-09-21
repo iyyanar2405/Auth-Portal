@@ -1,0 +1,53 @@
+@use 'pattern/colors';
+@use 'pattern/mixture';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+:host {
+  height: utility.get-rem(45);
+}
+
+.option {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  padding: utility.get-rem(10) utility.get-rem(12);
+}
+
+p-dropdown.p-element::ng-deep {
+  @extend %#{mixture.$dropdown-element-pattern};
+
+  .p-inputwrapper {
+    @extend %#{mixture.$dropdown-input-wrapper-pattern};
+  }
+
+  .p-disabled {
+    border-color: colors.get-color('Sandstone80');
+    background-color: colors.get-color('Sandstone95');
+    color: colors.get-color('Sandstone40');
+  }
+
+  li.p-element {
+    @extend %#{mixture.$dropdown-option-pattern};
+  }
+
+  .p-dropdown-items {
+    padding: utility.get-rem(8) utility.get-rem(6);
+  }
+
+  .p-dropdown-label {
+    padding: 0;
+  }
+
+  .p-overlay {
+    @extend %#{mixture.$shadow-modal-pattern};
+  }
+}
+
+p-calendar.p-element::ng-deep {
+  display: flex;
+
+  .p-calendar {
+    height: auto;
+  }
+}

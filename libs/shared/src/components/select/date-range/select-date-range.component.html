@@ -1,0 +1,48 @@
+<ng-container *transloco="let t">
+  <p-dropdown
+    #dropdown
+    dataKey="id"
+    [ariaLabel]="ariaLabel()"
+    [autoDisplayFirst]="false"
+    [disabled]="isDisabled()"
+    [ngModel]="selected()"
+    [options]="options()"
+    [scrollHeight]="scrollHeight"
+    (onChange)="onChange($event)">
+    <ng-template let-item pTemplate="selectedItem">
+      @if (isRangeCustomLabelVisible()) {
+        <span>{{
+          t('select.dateRange.rangeCustomLabel', {
+            start: rangeCustomLabel().start,
+            end: rangeCustomLabel().end,
+          })
+        }}</span>
+      } @else {
+        <span>{{ t(item.label) }}</span>
+      }
+    </ng-template>
+
+    <ng-template let-item pTemplate="item">
+      <div
+        class="option"
+        tabindex="0"
+        (click)="onClick($event, item); overlayDateRange.toggle($event)"
+        (keydown.enter)="onClick($event, item); overlayDateRange.toggle($event)"
+        (keydown.space)="
+          onClick($event, item); overlayDateRange.toggle($event)
+        ">
+        <span>{{ t(item.label) }}</span>
+
+        <p-overlayPanel #overlayDateRange styleClass="is-caret-hidden">
+          <p-calendar
+            selectionMode="range"
+            [inline]="true"
+            [(ngModel)]="rangeCustom"
+            (click)="$event.stopPropagation()"
+            (onSelect)="onSelect()">
+          </p-calendar>
+        </p-overlayPanel>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</ng-container>

@@ -1,0 +1,27 @@
+<ng-container *transloco="let t">
+  <div class="date-filter date-filter-style">
+    @if (isBlankOptionVisible) {
+      <div>
+        <p-checkbox
+          class="override-disabled"
+          attr.aria-label="{{ t('blank') }}"
+          [binary]="true"
+          [disabled]="false"
+          [label]="t('blank')"
+          [(ngModel)]="isBlankSelected"
+          (onChange)="onChangeEmptyValue()"></p-checkbox>
+      </div>
+    }
+
+    <p-calendar
+      [dateFormat]="dateFormat"
+      [disabled]="isBlankSelected"
+      [iconDisplay]="'input'"
+      [placeholder]="placeholder"
+      [readonlyInput]="true"
+      [selectionMode]="selectionMode"
+      [showIcon]="true"
+      [(ngModel)]="date"
+      (onSelect)="onSelectDate(date)"></p-calendar>
+  </div>
+</ng-container>

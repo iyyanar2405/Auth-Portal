@@ -1,0 +1,290 @@
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/mixture';
+@use 'pattern/typography';
+
+@use 'pattern/utility';
+
+.tree-table-container {
+  box-shadow: 0px 0px 0px 2px #f3f2f2;
+  border-radius: 10px;
+
+  h3.grid-message {
+    height: utility.get-rem(500);
+    font-size: utility.get-rem(22);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 utility.get-rem(35);
+  }
+
+  &::ng-deep {
+    .p-treetable-scrollable-header {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+
+      .p-treetable-scrollable-header-box {
+        padding-right: 0 !important;
+      }
+
+      th {
+        text-transform: uppercase;
+        word-break: break-word;
+        &:not(:first-child) {
+          text-align: center;
+        }
+        &:first-child {
+          padding-left: utility.get-rem(48);
+        }
+      }
+    }
+
+    .p-treetable-frozen-view {
+      .p-treetable-scrollable-header {
+        border-top-right-radius: 0;
+      }
+
+      & + .p-treetable-unfrozen-view {
+        .p-treetable-scrollable-header {
+          border-top-left-radius: 0;
+        }
+      }
+    }
+
+    .p-treetable-scrollable-body {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+
+      td {
+        white-space: nowrap;
+
+        &:not(:first-child) {
+          text-align: center;
+
+          span {
+            display: inline-block;
+            min-width: utility.get-rem(42);
+            box-sizing: border-box;
+            text-align: center;
+            font-size: var(--dnv-font-text-m);
+          }
+        }
+        &:first-child span {
+          display: inline-block;
+        }
+      }
+    }
+  }
+}
+
+.parent-row {
+  &::ng-deep button {
+    color: colors.get-color('SeaBlue');
+  }
+}
+
+.parent-cell {
+  color: colors.get-color('SeaBlue');
+}
+
+.underlined {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+$no-of-gradients: 8;
+
+.findings-category {
+  @for $i from 1 through $no-of-gradients {
+    &-#{$i} {
+      @extend %#{typography.$label-s-pattern};
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: colors.get-color('UiBlack');
+    }
+  }
+
+  &-1 {
+    background-color: #326583;
+    color: colors.get-color('UiWhite');
+  }
+  &-2 {
+    background-color: #4488af;
+    color: colors.get-color('UiWhite');
+  }
+  &-3 {
+    background-color: #56aada;
+  }
+  &-4 {
+    background-color: #6fbbe1;
+  }
+  &-5 {
+    background-color: #8fcbe8;
+  }
+  &-6 {
+    background-color: #a8d7ee;
+  }
+  &-7 {
+    background-color: #d9edf7;
+  }
+  &-8 {
+    background-color: #ecf7fb;
+  }
+}
+
+.majorCount,
+.minorCount,
+.observationCount,
+.toImproveCount,
+.totalCount {
+  @for $i from 1 through $no-of-gradients {
+    &-#{$i} {
+      @extend %#{typography.$label-s-pattern};
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: colors.get-color('UiBlack');
+    }
+  }
+}
+
+.majorCount,
+.minorCount,
+.observationCount,
+.toImproveCount {
+  @for $i from 1 through $no-of-gradients {
+    &-#{$i}:hover {
+      box-shadow: 0px 1px 12px 0px colors.get-color('Sandstone60');
+    }
+  }
+}
+
+.first-cell.majorCount,
+.first-cell.minorCount,
+.first-cell.observationCount,
+.first-cell.toImproveCount,
+.first-cell.totalCount {
+  @for $i from 1 through $no-of-gradients {
+    &-#{$i} {
+      border: 2px solid colors.get-color('UiWhite');
+      box-shadow: 0px 0px 2px 1px colors.get-color('Sandstone90');
+      cursor: pointer;
+    }
+
+    &-#{$i}:hover {
+      box-shadow: 0px 1px 12px 0px colors.get-color('Sandstone60');
+      cursor: pointer;
+    }
+  }
+}
+
+.first-cell.totalCount {
+  @for $i from 1 through $no-of-gradients {
+    &-#{$i} {
+      background-color: #faf7f7;
+    }
+  }
+}
+
+.majorCount {
+  &-1 {
+    background-color: #c36267;
+  }
+  &-2 {
+    background-color: #d87a7f;
+  }
+  &-3 {
+    background-color: #e99297;
+  }
+  &-4 {
+    background-color: #eda8ac;
+  }
+  &-5 {
+    background-color: #f2bec1;
+  }
+  &-6 {
+    background-color: #f6d3d5;
+  }
+  &-7 {
+    background-color: #fde8e9;
+  }
+}
+
+.minorCount {
+  &-1 {
+    background-color: #ccc25f;
+  }
+  &-2 {
+    background-color: #e5db6b;
+  }
+  &-3 {
+    background-color: #fff377;
+  }
+  &-4 {
+    background-color: #fff592;
+  }
+  &-5 {
+    background-color: #fff8ad;
+  }
+  &-6 {
+    background-color: #fffac9;
+  }
+  &-7 {
+    background-color: #fffde4;
+  }
+}
+
+.observationCount {
+  &-1 {
+    background-color: #5295bb;
+  }
+  &-2 {
+    background-color: #56aada;
+  }
+  &-3 {
+    background-color: #6fbbe1;
+  }
+  &-4 {
+    background-color: #8fcbe8;
+  }
+  &-5 {
+    background-color: #99d9f0;
+  }
+  &-6 {
+    background-color: #d9edf7;
+  }
+  &-7 {
+    background-color: #ecf7fb;
+  }
+}
+
+.toImproveCount {
+  &-1 {
+    background-color: #a2a2a0;
+  }
+  &-2 {
+    background-color: #b7b6b4;
+  }
+  &-3 {
+    background-color: #cbcac8;
+  }
+  &-4 {
+    background-color: #d5d5d3;
+  }
+  &-5 {
+    background-color: #e0dfde;
+  }
+  &-6 {
+    background-color: #eaeae9;
+  }
+  &-7 {
+    background-color: #f5f4f4;
+  }
+}
+
+p-treetabletoggler.terminal-row::ng-deep {
+  > button {
+    margin: 0;
+    margin-left: utility.get-rem(23) !important;
+  }
+}

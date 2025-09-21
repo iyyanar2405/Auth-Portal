@@ -1,0 +1,60 @@
+<ng-container *transloco="let t">
+  <aside role="complementary" [attr.aria-label]="t('ariaLabel.sidebar')">
+    <div class="logo">
+      <img alt="DNV logo" src="/assets/logos/dnv-logo.svg" />
+      <p-button
+        class="close"
+        icon="pi pi-times"
+        role="button"
+        tabindex="0"
+        [ariaLabel]="t('closeMenu')"
+        [rounded]="true"
+        [text]="true"
+        (keydown.enter)="onClose()"
+        (keydown.space)="onClose()"
+        (onClick)="onClose()">
+      </p-button>
+    </div>
+
+    <nav role="navigation" [ariaLabel]="t('asideNavigation')">
+      @for (
+        group of profileStoreService.sidebarMenu();
+        track group.id;
+        let last = $last
+      ) {
+        <div class="grouping">
+          @for (item of group.items; track item.id) {
+            @if (item.isVisible) {
+              @if (item.externalUrl) {
+                <p-button
+                  ariaCurrentWhenActive="page"
+                  [attr.aria-label]="t(item.i18nKey)"
+                  [disabled]="item.isDisabled"
+                  icon="pi pi-{{ item.icon }}"
+                  [label]="t(item.i18nKey)"
+                  [text]="true"
+                  (onClick)="onNavigateTo(item.externalUrl)">
+                </p-button>
+              } @else {
+                <p-button
+                  ariaCurrentWhenActive="page"
+                  routerLinkActive="is-active"
+                  [attr.aria-label]="t(item.i18nKey)"
+                  [disabled]="item.isDisabled"
+                  icon="pi pi-{{ item.icon }}"
+                  [label]="t(item.i18nKey)"
+                  [routerLink]="item.url"
+                  [text]="true"
+                  (onClick)="onClose()">
+                </p-button>
+              }
+            }
+          }
+        </div>
+        @if (!last) {
+          <tr aria-hidden="true"></tr>
+        }
+      }
+    </nav>
+  </aside>
+</ng-container>

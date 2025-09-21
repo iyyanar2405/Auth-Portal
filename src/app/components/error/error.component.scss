@@ -1,0 +1,57 @@
+@use 'variables';
+@use 'pattern/utility';
+@use 'pattern/typography';
+@use 'pattern/colors';
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.header {
+  display: flex;
+  height: utility.get-rem(69);
+  width: 100vw;
+  padding-top: utility.get-rem(18);
+  padding-right: calc(100vw - 97px);
+  padding-bottom: utility.get-rem(18);
+  padding-left: utility.get-rem(20);
+  background-color: colors.get-color('UiWhite');
+  border-bottom: 1px solid colors.get-color('UiWhite');
+}
+
+.content {
+  background-image: url('/assets/images/welcome.png');
+  top: utility.get-rem(69);
+  width: 100vw;
+  height: calc(100vh - utility.get-rem(69));
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: colors.get-color('DarkBlue');
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: utility.get-rem(32);
+  align-self: stretch;
+  justify-content: center;
+
+  .card {
+    display: flex;
+    padding: utility.get-rem(36) utility.get-rem(32) utility.get-rem(28) utility.get-rem(32);
+    max-width: utility.get-rem(720);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: utility.get-rem(24);
+    align-self: stretch;
+    border-radius: utility.get-rem(10);
+    background: rgba(255, 255, 255, 0.95);
+  }
+}

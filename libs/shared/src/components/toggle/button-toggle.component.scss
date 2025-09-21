@@ -1,0 +1,34 @@
+@use 'pattern/colors';
+@use 'pattern/mixture';
+@use 'pattern/typography';
+
+@use 'pattern/utility';
+
+:host {
+  height: utility.get-rem(40);
+}
+
+p-selectbutton.p-element::ng-deep {
+  height: 100%;
+  display: flex;
+
+  .p-buttonset {
+    display: flex;
+  }
+
+  .p-button {
+    @extend %#{typography.$button-l-pattern};
+    display: flex;
+    gap: utility.get-rem(8);
+    padding: utility.get-rem(8) utility.get-rem(16);
+    color: colors.get-color('SeaBlue');
+    border-color: colors.get-color('SeaBlue');
+    background-color: colors.get-color('UiWhite');
+
+    &.p-highlight {
+      border-width: 0;
+      color: colors.get-color('UiWhite');
+      background-color: colors.get-color('SeaBlue');
+    }
+  }
+}

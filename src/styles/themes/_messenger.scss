@@ -1,0 +1,26 @@
+/* CSS styles that need to be applied on site where the EM is 
+embedded*/
+/* make the EM cover full height of the display */
+.ecEmbedWrapper.dockIn {
+    height: 100% !important;
+    right: 0px !important;
+    bottom: 0px !important;
+    max-height: 100% !important;
+    width: 420px !important;
+}
+
+/* styling as defined in figma design files */
+.ecEmbedWrapper {
+    box-shadow: 0px 8px 15px -3px rgba(15, 32, 75, 0.2);
+    border-radius: 0px !important;
+}
+
+.ecEmbedWrapper iframe {
+    box-shadow: none !important;
+    border-radius: 0px !important;
+}
+
+/* hide the default "bubble" that displays in bottom right corner*/
+button#ecLauncherFloatingBubble {
+    display: none !important;
+}

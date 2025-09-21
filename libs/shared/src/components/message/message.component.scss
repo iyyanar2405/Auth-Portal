@@ -1,0 +1,29 @@
+@use 'variables';
+@use 'pattern/utility';
+
+.messages-container {
+  .pr-1 {
+    padding-right: 0.5rem;
+  }
+
+  .pr-2 {
+    padding-right: 0.75rem;
+  }
+
+  .bold-text {
+    font-weight: 700;
+  }
+
+  .message-text {
+    flex-wrap: wrap;
+    padding-right: 1rem;
+  }
+
+  .projected-button {
+    margin-right: utility.get-rem(15);
+  }
+
+  .close-button {
+    cursor: pointer;
+  }
+}

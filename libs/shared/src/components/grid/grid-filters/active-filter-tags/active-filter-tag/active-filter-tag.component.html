@@ -1,0 +1,43 @@
+<ng-container *transloco="let t">
+  <p-tag styleClass="active-filter-tag" [rounded]="true">
+    <div class="active-filter-tag__container">
+      @if (shouldPersist) {
+        @if (tag.isSaved) {
+          <i
+            class="pi pi-bookmark-fill active-filter-tag__bookmark-icon"
+            role="button"
+            tabindex="0"
+            attr.aria-label="{{ t('removeSavedFilter', { tagLabel }) }}"
+            (click)="onDeleteSavedFilterClick()"
+            (keydown.enter)="onDeleteSavedFilterClick()"
+            (keydown.space)="onDeleteSavedFilterClick()"></i>
+        } @else {
+          <i
+            class="pi pi-bookmark active-filter-tag__bookmark-icon"
+            role="button"
+            tabindex="0"
+            attr.aria-label="{{ t('saveFilterTag', { tagLabel }) }}"
+            (click)="onSaveFilterClick()"
+            (keydown.enter)="onSaveFilterClick()"
+            (keydown.space)="onSaveFilterClick()"></i>
+        }
+      }
+      <span
+        class="active-filter-tag__label"
+        role=""
+        [attr.aria-label]="tagLabel"
+        sharedTippyTooltip="{{ tagLabel | uppercase }}"
+        [tooltipTheme]="TooltipThemes.LightSm">
+        {{ tagLabel | uppercase }}
+      </span>
+      <i
+        class="pi pi-times active-filter-tag__icon"
+        role="button"
+        tabindex="0"
+        attr.aria-label="{{ t('removeFilter', { tagLabel }) }}"
+        (click)="removeFilter.emit(tag)"
+        (keydown.enter)="removeFilter.emit(tag)"
+        (keydown.space)="removeFilter.emit(tag)"></i>
+    </div>
+  </p-tag>
+</ng-container>

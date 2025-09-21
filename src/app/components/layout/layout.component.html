@@ -1,0 +1,25 @@
+@if (isDnvUser && !coBrowsingSharedService.getCoBrowsingUserEmail()) {
+  <router-outlet></router-outlet>
+  <lib-spinner></lib-spinner>
+} @else {
+  @if (coBrowsingSharedService.getCoBrowsingUserEmail()) {
+    <customer-portal-navbar-co-browsing></customer-portal-navbar-co-browsing>
+  }
+  <div class="app-container">
+    <customer-portal-navbar
+      (toggleSidebarEvent)="sidebarMobile.onToggle($event)">
+    </customer-portal-navbar>
+    <customer-portal-sidebar></customer-portal-sidebar>
+    <customer-portal-footer></customer-portal-footer>
+    <main [ngClass]="{ 'no-breadcrumb': breadcrumbVisibility }">
+      <customer-portal-breadcrumb></customer-portal-breadcrumb>
+      <div class="content">
+        <router-outlet></router-outlet>
+        <lib-spinner></lib-spinner>
+      </div>
+      <customer-portal-sidebar-mobile #sidebarMobile></customer-portal-sidebar-mobile>
+    </main>
+  </div>
+}
+<shared-custom-confirm-dialog></shared-custom-confirm-dialog>
+<shared-custom-toast></shared-custom-toast>

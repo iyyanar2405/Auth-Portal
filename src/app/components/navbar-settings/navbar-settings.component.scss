@@ -1,0 +1,53 @@
+@use 'pattern/colors';
+@use 'pattern/mixins';
+@use 'pattern/mixture';
+
+@use 'pattern/utility';
+
+:host {
+  display: flex;
+}
+
+tr {
+  width: calc(100% - (2 * utility.get-rem(12)));
+  border-top: 1px solid colors.get-color('SkyBlue80');
+}
+
+.container {
+  @extend %#{mixture.$shadow-modal-pattern};
+  width: utility.get-rem(252);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: utility.get-rem(12) utility.get-rem(8);
+
+  @include mixins.respond-to(tablet) {
+    background-color: colors.get-color('DarkBlue');
+  }
+
+  @include mixins.respond-to(phone) {
+    width: auto;
+  }
+
+  &.is-language-picker {
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+  }
+}
+
+.grouping {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: utility.get-rem(2);
+}
+
+customer-portal-navbar-button.back::ng-deep {
+  background-color: colors.get-color('Sandstone95');
+
+  @include mixins.respond-to(tablet) {
+    background-color: colors.get-color('DarkBlue');
+  }
+}

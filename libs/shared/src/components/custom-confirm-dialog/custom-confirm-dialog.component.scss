@@ -1,0 +1,73 @@
+@use 'variables';
+@use 'pattern/colors';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+.custom-confirm-dialog {
+  ::ng-deep {
+    white-space: pre-line;
+
+    .p-dialog {
+      width: 600px;
+    }
+
+    @media screen and (max-width: '960px') {
+      .p-dialog {
+        width: 75vw;
+      }
+    }
+
+    @media screen and (max-width: '640px') {
+      .p-dialog {
+        width: 90vw;
+      }
+    }
+
+    .p-button {
+      font-weight: 700;
+      background-color: variables.$primary-dnv-dark-blue;
+
+      &.button {
+        &--danger {
+          background-color: colors.get-color('EnergyRed');
+          border-color: colors.get-color('EnergyRed');
+        }
+
+        &--hide-icon {
+          .p-icon {
+            display: none;
+          }
+        }
+
+        &--outlined {
+          background-color: variables.$basic-tones-dnv-white;
+          color: variables.$primary-dnv-dark-blue;
+          border-color: variables.$primary-dnv-dark-blue;
+        }
+      }
+    }
+
+    button {
+      @extend %#{typography.$button-l-pattern};
+      display: flex;
+    }
+
+    .accept-button {
+      padding: utility.get-rem(8) utility.get-rem(16);
+      border-color: transparent;
+      background-color: colors.get-color('SeaBlue');
+      color: colors.get-color('UiWhite');
+    }
+
+    .reject-button {
+      padding: utility.get-rem(8) utility.get-rem(16);
+      border-color: colors.get-color('SeaBlue');
+      background-color: transparent;
+      color: colors.get-color('SeaBlue');
+    }
+
+    p {
+      @extend %#{typography.$text-l-pattern};
+    }
+  }
+}

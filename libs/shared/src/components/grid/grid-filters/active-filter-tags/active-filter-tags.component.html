@@ -1,0 +1,23 @@
+<ng-container *transloco="let t">
+  <div
+    class="active-filter-tags"
+    role="list"
+    [attr.aria-label]="t('activeFilters')"
+    [ngClass]="{
+      'active-filter-tags--empty': !activeFilters().length,
+    }">
+    @for (tag of activeFilters(); track tag.label) {
+      <shared-active-filter-tag
+        role="listitem"
+        [shouldPersist]="shouldPersist"
+        [tag]="tag"
+        (deleteSavedFilter)="
+          handleFilterPreferenceAction($event, FilterPreferenceAction.Delete)
+        "
+        (removeFilter)="onRemoveFilter($event)"
+        (saveFilter)="
+          handleFilterPreferenceAction($event, FilterPreferenceAction.Save)
+        "></shared-active-filter-tag>
+    }
+  </div>
+</ng-container>

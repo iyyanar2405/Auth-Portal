@@ -1,0 +1,60 @@
+@use 'sass:color';
+
+@use 'pattern/colors';
+@use 'pattern/typography';
+@use 'pattern/utility';
+
+:host {
+  display: flex;
+}
+
+p-button.p-element::ng-deep {
+  display: flex;
+
+  .large {
+    height: utility.get-rem(40);
+  }
+
+  .small {
+    height: utility.get-rem(30);
+  }
+
+  .p-button {
+    @extend %#{typography.$button-l-pattern};
+    display: flex;
+    gap: utility.get-rem(var(--dnv-gutter-base-unitless));
+    padding: utility.get-rem(8) utility.get-rem(16);
+    color: colors.get-color('UiWhite');
+    background-color: colors.get-color('SeaBlue');
+    border-color: transparent;
+  }
+
+  .p-button-outlined {
+    color: colors.get-color('SeaBlue');
+    background-color: colors.get-color('UiWhite');
+    border-color: colors.get-color('SeaBlue');
+  }
+
+  .p-button-text {
+    padding: 0;
+    color: inherit;
+    background-color: transparent;
+  }
+
+  .p-button-success {
+    background-color: colors.get-color('SuccessGreen50');
+  }
+
+  .p-button-icon {
+    font-size: utility.get-rem(14);
+    margin: 0;
+  }
+}
+
+p-button.p-element.p-disabled::ng-deep {
+  .p-button {
+    background-color: colors.get-color('Sandstone90');
+    color: colors.get-color('DisabledGrey10');
+    border-color: transparent;
+  }
+}

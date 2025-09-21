@@ -1,0 +1,27 @@
+@use 'variables';
+@use 'pattern/utility';
+
+.checkbox-all-text {
+  position: absolute;
+  left: utility.get-rem(43);
+  top: utility.get-rem(15);
+  z-index: 1;
+}
+
+.checkbox-filter-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  ::ng-deep {
+    .p-checkbox-label {
+      margin-left: 0;
+    }
+  }
+
+  .override-disabled,
+  .override-disabled ::ng-deep * {
+    cursor: pointer !important;
+    pointer-events: auto;
+  }
+}
