@@ -227,15 +227,83 @@ interface TestPayload {
 
                     <p-divider></p-divider>
 
-                    <div class="quick-auth-actions">
-                      <h4>Quick Actions:</h4>
-                      <div class="actions-row">
-                        <p-button label="Login Form" icon="pi pi-sign-in" (onClick)="openLoginDialog()" class="p-button-success"></p-button>
-                        <p-button label="Check Token" icon="pi pi-shield" class="p-button-info" (onClick)="openAuthenticationUI('validate')"></p-button>
-                        <p-button label="Logout" icon="pi pi-sign-out" class="p-button-warning" (onClick)="openAuthenticationUI('logout')"></p-button>
-                        <p-button label="User Profile" icon="pi pi-user" class="p-button-secondary" (onClick)="openAuthenticationUI('profile')"></p-button>
-                      </div>
-                    </div>
+                    <div class="recent-activity">
+              <h3>Quick Actions</h3>
+              <div class="quick-actions">
+                <p-button 
+                  label="Confirm Email" 
+                  icon="pi pi-envelope" 
+                  (onClick)="handleConfirmEmail()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Refresh Token" 
+                  icon="pi pi-refresh" 
+                  (onClick)="handleRefreshToken()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Login" 
+                  icon="pi pi-sign-in" 
+                  (onClick)="handleLogin()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Logout" 
+                  icon="pi pi-sign-out" 
+                  (onClick)="handleLogout()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Is Authenticated" 
+                  icon="pi pi-check-circle" 
+                  (onClick)="handleIsAuthenticated()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Forgot Password" 
+                  icon="pi pi-question-circle" 
+                  (onClick)="handleForgotPassword()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Resend Verification" 
+                  icon="pi pi-send" 
+                  (onClick)="handleResendVerificationEmail()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Set TFA" 
+                  icon="pi pi-shield" 
+                  (onClick)="handleSetTfa()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Set Password" 
+                  icon="pi pi-key" 
+                  (onClick)="handleSetPassword()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Send TFA SMS" 
+                  icon="pi pi-mobile" 
+                  (onClick)="handleSendTfaSMS()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="Verify TFA Code" 
+                  icon="pi pi-verified" 
+                  (onClick)="handleVerifyTFACode()"
+                  class="p-button-outlined"
+                ></p-button>
+                <p-button 
+                  label="QR Code" 
+                  icon="pi pi-qrcode" 
+                  (onClick)="handleQRCode()"
+                  class="p-button-outlined"
+                ></p-button>
+              </div>
+            </div>
                   </p-card>
                 </div>
               </p-tabPanel>
@@ -3048,5 +3116,78 @@ export class ApiDashboardComponent implements OnInit {
       }
     }
     return '';
+  }
+
+  // Quick Actions authentication handlers
+  handleConfirmEmail(): void {
+    console.log('Confirm Email clicked');
+    // TODO: Implement confirm email functionality
+    alert('Confirm Email functionality - Implementation pending');
+  }
+
+  handleRefreshToken(): void {
+    console.log('Refresh Token clicked');
+    // TODO: Implement refresh token functionality
+    alert('Refresh Token functionality - Implementation pending');
+  }
+
+  handleLogin(): void {
+    console.log('Login clicked');
+    // TODO: Implement login functionality
+    alert('Login functionality - Implementation pending');
+  }
+
+  handleLogout(): void {
+    console.log('Logout clicked');
+    // TODO: Implement logout functionality
+    alert('Logout functionality - Implementation pending');
+  }
+
+  handleIsAuthenticated(): void {
+    console.log('Is Authenticated clicked');
+    // TODO: Implement authentication check functionality
+    alert('Is Authenticated check - Implementation pending');
+  }
+
+  handleForgotPassword(): void {
+    console.log('Forgot Password clicked');
+    // TODO: Implement forgot password functionality
+    alert('Forgot Password functionality - Implementation pending');
+  }
+
+  handleResendVerificationEmail(): void {
+    console.log('Resend Verification Email clicked');
+    // TODO: Implement resend verification email functionality
+    alert('Resend Verification Email functionality - Implementation pending');
+  }
+
+  handleSetTfa(): void {
+    console.log('Set TFA clicked');
+    // TODO: Implement set TFA functionality
+    alert('Set TFA functionality - Implementation pending');
+  }
+
+  handleSetPassword(): void {
+    console.log('Set Password clicked');
+    // TODO: Implement set password functionality
+    alert('Set Password functionality - Implementation pending');
+  }
+
+  handleSendTfaSMS(): void {
+    console.log('Send TFA SMS clicked');
+    // TODO: Implement send TFA SMS functionality
+    alert('Send TFA SMS functionality - Implementation pending');
+  }
+
+  handleVerifyTFACode(): void {
+    console.log('Verify TFA Code clicked');
+    // TODO: Implement verify TFA code functionality
+    alert('Verify TFA Code functionality - Implementation pending');
+  }
+
+  handleQRCode(): void {
+    console.log('QR Code clicked');
+    // TODO: Implement QR Code functionality
+    alert('QR Code functionality - Implementation pending');
   }
 }
