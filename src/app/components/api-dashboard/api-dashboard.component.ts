@@ -835,7 +835,7 @@ interface TestPayload {
 
           <!-- Special handling for Account Management with dual options -->
           <ng-template #checkAccountManagement>
-            <div *ngIf="category === 'Account Management'; else standardCategory" class="account-management-container">
+            <div *ngIf="category === 'Account Management'; else checkTwoFactorAuthentication" class="account-management-container">
               <div class="category-header">
                 <h3>{{ category }}</h3>
                 <p>{{ getCategoryDescription(category) }}</p>
@@ -955,6 +955,141 @@ interface TestPayload {
                                   size="small"
                                   class="p-button-info"
                                   (onClick)="viewEndpointSchema(endpoint)"
+                                ></p-button>
+                              </div>
+                            </div>
+                          </div>
+                        </p-accordionTab>
+                      </p-accordion>
+                    </p-card>
+                  </div>
+                </p-tabPanel>
+              </p-tabView>
+            </div>
+          </ng-template>
+
+          <!-- Two-Factor Authentication Template -->
+          <ng-template #checkTwoFactorAuthentication>
+            <div *ngIf="category === 'Two-Factor Authentication'; else standardCategory" class="two-factor-auth-container">
+              <div class="category-header">
+                <h3>{{ category }}</h3>
+                <p>{{ getCategoryDescription(category) }}</p>
+              </div>
+
+              <p-tabView class="nested-tabs">
+                <!-- UI Option -->
+                <p-tabPanel header="UI Interface" leftIcon="pi pi-desktop">
+                  <div class="two-factor-ui-interface">
+                    <p-card header="Two-Factor Authentication Interface">
+                      <div class="ui-description">
+                        <p><i class="pi pi-info-circle"></i> A comprehensive interface for managing two-factor authentication security settings.</p>
+                      </div>
+                      
+                      <div class="ui-features">
+                        <h4>Available Features:</h4>
+                        <div class="feature-grid">
+                          <div class="feature-card">
+                            <i class="pi pi-mobile"></i>
+                            <h5>Authenticator Setup</h5>
+                            <p>Enable and configure authenticator apps</p>
+                            <p-button label="Setup Authenticator" icon="pi pi-external-link" class="p-button-outlined" size="small" (onClick)="openTwoFactorAuthUI('setup')"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-shield"></i>
+                            <h5>TFA Management</h5>
+                            <p>Enable or disable two-factor authentication</p>
+                            <p-button label="Manage TFA" icon="pi pi-cog" class="p-button-outlined" size="small" (onClick)="openTwoFactorAuthUI('manage')"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-refresh"></i>
+                            <h5>Reset Authenticator</h5>
+                            <p>Reset and reconfigure your authenticator</p>
+                            <p-button label="Reset TFA" icon="pi pi-refresh" class="p-button-outlined" size="small" (onClick)="openTwoFactorAuthUI('reset')"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-key"></i>
+                            <h5>Recovery Codes</h5>
+                            <p>Generate backup recovery codes</p>
+                            <p-button label="Recovery Codes" icon="pi pi-unlock" class="p-button-outlined" size="small" (onClick)="openTwoFactorAuthUI('recovery')"></p-button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p-divider></p-divider>
+
+                      <div class="quick-two-factor-actions">
+                        <h4>Quick Actions:</h4>
+                        <div class="actions-row">
+                          <p-button label="Check Status" icon="pi pi-info" (onClick)="openTwoFactorAuthUI('status')"></p-button>
+                          <p-button label="Enable TFA" icon="pi pi-shield" class="p-button-success" (onClick)="openTwoFactorAuthUI('enable')"></p-button>
+                          <p-button label="Disable TFA" icon="pi pi-times" class="p-button-warning" (onClick)="openTwoFactorAuthUI('disable')"></p-button>
+                          <p-button label="Generate Codes" icon="pi pi-key" class="p-button-info" (onClick)="openTwoFactorAuthUI('generate-codes')"></p-button>
+                        </div>
+                      </div>
+                    </p-card>
+                  </div>
+                </p-tabPanel>
+
+                <!-- API Option -->
+                <p-tabPanel header="API Endpoints" leftIcon="pi pi-code">
+                  <div class="api-endpoints-interface">
+                    <p-card header="Two-Factor Authentication API Endpoints">
+                      <div class="api-description">
+                        <p><i class="pi pi-info-circle"></i> Direct access to Two-Factor Authentication API endpoints for testing and integration.</p>
+                      </div>
+
+                      <p-accordion>
+                        <p-accordionTab 
+                          *ngFor="let endpoint of getEndpointsByCategory(category)"
+                          [header]="getAccordionHeader(endpoint)"
+                        >
+                          <div class="endpoint-details">
+                            <div class="endpoint-info">
+                              <div class="endpoint-meta">
+                                <p-chip 
+                                  [label]="endpoint.method" 
+                                  [class]="'method-' + endpoint.method.toLowerCase()"
+                                ></p-chip>
+                                <span class="endpoint-path">{{ endpoint.endpoint }}</span>
+                                <p-badge 
+                                  *ngIf="endpoint.requiresAuth" 
+                                  value="AUTH" 
+                                  severity="warning"
+                                ></p-badge>
+                              </div>
+                              <p class="endpoint-summary">{{ endpoint.summary }}</p>
+                              
+                              <div class="endpoint-parameters" *ngIf="endpoint.parameters && endpoint.parameters.length > 0">
+                                <h5>Parameters:</h5>
+                                <div class="parameters-list">
+                                  <p-chip 
+                                    *ngFor="let param of endpoint.parameters" 
+                                    [label]="param"
+                                    class="parameter-chip"
+                                  ></p-chip>
+                                </div>
+                              </div>
+
+                              <div class="endpoint-actions">
+                                <p-button 
+                                  label="Test Endpoint" 
+                                  icon="pi pi-play" 
+                                  size="small"
+                                  (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)"
+                                ></p-button>
+                                <p-button 
+                                  label="Copy cURL" 
+                                  icon="pi pi-copy" 
+                                  size="small"
+                                  class="p-button-outlined"
+                                  (onClick)="copyCurlCommand(endpoint)"
+                                ></p-button>
+                                <p-button 
+                                  label="View Details" 
+                                  icon="pi pi-eye" 
+                                  size="small"
+                                  class="p-button-text"
+                                  (onClick)="showEndpointDetails(endpoint)"
                                 ></p-button>
                               </div>
                             </div>
@@ -1408,7 +1543,7 @@ interface TestPayload {
     }
 
     /* User Management specific styles */
-    .user-management-container, .authentication-container, .role-management-container, .claims-management-container, .user-role-management-container, .account-management-container {
+    .user-management-container, .authentication-container, .role-management-container, .claims-management-container, .user-role-management-container, .account-management-container, .two-factor-auth-container {
       padding: 1rem 0;
     }
 
@@ -1416,7 +1551,7 @@ interface TestPayload {
       margin-top: 1rem;
     }
 
-    .user-ui-interface, .auth-ui-interface, .role-ui-interface, .claims-ui-interface, .user-role-ui-interface, .account-ui-interface, .api-endpoints-interface {
+    .user-ui-interface, .auth-ui-interface, .role-ui-interface, .claims-ui-interface, .user-role-ui-interface, .account-ui-interface, .two-factor-ui-interface, .api-endpoints-interface {
       padding: 1rem 0;
     }
 
@@ -1476,11 +1611,11 @@ interface TestPayload {
       margin-bottom: 1rem;
     }
 
-    .quick-user-actions, .quick-auth-actions, .quick-role-actions, .quick-claims-actions, .quick-user-role-actions, .quick-account-actions {
+    .quick-user-actions, .quick-auth-actions, .quick-role-actions, .quick-claims-actions, .quick-user-role-actions, .quick-account-actions, .quick-two-factor-actions {
       margin-top: 1.5rem;
     }
 
-    .quick-user-actions h4, .quick-auth-actions h4, .quick-role-actions h4, .quick-claims-actions h4, .quick-user-role-actions h4, .quick-account-actions h4 {
+    .quick-user-actions h4, .quick-auth-actions h4, .quick-role-actions h4, .quick-claims-actions h4, .quick-user-role-actions h4, .quick-account-actions h4, .quick-two-factor-actions h4 {
       color: #374151;
       margin-bottom: 1rem;
     }
@@ -1894,6 +2029,40 @@ export class ApiDashboardComponent implements OnInit {
         break;
       default:
         console.log('Unknown account management action:', action);
+    }
+  }
+
+  openTwoFactorAuthUI(action: string): void {
+    console.log(`Opening Two-Factor Authentication UI for action: ${action}`);
+    // Here you would navigate to specific TFA pages
+    // For now, just log the action
+    switch (action) {
+      case 'setup':
+        console.log('Navigate to authenticator setup');
+        break;
+      case 'manage':
+        console.log('Navigate to TFA management interface');
+        break;
+      case 'reset':
+        console.log('Navigate to reset authenticator');
+        break;
+      case 'recovery':
+        console.log('Navigate to recovery codes management');
+        break;
+      case 'status':
+        console.log('Navigate to TFA status check');
+        break;
+      case 'enable':
+        console.log('Navigate to enable TFA');
+        break;
+      case 'disable':
+        console.log('Navigate to disable TFA');
+        break;
+      case 'generate-codes':
+        console.log('Navigate to generate recovery codes');
+        break;
+      default:
+        console.log('Unknown two-factor authentication action:', action);
     }
   }
 }
