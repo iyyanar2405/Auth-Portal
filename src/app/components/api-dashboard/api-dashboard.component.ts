@@ -430,7 +430,7 @@ interface TestPayload {
 
           <!-- Special handling for Role Management with dual options -->
           <ng-template #checkRoleManagement>
-            <div *ngIf="category === 'Role Management'; else standardCategory" class="role-management-container">
+               <div *ngIf="category === 'Role Management'; else checkClaimsManagement" class="role-management-container">
               <div class="category-header">
                 <h3>{{ category }}</h3>
                 <p>{{ getCategoryDescription(category) }}</p>
@@ -496,6 +496,141 @@ interface TestPayload {
                     <p-card header="Role Management API Endpoints">
                       <div class="api-description">
                         <p><i class="pi pi-info-circle"></i> Direct access to Role Management API endpoints for testing and integration.</p>
+                      </div>
+
+                      <p-accordion>
+                        <p-accordionTab 
+                          *ngFor="let endpoint of getEndpointsByCategory(category)"
+                          [header]="getAccordionHeader(endpoint)"
+                        >
+                          <div class="endpoint-details">
+                            <div class="endpoint-info">
+                              <div class="endpoint-meta">
+                                <p-chip 
+                                  [label]="endpoint.method" 
+                                  [class]="'method-' + endpoint.method.toLowerCase()"
+                                ></p-chip>
+                                <span class="endpoint-path">{{ endpoint.endpoint }}</span>
+                                <p-badge 
+                                  *ngIf="endpoint.requiresAuth" 
+                                  value="AUTH" 
+                                  severity="warning"
+                                ></p-badge>
+                              </div>
+                              <p class="endpoint-summary">{{ endpoint.summary }}</p>
+                              
+                              <div class="endpoint-parameters" *ngIf="endpoint.parameters && endpoint.parameters.length > 0">
+                                <h5>Parameters:</h5>
+                                <div class="parameters-list">
+                                  <p-chip 
+                                    *ngFor="let param of endpoint.parameters" 
+                                    [label]="param"
+                                    class="parameter-chip"
+                                  ></p-chip>
+                                </div>
+                              </div>
+
+                              <div class="endpoint-actions">
+                                <p-button 
+                                  label="Test Endpoint" 
+                                  icon="pi pi-play" 
+                                  size="small"
+                                  (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)"
+                                ></p-button>
+                                <p-button 
+                                  label="Copy cURL" 
+                                  icon="pi pi-copy" 
+                                  size="small"
+                                  class="p-button-outlined"
+                                  (onClick)="copyCurlCommand(endpoint)"
+                                ></p-button>
+                                <p-button 
+                                  label="View Schema" 
+                                  icon="pi pi-eye" 
+                                  size="small"
+                                  class="p-button-info"
+                                  (onClick)="viewEndpointSchema(endpoint)"
+                                ></p-button>
+                              </div>
+                            </div>
+                          </div>
+                        </p-accordionTab>
+                      </p-accordion>
+                    </p-card>
+                  </div>
+                </p-tabPanel>
+              </p-tabView>
+            </div>
+          </ng-template>
+
+          <!-- Special handling for Claims Management with dual options -->
+          <ng-template #checkClaimsManagement>
+            <div *ngIf="category === 'Claims Management'; else standardCategory" class="claims-management-container">
+              <div class="category-header">
+                <h3>{{ category }}</h3>
+                <p>{{ getCategoryDescription(category) }}</p>
+              </div>
+
+              <p-tabView class="nested-tabs">
+                <!-- UI Option -->
+                <p-tabPanel header="UI Interface" leftIcon="pi pi-desktop">
+                  <div class="claims-ui-interface">
+                    <p-card header="Claims Management Interface">
+                      <div class="ui-description">
+                        <p><i class="pi pi-info-circle"></i> A comprehensive interface for managing user claims, permissions, and access tokens.</p>
+                      </div>
+                      
+                      <div class="ui-features">
+                        <h4>Available Features:</h4>
+                        <div class="feature-grid">
+                          <div class="feature-card">
+                            <i class="pi pi-list"></i>
+                            <h5>Claims List</h5>
+                            <p>View and search all user claims with filtering</p>
+                            <p-button label="Open Claims List" icon="pi pi-external-link" class="p-button-outlined" size="small"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-plus-circle"></i>
+                            <h5>Create Claim</h5>
+                            <p>Add new claims with validation rules</p>
+                            <p-button label="Create Claim" icon="pi pi-plus" class="p-button-outlined" size="small"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-pencil"></i>
+                            <h5>Edit Claim</h5>
+                            <p>Modify existing claim values and properties</p>
+                            <p-button label="Edit Claims" icon="pi pi-pencil" class="p-button-outlined" size="small"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-verified"></i>
+                            <h5>Claim Validation</h5>
+                            <p>Validate and verify claim authenticity</p>
+                            <p-button label="Validate Claims" icon="pi pi-check-circle" class="p-button-outlined" size="small"></p-button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p-divider></p-divider>
+
+                      <div class="quick-claims-actions">
+                        <h4>Quick Actions:</h4>
+                        <div class="actions-row">
+                          <p-button label="View All Claims" icon="pi pi-list" (onClick)="openClaimsManagementUI('list')"></p-button>
+                          <p-button label="Add New Claim" icon="pi pi-plus" class="p-button-success" (onClick)="openClaimsManagementUI('create')"></p-button>
+                          <p-button label="Claims Reports" icon="pi pi-chart-bar" class="p-button-info" (onClick)="openClaimsManagementUI('reports')"></p-button>
+                          <p-button label="Validate Claims" icon="pi pi-shield" class="p-button-warning" (onClick)="openClaimsManagementUI('validate')"></p-button>
+                        </div>
+                      </div>
+                    </p-card>
+                  </div>
+                </p-tabPanel>
+
+                <!-- API Endpoints Option -->
+                <p-tabPanel header="API Endpoints" leftIcon="pi pi-code">
+                  <div class="api-endpoints-interface">
+                    <p-card header="Claims Management API Endpoints">
+                      <div class="api-description">
+                        <p><i class="pi pi-info-circle"></i> Complete list of API endpoints for claims management operations.</p>
                       </div>
 
                       <p-accordion>
@@ -1003,7 +1138,7 @@ interface TestPayload {
     }
 
     /* User Management specific styles */
-    .user-management-container, .authentication-container, .role-management-container {
+    .user-management-container, .authentication-container, .role-management-container, .claims-management-container {
       padding: 1rem 0;
     }
 
@@ -1011,7 +1146,7 @@ interface TestPayload {
       margin-top: 1rem;
     }
 
-    .user-ui-interface, .auth-ui-interface, .role-ui-interface, .api-endpoints-interface {
+    .user-ui-interface, .auth-ui-interface, .role-ui-interface, .claims-ui-interface, .api-endpoints-interface {
       padding: 1rem 0;
     }
 
@@ -1071,11 +1206,11 @@ interface TestPayload {
       margin-bottom: 1rem;
     }
 
-    .quick-user-actions, .quick-auth-actions, .quick-role-actions {
+    .quick-user-actions, .quick-auth-actions, .quick-role-actions, .quick-claims-actions {
       margin-top: 1.5rem;
     }
 
-    .quick-user-actions h4, .quick-auth-actions h4, .quick-role-actions h4 {
+    .quick-user-actions h4, .quick-auth-actions h4, .quick-role-actions h4, .quick-claims-actions h4 {
       color: #374151;
       margin-bottom: 1rem;
     }
@@ -1154,6 +1289,11 @@ export class ApiDashboardComponent implements OnInit {
     // Initialize with a sample endpoint for testing
     this.testPayload.endpoint = '/api/manage/userInfo';
     this.testPayload.method = 'GET';
+    
+    // Debug: Check Claims Management endpoints
+    const claimsEndpoints = this.endpoints.filter(e => e.category === 'Claims Management');
+    console.log('Claims Management endpoints found:', claimsEndpoints.length);
+    console.log('Available categories:', this.getUniqueCategories());
   }
 
   getTotalEndpointsCount(): number {
@@ -1397,6 +1537,31 @@ export class ApiDashboardComponent implements OnInit {
         break;
       default:
         console.log('Unknown role management action:', action);
+    }
+  }
+
+  openClaimsManagementUI(action: string): void {
+    console.log(`Opening Claims Management UI for action: ${action}`);
+    // Here you would navigate to specific claims management pages
+    // For now, just log the action
+    switch (action) {
+      case 'list':
+        console.log('Navigate to claims list view');
+        break;
+      case 'create':
+        console.log('Navigate to create claim form');
+        break;
+      case 'edit':
+        console.log('Navigate to edit claim form');
+        break;
+      case 'validate':
+        console.log('Navigate to claim validation');
+        break;
+      case 'reports':
+        console.log('Navigate to claims reports');
+        break;
+      default:
+        console.log('Unknown claims management action:', action);
     }
   }
 }
