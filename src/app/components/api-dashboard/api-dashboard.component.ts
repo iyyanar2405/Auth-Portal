@@ -700,7 +700,7 @@ interface TestPayload {
 
           <!-- Special handling for User Role Management with dual options -->
           <ng-template #checkUserRoleManagement>
-            <div *ngIf="category === 'User Role Management'; else standardCategory" class="user-role-management-container">
+            <div *ngIf="category === 'User Role Management'; else checkAccountManagement" class="user-role-management-container">
               <div class="category-header">
                 <h3>{{ category }}</h3>
                 <p>{{ getCategoryDescription(category) }}</p>
@@ -766,6 +766,141 @@ interface TestPayload {
                     <p-card header="User Role Management API Endpoints">
                       <div class="api-description">
                         <p><i class="pi pi-info-circle"></i> Direct access to User Role Management API endpoints for testing and integration.</p>
+                      </div>
+
+                      <p-accordion>
+                        <p-accordionTab 
+                          *ngFor="let endpoint of getEndpointsByCategory(category)"
+                          [header]="getAccordionHeader(endpoint)"
+                        >
+                          <div class="endpoint-details">
+                            <div class="endpoint-info">
+                              <div class="endpoint-meta">
+                                <p-chip 
+                                  [label]="endpoint.method" 
+                                  [class]="'method-' + endpoint.method.toLowerCase()"
+                                ></p-chip>
+                                <span class="endpoint-path">{{ endpoint.endpoint }}</span>
+                                <p-badge 
+                                  *ngIf="endpoint.requiresAuth" 
+                                  value="AUTH" 
+                                  severity="warning"
+                                ></p-badge>
+                              </div>
+                              <p class="endpoint-summary">{{ endpoint.summary }}</p>
+                              
+                              <div class="endpoint-parameters" *ngIf="endpoint.parameters && endpoint.parameters.length > 0">
+                                <h5>Parameters:</h5>
+                                <div class="parameters-list">
+                                  <p-chip 
+                                    *ngFor="let param of endpoint.parameters" 
+                                    [label]="param"
+                                    class="parameter-chip"
+                                  ></p-chip>
+                                </div>
+                              </div>
+
+                              <div class="endpoint-actions">
+                                <p-button 
+                                  label="Test Endpoint" 
+                                  icon="pi pi-play" 
+                                  size="small"
+                                  (onClick)="openEndpointTester(endpoint.endpoint, endpoint.method)"
+                                ></p-button>
+                                <p-button 
+                                  label="Copy cURL" 
+                                  icon="pi pi-copy" 
+                                  size="small"
+                                  class="p-button-outlined"
+                                  (onClick)="copyCurlCommand(endpoint)"
+                                ></p-button>
+                                <p-button 
+                                  label="View Schema" 
+                                  icon="pi pi-eye" 
+                                  size="small"
+                                  class="p-button-info"
+                                  (onClick)="viewEndpointSchema(endpoint)"
+                                ></p-button>
+                              </div>
+                            </div>
+                          </div>
+                        </p-accordionTab>
+                      </p-accordion>
+                    </p-card>
+                  </div>
+                </p-tabPanel>
+              </p-tabView>
+            </div>
+          </ng-template>
+
+          <!-- Special handling for Account Management with dual options -->
+          <ng-template #checkAccountManagement>
+            <div *ngIf="category === 'Account Management'; else standardCategory" class="account-management-container">
+              <div class="category-header">
+                <h3>{{ category }}</h3>
+                <p>{{ getCategoryDescription(category) }}</p>
+              </div>
+
+              <p-tabView class="nested-tabs">
+                <!-- UI Option -->
+                <p-tabPanel header="UI Interface" leftIcon="pi pi-desktop">
+                  <div class="account-ui-interface">
+                    <p-card header="Account Management Interface">
+                      <div class="ui-description">
+                        <p><i class="pi pi-info-circle"></i> A comprehensive interface for managing user accounts, profiles, and personal settings.</p>
+                      </div>
+                      
+                      <div class="ui-features">
+                        <h4>Available Features:</h4>
+                        <div class="feature-grid">
+                          <div class="feature-card">
+                            <i class="pi pi-user"></i>
+                            <h5>Profile Management</h5>
+                            <p>View and edit user profile information</p>
+                            <p-button label="Manage Profile" icon="pi pi-external-link" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('profile')"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-lock"></i>
+                            <h5>Password Management</h5>
+                            <p>Change password and security settings</p>
+                            <p-button label="Change Password" icon="pi pi-key" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('password')"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-envelope"></i>
+                            <h5>Email Verification</h5>
+                            <p>Manage email verification and notifications</p>
+                            <p-button label="Email Settings" icon="pi pi-send" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('email')"></p-button>
+                          </div>
+                          <div class="feature-card">
+                            <i class="pi pi-cog"></i>
+                            <h5>Account Settings</h5>
+                            <p>Configure account preferences and security</p>
+                            <p-button label="Account Settings" icon="pi pi-sliders-h" class="p-button-outlined" size="small" (onClick)="openAccountManagementUI('settings')"></p-button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p-divider></p-divider>
+
+                      <div class="quick-account-actions">
+                        <h4>Quick Actions:</h4>
+                        <div class="actions-row">
+                          <p-button label="View Profile" icon="pi pi-user" (onClick)="openAccountManagementUI('view-profile')"></p-button>
+                          <p-button label="Change Password" icon="pi pi-lock" class="p-button-success" (onClick)="openAccountManagementUI('change-password')"></p-button>
+                          <p-button label="Verify Email" icon="pi pi-envelope" class="p-button-info" (onClick)="openAccountManagementUI('verify-email')"></p-button>
+                          <p-button label="Security Settings" icon="pi pi-shield" class="p-button-warning" (onClick)="openAccountManagementUI('security')"></p-button>
+                        </div>
+                      </div>
+                    </p-card>
+                  </div>
+                </p-tabPanel>
+
+                <!-- API Option -->
+                <p-tabPanel header="API Endpoints" leftIcon="pi pi-code">
+                  <div class="api-endpoints-interface">
+                    <p-card header="Account Management API Endpoints">
+                      <div class="api-description">
+                        <p><i class="pi pi-info-circle"></i> Direct access to Account Management API endpoints for testing and integration.</p>
                       </div>
 
                       <p-accordion>
@@ -1273,7 +1408,7 @@ interface TestPayload {
     }
 
     /* User Management specific styles */
-    .user-management-container, .authentication-container, .role-management-container, .claims-management-container, .user-role-management-container {
+    .user-management-container, .authentication-container, .role-management-container, .claims-management-container, .user-role-management-container, .account-management-container {
       padding: 1rem 0;
     }
 
@@ -1281,7 +1416,7 @@ interface TestPayload {
       margin-top: 1rem;
     }
 
-    .user-ui-interface, .auth-ui-interface, .role-ui-interface, .claims-ui-interface, .user-role-ui-interface, .api-endpoints-interface {
+    .user-ui-interface, .auth-ui-interface, .role-ui-interface, .claims-ui-interface, .user-role-ui-interface, .account-ui-interface, .api-endpoints-interface {
       padding: 1rem 0;
     }
 
@@ -1341,11 +1476,11 @@ interface TestPayload {
       margin-bottom: 1rem;
     }
 
-    .quick-user-actions, .quick-auth-actions, .quick-role-actions, .quick-claims-actions, .quick-user-role-actions {
+    .quick-user-actions, .quick-auth-actions, .quick-role-actions, .quick-claims-actions, .quick-user-role-actions, .quick-account-actions {
       margin-top: 1.5rem;
     }
 
-    .quick-user-actions h4, .quick-auth-actions h4, .quick-role-actions h4, .quick-claims-actions h4, .quick-user-role-actions h4 {
+    .quick-user-actions h4, .quick-auth-actions h4, .quick-role-actions h4, .quick-claims-actions h4, .quick-user-role-actions h4, .quick-account-actions h4 {
       color: #374151;
       margin-bottom: 1rem;
     }
@@ -1724,6 +1859,41 @@ export class ApiDashboardComponent implements OnInit {
         break;
       default:
         console.log('Unknown user role management action:', action);
+    }
+  }
+
+  // Account Management UI methods
+  openAccountManagementUI(action: string): void {
+    console.log(`Opening Account Management UI for action: ${action}`);
+    // Here you would navigate to specific account management pages
+    // For now, just log the action
+    switch (action) {
+      case 'profile':
+        console.log('Navigate to profile management');
+        break;
+      case 'password':
+        console.log('Navigate to password change interface');
+        break;
+      case 'email':
+        console.log('Navigate to email verification settings');
+        break;
+      case 'settings':
+        console.log('Navigate to account settings');
+        break;
+      case 'view-profile':
+        console.log('Navigate to view profile page');
+        break;
+      case 'change-password':
+        console.log('Navigate to change password form');
+        break;
+      case 'verify-email':
+        console.log('Navigate to email verification');
+        break;
+      case 'security':
+        console.log('Navigate to security settings');
+        break;
+      default:
+        console.log('Unknown account management action:', action);
     }
   }
 }
