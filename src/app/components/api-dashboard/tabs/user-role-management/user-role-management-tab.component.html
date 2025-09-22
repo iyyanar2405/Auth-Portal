@@ -158,7 +158,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="assign-role-dialog"
+  styleClass="assign-role-dialog responsive-dialog"
   (onHide)="onAssignDialogHide()"
 >
   <form [formGroup]="assignRoleForm" (ngSubmit)="handleAssignRole()">
@@ -219,7 +219,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="remove-role-dialog"
+  styleClass="remove-role-dialog responsive-dialog"
   (onHide)="onRemoveDialogHide()"
 >
   <form [formGroup]="removeRoleForm" (ngSubmit)="handleRemoveRole()">
@@ -281,7 +281,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="user-roles-dialog"
+  styleClass="user-roles-dialog responsive-dialog"
   (onHide)="onUserRolesDialogHide()"
 >
   <form [formGroup]="userRolesForm" (ngSubmit)="handleGetUserRoles()">
@@ -387,7 +387,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="role-users-dialog"
+  styleClass="role-users-dialog responsive-dialog"
   (onHide)="onRoleUsersDialogHide()"
 >
   <form [formGroup]="roleUsersForm" (ngSubmit)="handleGetRoleUsers()">
@@ -493,7 +493,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="bulk-assign-dialog"
+  styleClass="bulk-assign-dialog responsive-dialog"
   (onHide)="onBulkAssignDialogHide()"
 >
   <form [formGroup]="bulkAssignForm" (ngSubmit)="handleBulkAssign()">

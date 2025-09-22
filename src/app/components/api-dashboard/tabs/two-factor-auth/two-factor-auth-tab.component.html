@@ -23,7 +23,7 @@
             </div>
             
             <form [formGroup]="setupTwoFactorForm" (ngSubmit)="handleSetupTwoFactor()">
-              <div class="field">
+              <div class="form-field">
                 <label for="setup-userId">User ID *</label>
                 <input pInputText 
                        id="setup-userId" 
@@ -36,7 +36,7 @@
                 </small>
               </div>
 
-              <div class="field" *ngIf="setupTwoFactorForm.get('method')?.value === 'sms'">
+              <div class="form-field" *ngIf="setupTwoFactorForm.get('method')?.value === 'sms'">
                 <label for="setup-phone">Phone Number *</label>
                 <input pInputText 
                        id="setup-phone" 
@@ -49,7 +49,7 @@
                 </small>
               </div>
 
-              <div class="field" *ngIf="setupTwoFactorForm.get('method')?.value === 'email'">
+              <div class="form-field" *ngIf="setupTwoFactorForm.get('method')?.value === 'email'">
                 <label for="setup-email">Email Address *</label>
                 <input pInputText 
                        id="setup-email" 
@@ -85,7 +85,7 @@
           </ng-template>
           
           <form [formGroup]="verifyTwoFactorForm" (ngSubmit)="handleVerifyTwoFactor()">
-            <div class="field">
+            <div class="form-field">
               <label for="verify-userId">User ID *</label>
               <input pInputText 
                      id="verify-userId" 
@@ -94,7 +94,7 @@
                      [class.ng-invalid]="verifyTwoFactorForm.get('userId')?.invalid && verifyTwoFactorForm.get('userId')?.touched" />
             </div>
 
-            <div class="field">
+            <div class="form-field">
               <label for="verify-method">Authentication Method *</label>
               <p-dropdown id="verify-method"
                           formControlName="method"
@@ -104,13 +104,14 @@
                           placeholder="Select method" />
             </div>
 
-            <div class="field">
+            <div class="form-field">
               <label for="verify-code">Verification Code *</label>
               <input pInputText 
                      id="verify-code" 
                      formControlName="code" 
                      placeholder="Enter 6-digit code"
                      maxlength="6"
+                     class="verification-code-input"
                      [class.ng-invalid]="verifyTwoFactorForm.get('code')?.invalid && verifyTwoFactorForm.get('code')?.touched" />
               <small class="p-error" 
                      *ngIf="verifyTwoFactorForm.get('code')?.invalid && verifyTwoFactorForm.get('code')?.touched">
@@ -140,7 +141,7 @@
           </ng-template>
           
           <form [formGroup]="statusForm" (ngSubmit)="handleGetStatus()">
-            <div class="field">
+            <div class="form-field">
               <label for="status-userId">User ID *</label>
               <input pInputText 
                      id="status-userId" 
@@ -214,7 +215,7 @@
           </ng-template>
           
           <form [formGroup]="recoveryCodesForm" (ngSubmit)="handleGetRecoveryCodes()">
-            <div class="field">
+            <div class="form-field">
               <label for="recovery-userId">User ID *</label>
               <input pInputText 
                      id="recovery-userId" 
@@ -247,6 +248,7 @@
                 <p-button icon="pi pi-copy" 
                           size="small"
                           text
+                          class="copy-button"
                           (onClick)="copyToClipboard(code)" />
               </div>
             </div>
@@ -275,7 +277,7 @@
                   </p>
                   <div *ngIf="endpoint.parameters?.length">
                     <p><strong>Parameters:</strong></p>
-                    <ul>
+                    <ul class="parameter-list">
                       <li *ngFor="let param of endpoint.parameters">{{ param }}</li>
                     </ul>
                   </div>
@@ -314,6 +316,7 @@
           [modal]="true" 
           [closable]="true"
           [style]="{width: '500px'}"
+          styleClass="responsive-dialog"
           (onHide)="onSetupDialogHide()">
   <form [formGroup]="setupTwoFactorForm" (ngSubmit)="handleSetupTwoFactor()">
     <div class="dialog-content">
@@ -378,6 +381,7 @@
           [modal]="true" 
           [closable]="true"
           [style]="{width: '400px'}"
+          styleClass="responsive-dialog"
           (onHide)="onVerifyDialogHide()">
   <form [formGroup]="verifyTwoFactorForm" (ngSubmit)="handleVerifyTwoFactor()">
     <div class="dialog-content">
@@ -417,6 +421,7 @@
           [modal]="true" 
           [closable]="true"
           [style]="{width: '400px'}"
+          styleClass="responsive-dialog"
           (onHide)="onDisableDialogHide()">
   <form [formGroup]="disableTwoFactorForm" (ngSubmit)="handleDisableTwoFactor()">
     <div class="dialog-content">
@@ -459,6 +464,7 @@
           [modal]="true" 
           [closable]="true"
           [style]="{width: '600px'}"
+          styleClass="responsive-dialog"
           (onHide)="onStatusDialogHide()">
   <div class="dialog-content">
     <p-message *ngIf="statusMessage" 
@@ -508,6 +514,7 @@
           [modal]="true" 
           [closable]="true"
           [style]="{width: '500px'}"
+          styleClass="responsive-dialog"
           (onHide)="onRecoveryDialogHide()">
   <div class="dialog-content">
     <p-message *ngIf="recoveryMessage" 
@@ -545,6 +552,7 @@
           [modal]="true" 
           [closable]="true"
           [style]="{width: '450px'}"
+          styleClass="responsive-dialog"
           (onHide)="onQrCodeDialogHide()">
   <div class="dialog-content">
     <div class="qr-code-container" *ngIf="qrCodeUrl">

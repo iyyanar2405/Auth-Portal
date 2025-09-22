@@ -163,7 +163,9 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="login-dialog"
+  styleClass="login-dialog responsive-dialog"
+  [style]="{width: '90vw', maxWidth: '450px', minWidth: '320px'}"
+  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
 >
   <form [formGroup]="loginForm" (ngSubmit)="handleLogin()">
     <div class="form-field">
@@ -243,7 +245,9 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="register-dialog"
+  styleClass="register-dialog responsive-dialog"
+  [style]="{width: '90vw', maxWidth: '500px', minWidth: '320px'}"
+  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
 >
   <form [formGroup]="registerForm" (ngSubmit)="handleRegister()">
     <div class="form-field">
@@ -329,7 +333,9 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="forgot-password-dialog"
+  styleClass="forgot-password-dialog responsive-dialog"
+  [style]="{width: '90vw', maxWidth: '400px', minWidth: '320px'}"
+  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
 >
   <form [formGroup]="forgotPasswordForm" (ngSubmit)="handleForgotPassword()">
     <div class="form-field">
@@ -375,7 +381,9 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="reset-password-dialog"
+  styleClass="reset-password-dialog responsive-dialog"
+  [style]="{width: '90vw', maxWidth: '450px', minWidth: '320px'}"
+  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
 >
   <form [formGroup]="resetPasswordForm" (ngSubmit)="handleResetPassword()">
     <div class="form-field">
@@ -465,7 +473,9 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="confirm-email-dialog"
+  styleClass="confirm-email-dialog responsive-dialog"
+  [style]="{width: '90vw', maxWidth: '400px', minWidth: '320px'}"
+  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
 >
   <form [formGroup]="confirmEmailForm" (ngSubmit)="handleConfirmEmail()">
     <div class="form-field">

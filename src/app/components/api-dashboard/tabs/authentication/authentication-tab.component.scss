@@ -232,6 +232,13 @@
 .confirm-email-dialog {
   .p-dialog-content {
     padding: 1.5rem;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .p-dialog-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--surface-border);
   }
 
   .form-field {
@@ -242,16 +249,28 @@
       margin-bottom: 0.5rem;
       font-weight: 500;
       color: var(--text-color);
+      font-size: 0.9rem;
     }
 
     input,
     p-password {
       width: 100%;
+      min-height: 2.5rem;
+    }
+
+    p-password ::ng-deep .p-password-input {
+      width: 100%;
+      min-height: 2.5rem;
+    }
+
+    .p-checkbox {
+      margin-top: 0.5rem;
     }
 
     .p-error {
       margin-top: 0.25rem;
       display: block;
+      font-size: 0.85rem;
     }
 
     .ng-invalid.ng-touched {
@@ -264,18 +283,35 @@
     gap: 1rem;
     justify-content: flex-end;
     margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--surface-border);
 
     .p-button {
       min-width: 100px;
+      height: 2.5rem;
     }
   }
 
   .p-message {
     margin-top: 1rem;
+    border-radius: 6px;
   }
 }
 
 // Responsive design
+@media (max-width: 1024px) {
+  .authentication-container {
+    .feature-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .nested-tabs .p-tabview-nav-link {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .authentication-container {
     .feature-grid {
@@ -297,6 +333,20 @@
         width: 100%;
       }
     }
+
+    .nested-tabs {
+      .p-tabview-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .p-tabview-nav-link {
+        padding: 0.75rem 1rem;
+        min-width: 120px;
+        text-align: center;
+      }
+    }
   }
 
   .login-dialog,
@@ -310,6 +360,133 @@
       .p-button {
         width: 100%;
       }
+    }
+
+    .p-dialog-content {
+      padding: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .authentication-container {
+    .category-header h3 {
+      font-size: 1.2rem;
+    }
+
+    .feature-grid .feature-card {
+      padding: 1rem;
+      text-align: center;
+
+      i {
+        font-size: 1.5rem;
+      }
+
+      h5 {
+        font-size: 0.95rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+      }
+    }
+
+    .nested-tabs .p-tabview-nav-link {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+      min-width: 100px;
+    }
+
+    .endpoint-details {
+      .endpoint-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .endpoint-path {
+        font-size: 0.8rem;
+        word-break: break-all;
+      }
+    }
+  }
+
+  .login-dialog,
+  .register-dialog,
+  .forgot-password-dialog,
+  .reset-password-dialog,
+  .confirm-email-dialog {
+    .p-dialog-content {
+      padding: 0.75rem;
+      max-height: 90vh;
+    }
+
+    .p-dialog-header {
+      padding: 0.75rem;
+      
+      .p-dialog-title {
+        font-size: 0.95rem;
+      }
+    }
+
+    .form-field {
+      margin-bottom: 0.75rem;
+
+      label {
+        font-size: 0.85rem;
+        margin-bottom: 0.375rem;
+      }
+
+      input,
+      p-password {
+        min-height: 2.75rem;
+      }
+
+      p-password ::ng-deep .p-password-input {
+        min-height: 2.75rem;
+        font-size: 0.9rem;
+      }
+
+      .p-error {
+        font-size: 0.8rem;
+      }
+    }
+
+    .form-actions {
+      flex-direction: column;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+
+      .p-button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        height: 2.75rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    .p-message {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+    }
+  }
+
+  // Make all dialogs full screen on very small devices
+  .responsive-dialog {
+    ::ng-deep .p-dialog {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      position: fixed !important;
+    }
+
+    ::ng-deep .p-dialog-content {
+      height: calc(100vh - 60px);
+      overflow-y: auto;
     }
   }
 }

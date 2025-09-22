@@ -1,0 +1,1 @@
+export { TwoFactorAuthTabComponent } from './two-factor-auth-tab.component';

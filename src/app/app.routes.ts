@@ -11,7 +11,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'api-dashboard',
-    loadComponent: () => import('./components/api-dashboard/api-dashboard.component').then(m => m.ApiDashboardComponent)
+    loadComponent: () => import('./components/api-dashboard/api-dashboard-refactored.component').then(m => m.ApiDashboardComponent)
   },
   {
     path: 'demo',

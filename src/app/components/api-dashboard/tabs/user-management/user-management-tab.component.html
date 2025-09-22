@@ -176,7 +176,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="create-user-dialog"
+  styleClass="responsive-dialog create-user-dialog"
 >
   <form [formGroup]="createUserForm" (ngSubmit)="handleCreateUser()">
     <div class="form-grid">
@@ -291,7 +291,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="edit-user-dialog"
+  styleClass="responsive-dialog edit-user-dialog"
 >
   <form [formGroup]="editUserForm" (ngSubmit)="handleEditUser()">
     <div class="form-grid">
@@ -405,7 +405,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="search-users-dialog"
+  styleClass="responsive-dialog search-users-dialog"
 >
   <form [formGroup]="searchUsersForm" (ngSubmit)="handleSearchUsers()">
     <div class="search-form">
@@ -495,7 +495,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="lockout-user-dialog"
+  styleClass="responsive-dialog lockout-user-dialog"
 >
   <form [formGroup]="lockoutForm" (ngSubmit)="handleLockoutUser()">
     <div class="form-field">
@@ -545,4 +545,60 @@
 
     <p-message *ngIf="lockoutUserMessage" severity="info" [text]="lockoutUserMessage"></p-message>
   </form>
+</p-dialog>
+
+<!-- Delete User Dialog -->
+<p-dialog 
+  header="Delete User" 
+  [(visible)]="showDeleteUserDialog" 
+  [modal]="true" 
+  [closable]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="responsive-dialog delete-user-dialog"
+>
+  <div class="delete-confirmation">
+    <div class="warning-icon">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f56565;"></i>
+    </div>
+    
+    <div class="confirmation-message">
+      <h4>Are you sure you want to delete this user?</h4>
+      <p>This action cannot be undone. The user and all associated data will be permanently removed.</p>
+    </div>
+
+    <div class="form-field">
+      <label for="deleteUserId">User ID to Delete *</label>
+      <input 
+        pInputText 
+        id="deleteUserId" 
+        [(ngModel)]="deleteUserId" 
+        placeholder="Enter user ID to confirm deletion"
+        [class.ng-invalid]="!deleteUserId"
+      />
+      <small class="p-error" *ngIf="!deleteUserId">
+        User ID is required to confirm deletion
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        label="Delete User" 
+        icon="pi pi-trash" 
+        severity="danger"
+        [loading]="deleteUserLoading"
+        [disabled]="!deleteUserId"
+        (onClick)="handleDeleteUser()"
+      ></p-button>
+      <p-button 
+        type="button" 
+        label="Cancel" 
+        icon="pi pi-times" 
+        class="p-button-secondary" 
+        (onClick)="showDeleteUserDialog = false; deleteUserId = ''"
+      ></p-button>
+    </div>
+
+    <p-message *ngIf="deleteUserMessage" severity="info" [text]="deleteUserMessage"></p-message>
+  </div>
 </p-dialog>

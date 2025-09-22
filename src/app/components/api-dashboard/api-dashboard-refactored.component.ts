@@ -18,11 +18,11 @@ import { DividerModule } from 'primeng/divider';
 // Import the new modular tab components
 import { AuthenticationTabComponent } from './tabs/authentication';
 import { UserManagementTabComponent } from './tabs/user-management';
-// import { RoleManagementTabComponent } from './tabs/role-management';
-// import { ClaimsManagementTabComponent } from './tabs/claims-management';
-// import { UserRoleManagementTabComponent } from './tabs/user-role-management';
-// import { AccountManagementTabComponent } from './tabs/account-management';
-// import { TwoFactorAuthTabComponent } from './tabs/two-factor-auth';
+import { RoleManagementTabComponent } from './tabs/role-management';
+import { ClaimsManagementTabComponent } from './tabs/claims-management';
+import { UserRoleManagementTabComponent } from './tabs/user-role-management';
+import { AccountManagementTabComponent } from './tabs/account-management';
+import { TwoFactorAuthTabComponent } from './tabs/two-factor-auth';
 
 import { ApiService } from '../../services/api.service';
 import { DashboardService } from '../../services/dashboard.service';
@@ -65,8 +65,12 @@ interface TestPayload {
     
     // Import the new modular components
     AuthenticationTabComponent,
-    UserManagementTabComponent
-    // Add other tab components as they are created
+    UserManagementTabComponent,
+    RoleManagementTabComponent,
+    ClaimsManagementTabComponent,
+    UserRoleManagementTabComponent,
+    AccountManagementTabComponent,
+    TwoFactorAuthTabComponent
   ],
   template: `
     <div class="api-dashboard-container">
@@ -170,9 +174,6 @@ interface TestPayload {
           <app-user-management-tab></app-user-management-tab>
         </p-tabPanel>
 
-        <!-- 
-        Additional tabs can be added as components are created:
-        
         <p-tabPanel header="Role Management" leftIcon="pi pi-key">
           <app-role-management-tab></app-role-management-tab>
         </p-tabPanel>
@@ -192,7 +193,6 @@ interface TestPayload {
         <p-tabPanel header="Two-Factor Auth" leftIcon="pi pi-lock">
           <app-two-factor-auth-tab></app-two-factor-auth-tab>
         </p-tabPanel>
-        -->
       </p-tabView>
 
       <!-- Global Endpoint Tester Dialog -->
@@ -203,8 +203,9 @@ interface TestPayload {
         [closable]="true" 
         [draggable]="false" 
         [resizable]="true"
-        styleClass="endpoint-tester-dialog"
-        [style]="{width: '50vw', minWidth: '400px'}"
+        styleClass="endpoint-tester-dialog responsive-dialog"
+        [style]="{width: '90vw', maxWidth: '600px', minWidth: '320px'}"
+        [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
       >
         <form (ngSubmit)="testEndpoint()">
           <div class="tester-form">
@@ -286,7 +287,7 @@ interface TestPayload {
       </p-dialog>
     </div>
   `,
-  styleUrls: ['./api-dashboard-refactored.component.scss']
+  styleUrls: ['./responsive-dialogs.scss']
 })
 export class ApiDashboardComponent implements OnInit {
   protected apiService = inject(ApiService);

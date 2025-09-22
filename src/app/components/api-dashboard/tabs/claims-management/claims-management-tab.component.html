@@ -176,7 +176,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="create-claim-dialog"
+  styleClass="create-claim-dialog responsive-dialog"
   (onHide)="onCreateDialogHide()"
 >
   <form [formGroup]="createClaimForm" (ngSubmit)="handleCreateClaim()">
@@ -259,7 +259,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="edit-claim-dialog"
+  styleClass="edit-claim-dialog responsive-dialog"
   (onHide)="onEditDialogHide()"
 >
   <form [formGroup]="editClaimForm" (ngSubmit)="handleEditClaim()">
@@ -346,7 +346,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="search-claims-dialog"
+  styleClass="search-claims-dialog responsive-dialog"
   (onHide)="onSearchDialogHide()"
 >
   <form [formGroup]="searchClaimsForm" (ngSubmit)="handleSearchClaims()">
@@ -451,7 +451,7 @@
   [closable]="true" 
   [draggable]="false" 
   [resizable]="false"
-  styleClass="user-claims-dialog"
+  styleClass="user-claims-dialog responsive-dialog"
   (onHide)="onUserClaimsDialogHide()"
 >
   <form [formGroup]="userClaimsForm" (ngSubmit)="handleGetUserClaims()">

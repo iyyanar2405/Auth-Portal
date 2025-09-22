@@ -1,1 +1,1 @@
-export * from './api-dashboard.component';
+export * from './api-dashboard-refactored.component';

@@ -1,0 +1,1 @@
+export { UserRoleManagementTabComponent } from './user-role-management-tab.component';

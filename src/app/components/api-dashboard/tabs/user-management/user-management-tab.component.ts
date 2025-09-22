@@ -83,6 +83,7 @@ export class UserManagementTabComponent implements OnInit {
   // Data
   selectedUser: any = null;
   searchResults: any[] = [];
+  deleteUserId = '';
 
   constructor() {
     this.initializeForms();
@@ -217,8 +218,8 @@ export class UserManagementTabComponent implements OnInit {
   }
 
   async handleDeleteUser(): Promise<void> {
-    if (!this.selectedUser?.id) {
-      this.deleteUserMessage = 'Please select a user to delete';
+    if (!this.deleteUserId) {
+      this.deleteUserMessage = 'User ID is required';
       return;
     }
 
@@ -227,7 +228,7 @@ export class UserManagementTabComponent implements OnInit {
 
     try {
       const result = await this.apiService.testEndpoint({
-        endpoint: `/api/User/${this.selectedUser.id}`,
+        endpoint: `/api/User/${this.deleteUserId}`,
         method: 'DELETE'
       });
 
@@ -235,7 +236,7 @@ export class UserManagementTabComponent implements OnInit {
         this.deleteUserMessage = 'User deleted successfully!';
         setTimeout(() => {
           this.showDeleteUserDialog = false;
-          this.selectedUser = null;
+          this.deleteUserId = '';
         }, 2000);
       } else {
         this.deleteUserMessage = result.error || 'Failed to delete user';

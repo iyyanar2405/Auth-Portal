@@ -1,0 +1,1 @@
+export { ClaimsManagementTabComponent } from './claims-management-tab.component';

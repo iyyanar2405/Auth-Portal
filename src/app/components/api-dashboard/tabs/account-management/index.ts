@@ -1,0 +1,1 @@
+export { AccountManagementTabComponent } from './account-management-tab.component';
